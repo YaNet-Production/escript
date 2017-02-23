@@ -1,0 +1,2 @@
+Функция "WriteLine" заменена на "echo". Введите:
+GetDocumentation echo <language>

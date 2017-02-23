@@ -1,0 +1,9 @@
+Welcome to ESCRIPT!
+
+Using documentation (examples):
+
+GetDocumentation AvailableMethods english
+^ get all available methods
+
+GetDocumentation echo russian
+^ get echo's documentation in russian language

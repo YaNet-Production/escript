@@ -1,0 +1,27 @@
+Методы, помеченные "-", не имеют документации
+
+echo
+WriteLine
+ReadLine-
+set-
+ifvar-
+web_get-
+web_post-
+TCP_SetTriggers-
+TCP_Disconnect-
+TCP_Connect-
+TCP_Send-
+Beep-
+Beep_Advanced-
+Exit-
+ReturnUsername-
+ReturnUserDomainName-
+ReturnStackTrace-
+ReturnCurrentDirectory
+GetDocumentation
+ShowMessageBox
+ReturnProcessorCount
+ReturnOSVersion
+
+Дополнительно:
+MsgBoxSpecial

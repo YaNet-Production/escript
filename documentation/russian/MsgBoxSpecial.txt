@@ -1,0 +1,19 @@
+MessageBox special IDs in ESCRIPT
+used for ShowMessageBox method
+
+
+Icons IDs:
+0 - None
+1 - Information
+2 - Warning
+3 - Error
+4 - Exclamation
+5 - Question
+
+Answer types:
+0 - OK
+1 - OKCancel
+2 - YesNo
+3 - YesNoCancel
+4 - RetryCancel
+5 - AbortRetryIgnore

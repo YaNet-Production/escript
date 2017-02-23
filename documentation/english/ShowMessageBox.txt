@@ -1,0 +1,18 @@
+"ShowMessageBox" in ESCRIPT
+
+Show Windows Message Box
+
+Usage:
+ShowMessageBox caption||text||icon||answers
+* to get icons IDs and answers types enter: GetDocumentation MsgBoxSpecial english
+
+Returns:
+into $result: *PRESSED BUTTON NAME* - successful
+nothing - with errors
+
+Examples:
+
+Display ERROR window and display user's answer!
+
+ShowMessageBox Program Error||Something wrong!||0||3
+echo User's answer is $result

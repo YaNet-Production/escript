@@ -1,0 +1,21 @@
+"echo" метод в ESCRIPT
+
+Отображает текст в консольном окне
+
+Исползование:
+echo ТЕКСТ
+
+Возвращает:
+в $result: 1 - успешно
+в $result: 0 - с ошибками
+
+Примеры:
+
+Показать информацию из $test:
+
+set test Some information
+echo Information from test: $test
+
+Показать "Some text!":
+
+echo Some text!
