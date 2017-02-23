@@ -1,8 +1,8 @@
-MessageBox special IDs in ESCRIPT
-used for ShowMessageBox method
+MessageBox дополнительные параметры в ESCRIPT
+используетс€ дл€ ShowMessageBox
 
 
-Icons IDs:
+»ƒы значков:
 0 - None
 1 - Information
 2 - Warning
@@ -10,7 +10,7 @@ Icons IDs:
 4 - Exclamation
 5 - Question
 
-Answer types:
+“ипы ответов:
 0 - OK
 1 - OKCancel
 2 - YesNo

@@ -18,7 +18,7 @@ ReturnUsername-
 ReturnUserDomainName-
 ReturnStackTrace-
 ReturnCurrentDirectory
-GetDocumentation
+FirstHelp
 ShowMessageBox
 ReturnProcessorCount
 ReturnOSVersion

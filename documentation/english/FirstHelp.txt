@@ -2,8 +2,8 @@ Welcome to ESCRIPT!
 
 Using documentation (examples):
 
-GetDocumentation AvailableMethods english
+GetDocumentation AvailableMethods||english
 ^ get all available methods
 
-GetDocumentation echo russian
+GetDocumentation echo||russian
 ^ get echo's documentation in russian language
