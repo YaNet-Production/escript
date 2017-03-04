@@ -4,7 +4,7 @@ echo
 WriteLine
 ReadLine-
 set-
-ifvar-
+ifvar
 web_get-
 web_post-
 TCP_SetTriggers-

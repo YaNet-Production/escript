@@ -1,0 +1,4 @@
+c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\bin\Debug\escript.exe
+c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\bin\Debug\escript.pdb
+c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\obj\Debug\escript.exe
+c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\obj\Debug\escript.pdb

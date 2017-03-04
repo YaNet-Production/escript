@@ -1,0 +1,37 @@
+Метод "ifvar" в ESCRIPT
+
+Позволяет сравнить числа или текст
+
+Использование:
+ifvar <number> ||<uslovie>|| <number> || <method> || <elseMethod>
+
+Доступные условия:
+>= - больше или такое же
+<= - меньше или такое же
+< - меньше
+> - больше
+== - такое же
+
+Примеры:
+
+Запустить метод RunUserMode если v1 больше, чем v2:
+
+set v1 5
+set v2 1
+ifvar $v1 ||>|| $v2 ||RunUserMode
+
+Отобразить на экране "Good!" если $message будет такой же, как и $userInput (ввод пользователя)
+
+set userInput ReadLine
+set message Hello from script!
+ifvar $message ||==|| $userInput ||echo "Good!"||-
+
+Ещё пример:
+
+set p 1
+set s 2
+ifvar $p ||<=|| $s ||echo $p is lower than $s ||echo $p is not lower than $s1 is lower than 2
+1 is lower than 2
+set p 10
+ifvar $p ||<=|| $s ||echo $p is lower than $s ||echo $p is not lower than $s10 is not lower than 2
+10 is not lower than 2
