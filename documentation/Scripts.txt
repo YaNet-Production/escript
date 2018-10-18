@@ -1,0 +1,26 @@
+You can create scripts with custom methods and labels.
+
+
+Example:
+
+func HelloMethod
+{
+echo -------------------------
+echo Hello from $workingMethod
+echo What is your name?
+set inputText - 
+set name ^ReadLine
+ShowName
+}
+
+func ShowName
+{
+echo
+echo Your name is: $name
+echo
+}
+
+:lbl
+HelloMethod
+goto lbl
+

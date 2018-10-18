@@ -25,7 +25,7 @@ namespace escript
             }
             else if (command.StartsWith("if ")) return Process(command.Replace("if ", "ifvar "), Methods, Labels);
             else if (command.StartsWith("for ")) return Process(command.Replace("for ", "Times "), Methods, Labels);
-            else if (command.StartsWith(":")) { Program.ConWrLine("You can use labels only in scripts."); return "0"; }
+            else if (command.StartsWith(":")) { return "0"; }
             else if (command.StartsWith("-"))
             {
                 return "1";

@@ -1,0 +1,10 @@
+[2.0.0.0]
+- added new methods
+- fixed critical bugs
+- optimized
+- have a nice day
+- ReadLine is ^ReadLine now
+- Added ^ReadKey, see details in GetDocumentation Commands
+- fixed critical error in TCPConnection class
+- added icon
+- added updating system
