@@ -38,7 +38,7 @@ Available commands (v3.51):
 [-] WriteFile: fileName||data||dontCleanFile
 [-] DownloadText: url
 [-] DownloadFile: url||fileName
-[-] Start: fileName||arguments
+[-] Start: fileName||arguments||waitOnExit?
 
 Special:
 [+] MsgBoxSpecial
