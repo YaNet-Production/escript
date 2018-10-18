@@ -155,10 +155,18 @@ namespace escript
             return BeepEx(p1, p2);
         }
 
+        public object CheckUpdates()
+        {
+            Program.CheckUpdates();
+            return "1";
+        }
+
         public object InstallESCRIPT()
         {
             Process p = new Process();
-            p.StartInfo.FileName = ".\\escript.exe";
+            string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            p.StartInfo.FileName = me;
             p.StartInfo.Arguments = "-installNext";
             if (System.Environment.OSVersion.Version.Major >= 6)
             {
@@ -307,6 +315,8 @@ namespace escript
             return "1";
         }
 
+
+
         public object cat(string filename) { return ReadFile(filename); }
 
         public object ReadFile(string filename)
@@ -316,7 +326,15 @@ namespace escript
             r.Dispose();
             return a;
         }
-
+        public object UpdateProgram()
+        {
+            echo("Downloading latest ESCRIPT...");
+            WebClient w = new WebClient();
+            w.DownloadFile("https://raw.githubusercontent.com/feel-the-dz3n/escript/master/UpdateFiles/escript-latest.exe", "escript-update.exe");
+            echo("Starting escript.exe -install");
+            Process.Start(".\\escript-update.exe", "-close -install");
+            return "1";
+        }
         public object WriteFile(string filename, string data, string notClearFile)
         {
             string a = "";
@@ -371,7 +389,7 @@ namespace escript
                 return GetDocumentation(text.Replace("REDIRECT:", ""));
             }
             echo(text);
-            return text;
+            return "1";
         }
 
         public object cls() { return Clear(); }

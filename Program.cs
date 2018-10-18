@@ -83,6 +83,13 @@ namespace escript
                 GC.WaitForPendingFinalizers();
             }
         }
+
+        public static FileInfo GetAboutMe()
+        {
+            string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            return new FileInfo(me);
+
+        }
         public static void ConWrLine(object text)
         {
             Console.WriteLine(text);
@@ -92,8 +99,35 @@ namespace escript
         {
             Cmd.CmdParams["result"] = result;
         }
+        public static void CheckUpdates()
+        {
+            try
+            {
+                string currentVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                string latestVersion = new System.Net.WebClient().DownloadString("https://raw.githubusercontent.com/feel-the-dz3n/escript/master/UpdateFiles/latest-version.txt");
+                if(currentVersion != latestVersion)
+                {
+                    ConsoleColor c = Console.ForegroundColor;
+                    int x = Console.CursorLeft;
+                    int y = Console.CursorTop;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.CursorLeft = 0;
+                    Console.CursorTop = 0;
+                    Program.ConWrLine(" = ESCRIPT " + latestVersion + " is available. You can update using UpdateProgram command.");
+                    Console.ForegroundColor = c;
+                    Console.CursorLeft = x;
+                    Console.CursorTop = y;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         public static void Init(string[] args, bool overwrite = true, API ap = null)
         {
+            new Thread(CheckUpdates).Start();
             api = ap;
             if (overwrite)
             {
@@ -163,7 +197,12 @@ namespace escript
                         {
                             foreach (var p in Process.GetProcesses())
                             {
-                                if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                                try
+                                {
+                                    if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                                    if (p.ProcessName.ToLower() == "escript-update" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                                }
+                                catch { }
                             }
                         }
                         if(args.Contains<string>("-install"))
@@ -215,13 +254,14 @@ namespace escript
                                 
                             }
                             RunScript(InstallScript);
-                            
+                            Environment.Exit(0);
                         }
                         if (args.Contains<string>("-assoc"))
                         {
                             Console.Clear();
+                            string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
                             Program.ConWrLine("Associating *.es files...");
-                            FileAssociation.Associate("ESCRIPT file", "");
+                            FileAssociation.Associate("ESCRIPT file", me);
                             Console.ForegroundColor = ConsoleColor.Green;
                             Program.ConWrLine("ESCRIPT was installed!");
                             Thread.Sleep(2000);
@@ -237,19 +277,20 @@ namespace escript
 
                             string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
                             string destination = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\ESCRIPT";
-                            FileInfo aboutme = new FileInfo(me);
+                            FileInfo aboutme = GetAboutMe();
 
-                            if (aboutme.DirectoryName == destination)
+                            if (aboutme.DirectoryName == destination && aboutme.Name.ToLower().StartsWith("escript.exe"))
                             {
-                                Program.ConWrLine("Download new version of ESCRIPT and start installer");
+                                Program.ConWrLine("You can't do this. Use escript-install.exe or UpdateProgram method.");
                             }
                             else
                             {
 
                                 Program.ConWrLine("Installing ESCRIPT...");
                                 if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\ESCRIPT")) Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\ESCRIPT");
-                                File.Copy(me, destination + "\\" + aboutme.Name, true);
-                                new Process() { StartInfo = { FileName = destination + "\\" + aboutme.Name, Arguments = "-close -assoc" } }.Start();
+                                File.Copy(me, destination + "\\escript.exe", true);
+                                new Process() { StartInfo = { FileName = destination + "\\escript.exe", Arguments = "-close -assoc" } }.Start();
+                                Environment.Exit(0);
                             }
                         }
                     }
