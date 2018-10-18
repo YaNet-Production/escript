@@ -1,0 +1,44 @@
+* you can get documentation to any command marked with [+]
+* arguments marked with [N] can be replaced with "null". "null" means nothing in ESCRIPT syntax.
+* in some arguments you should answer to questions. DO NOT USE yes OR no AS ARGUMENTS! Just write 1 if yes/true and 0 if no/false.
+
+Available commands (v3.51): 
+[+] echo: text
+[-] ^ReadLine (will be replaced by written text everywhere!)
+[-] ^ReadKey (will be replaced by pressed key everywhere!)
+[+] set (shows variables)
+[+] set: variable newValue (sets variable's new value)
+[+] if: [see GetDocumentation||if]
+[+] for: [see GetDocumentation||for]
+[-] WebGet Url||Data
+[-] WebPost Url||Data
+[-] TCP_SetTriggers: messageMethod||disconnected||connected
+[-] TCP_Disconnect
+[-] TCP_Connect: IP||Port
+[-] TCP_Send: Data
+[-] Beep
+[-] BeepEx: Frequency||Duration
+[-] Exit
+[-] ReturnUsername
+[-] ReturnUserDomainName
+[-] ReturnStackTrace
+[-] ReturnCurrentDirectory
+[-] ReturnProcessorCount
+[-] OSVersion
+[-] Version
+[+] ShowMessageBox: [see GetDocumentation ShowMessageBox]
+[-] FileCopy: FileName||FileDestination||Overwrite?
+[-] (FileRename) FileMove: FileName||FileDestination
+[-] FileDelete: FileName
+[-] Clear (cls) - clears console window
+[-] HideConsole, MinimizeConsole, ShowConsole
+[-] GetConsoleWindowHandle
+[-] Sleep: milliseconds
+[-] ReadFile (cat): fileName
+[-] WriteFile: fileName||data||dontCleanFile
+[-] DownloadText: url
+[-] DownloadFile: url||fileName
+[-] Start: fileName||arguments
+
+Special:
+[+] MsgBoxSpecial

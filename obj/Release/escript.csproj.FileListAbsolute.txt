@@ -1,0 +1,5 @@
+D:\vsprojects\escript-master\bin\Release\escript.exe
+D:\vsprojects\escript-master\bin\Release\escript.pdb
+D:\vsprojects\escript-master\obj\Release\escript.exe
+D:\vsprojects\escript-master\obj\Release\escript.pdb
+D:\VSProjects\escript-master\obj\Release\escript.csproj.CoreCompileInputs.cache

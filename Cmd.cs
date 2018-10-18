@@ -11,26 +11,21 @@ namespace escript
 {
     class Cmd
     {
-
+        
+        private static Functions fnc = new Functions();
         public static Dictionary<string, string> CmdParams = new Dictionary<string, string>();
         public static string Process(string command, List<EMethod> Methods, Dictionary<string, int> Labels)
         {
             if (String.IsNullOrWhiteSpace(command)) return "0";
             //Program.ConWrLine(command);
             CmdParams["previousCommand"] = command;
-            if (command.StartsWith("help"))
+            if (command.StartsWith("help") || command == "?")
             {
-                Program.ConWrLine("GetDocumentation FirstHelp||<language>");
-                return "1";
+                return Process("Help", Methods, Labels);
             }
             else if (command.StartsWith("if ")) return Process(command.Replace("if ", "ifvar "), Methods, Labels);
             else if (command.StartsWith("for ")) return Process(command.Replace("for ", "Times "), Methods, Labels);
-            else if (command.StartsWith(":")) return "0";
-            else if (command.StartsWith("version"))
-            {
-                Program.ConWrLine(Console.Title);
-                return Console.Title;
-            }
+            else if (command.StartsWith(":")) { Program.ConWrLine("You can use labels only in scripts."); return "0"; }
             else if (command.StartsWith("-"))
             {
                 return "1";
@@ -94,15 +89,15 @@ namespace escript
                 }
                 try
                 {
-
-                    Functions fnc = new Functions(Methods, Labels);
+                    fnc.Methods = Methods;
+                    fnc.Labels = Labels;
                     MethodInfo mth = fnc.GetType().GetMethod(command.Split(' ')[0]);
                     try
                     {
                         string p = StrSp(command, ' ', 1);
-                        if (p.Contains("||"))
+                        if (p.Contains(CmdParams["splitArgs"]))
                         {
-                            object[] objs = p.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
+                            object[] objs = p.Split(new string[] { CmdParams["splitArgs"] }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
 
 
                             return mth.Invoke(fnc, objs).ToString();
@@ -151,9 +146,9 @@ namespace escript
             string[] tmp = str.Split(' ');
             for (int c = 0; c < tmp.Length; c++)
             {
-                if (tmp[c].Contains("ReadLine")) tmp[c] = tmp[c].Replace("ReadLine", ReadConsoleLine());
-                
-                
+                if (tmp[c].Contains("^ReadLine")) tmp[c] = tmp[c].Replace("^ReadLine", ReadConsoleLine());
+                if (tmp[c].Contains("^ReadKey")) tmp[c] = tmp[c].Replace("^ReadKey", ReadConsoleKey());
+
             }
 
             string result = "";
@@ -171,8 +166,15 @@ namespace escript
         }
         public static string ReadConsoleLine()
         {
-            if (CmdParams["readLine_Settings"] != "") Console.Write(CmdParams["readLine_Settings"]);
+            if (CmdParams["inputText"] != "") Console.Write(CmdParams["inputText"]);
             return Console.ReadLine();
+        }
+        public static string ReadConsoleKey()
+        {
+            if (CmdParams["inputText"] != "") Console.Write(CmdParams["inputText"]);
+            string k = Console.ReadKey().KeyChar.ToString();
+            Program.ConWrLine("");
+            return k;
         }
     }
 }

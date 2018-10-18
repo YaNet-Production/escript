@@ -1,0 +1,21 @@
+"echo" method in ESCRIPT
+
+Display text in a console window
+
+Usage:
+echo TEXT
+
+Returns:
+into $result: 1 - successful
+into $result: 0 - with errors
+
+Examples:
+
+Display information from $test:
+
+set test Some information
+echo Information from test: $test
+
+Display some text:
+
+echo Some text!

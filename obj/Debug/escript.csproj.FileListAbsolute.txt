@@ -2,3 +2,7 @@ c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\bin\Debug\e
 c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\bin\Debug\escript.pdb
 c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\obj\Debug\escript.exe
 c:\users\yanet\documents\visual studio 2012\Projects\escript\escript\obj\Debug\escript.pdb
+D:\vsprojects\escript-master\bin\Debug\escript.exe
+D:\vsprojects\escript-master\bin\Debug\escript.pdb
+D:\vsprojects\escript-master\obj\Debug\escript.exe
+D:\vsprojects\escript-master\obj\Debug\escript.pdb

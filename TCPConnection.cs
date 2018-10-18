@@ -60,8 +60,16 @@ namespace escript
                 }
             }
             tcpServer.Close();
-            swSender.Dispose();
-            srReceiver.Dispose();
+            try
+            {
+                swSender.Dispose();
+            }
+            catch { }
+            try
+            {
+                srReceiver.Dispose();
+            }
+            catch { }
         }
         private static void msg()
         {
@@ -72,6 +80,7 @@ namespace escript
                 {
                     string msg = srReceiver.ReadLine();
                     Cmd.CmdParams["tcpMsg"] = msg;
+                    if (msg == null) throw new Exception("TCP says null");
                     foreach (var m in currentMethods)
                     {
                         if (m.Name == Cmd.CmdParams["TCP_triggerMsg"])
@@ -83,7 +92,7 @@ namespace escript
             }
             catch (Exception ex)
             {
-                Program.ConWrLine(ex.Message); Disconnect();
+                Program.ConWrLine("TCP ERROR: " + ex.Message); Disconnect();
             }
         }
 

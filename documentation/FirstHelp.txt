@@ -1,0 +1,6 @@
+Welcome to ESCRIPT!
+
+Available documentation files:
+GetDocumentation Commands
+GetDocumentation Environment
+GetDocumentation Scripts

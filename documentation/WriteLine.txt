@@ -1,0 +1,2 @@
+Function "WriteLine" is deprecated; use "echo" instead. Enter:
+GetDocumentation echo <language>

@@ -1,0 +1,27 @@
+if!
+You can compare numbers and texts using this method
+
+Usage:
+if smth||condition||smth||CommandIfConditionIsOk||CommandIfConditionIsNotOk
+
+Available conditions:
+>= more or the same
+<= less or the same
+< less
+> more
+== the same
+
+Examples:
+
+
+Run method "RunUserMode" if varible "v1" is bigger than variable "v2":
+
+set v1 5
+set v2 1
+if $v1||>||$v2||RunUserMode
+
+
+If the text entered by the user will be "NANI?" exit the application, otherwise write "something wrong!" on the screen;
+
+set input ^ReadLine
+if $input||==||NANI?||Exit||echo something wrong!
