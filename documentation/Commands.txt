@@ -1,15 +1,18 @@
 * you can get documentation to any command marked with [+]
 * arguments marked with [N] can be replaced with "null". "null" means nothing in ESCRIPT syntax.
 * in some arguments you should answer to questions. DO NOT USE yes OR no AS ARGUMENTS! Just write 1 if yes/true and 0 if no/false.
+* argument values after = are default values. You may omit them.
 
-Available commands (v3.51): 
+Available commands (v2.1.0.0): 
 [+] echo: text
 [-] ^ReadLine (will be replaced by written text everywhere!)
 [-] ^ReadKey (will be replaced by pressed key everywhere!)
 [+] set (shows variables)
 [+] set: variable newValue (sets variable's new value)
-[+] if: [see GetDocumentation||if]
-[+] for: [see GetDocumentation||for]
+[-] dir - display files and folders in current directory
+[-] dir: directory - display files and folders in directory
+[+] if: [see doc||if]
+[+] for: [see doc||for]
 [-] WebGet Url||Data
 [-] WebPost Url||Data
 [-] TCP_SetTriggers: messageMethod||disconnected||connected
@@ -18,27 +21,36 @@ Available commands (v3.51):
 [-] TCP_Send: Data
 [-] Beep
 [-] BeepEx: Frequency||Duration
-[-] Exit
+[-] exit
 [-] ReturnUsername
 [-] ReturnUserDomainName
 [-] ReturnStackTrace
 [-] ReturnCurrentDirectory
 [-] ReturnProcessorCount
-[-] OSVersion
-[-] Version
-[+] ShowMessageBox: [see GetDocumentation ShowMessageBox]
-[-] FileCopy: FileName||FileDestination||Overwrite?
-[-] (FileRename) FileMove: FileName||FileDestination
-[-] FileDelete: FileName
-[-] Clear (cls) - clears console window
+[-] winver
+[-] ver
+[+] msg: [see doc||msg]
+[-] copy (FileCopy): FileName||FileDestination||Overwrite?
+[-] move, ren (FileRemove, FileRename): FileName||FileDestination
+[-] delete (FileDelete): FileName 
+[-] cls (Clear) - clears console window
 [-] HideConsole, MinimizeConsole, ShowConsole
 [-] GetConsoleWindowHandle
-[-] Sleep: milliseconds
+[-] sleep (ThreadSleep, wait): milliseconds
 [-] ReadFile (cat): fileName
 [-] WriteFile: fileName||data||dontCleanFile
 [-] DownloadText: url
 [-] DownloadFile: url||fileName
-[-] Start: fileName||arguments||waitOnExit?
+[-] start (StartProgram): fileName||arguments||waitOnExit?
+[-] color (SetColor): foregroundColor
+[-] GetMethod: methodName - show information about method's arguments
+[-] mciSendCommand: command - sends command to MCI device
+[-] mciSendCommand: command||returnString = null||returnLength = 0||hwndCallback = 0
+[-] mciOpenAndPlay: filename - play file in "escript" alias
+[-] mciOpenAndPlay: filename||alias = escript
+[-] mciClose: alias = escript - closes an alias
+[-] mciOpen: filename||alias = escript - opens an alias
+[-] mciPlay: alias = escript - plays an alias
 
-Special:
-[+] MsgBoxSpecial
+Special topics:
+MsgBoxSpecial, Colors

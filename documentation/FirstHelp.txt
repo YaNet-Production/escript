@@ -1,6 +1,13 @@
 Welcome to ESCRIPT!
 
-Available documentation files:
-GetDocumentation Commands
-GetDocumentation Environment
-GetDocumentation Scripts
+Available documentation topics:
+Commands, Environment, Scripts
+
+Use: doc [topic]
+to read topics
+
+Example: 
+doc Commands
+doc Scripts
+
+WARNING: This documentation is intended for version 2.1.0.0 and higher. If you own an outdated version, you should update the program.
