@@ -11,8 +11,8 @@ Available commands (v2.1.0.0):
 [+] set: variable newValue (sets variable's new value)
 [-] dir - display files and folders in current directory
 [-] dir: directory - display files and folders in directory
-[+] if: [see doc||if]
-[+] for: [see doc||for]
+[+] if: [see "doc if"]
+[+] for: [see "doc for"]
 [-] WebGet Url||Data
 [-] WebPost Url||Data
 [-] TCP_SetTriggers: messageMethod||disconnected||connected
@@ -29,7 +29,7 @@ Available commands (v2.1.0.0):
 [-] ReturnProcessorCount
 [-] winver
 [-] ver
-[+] msg: [see doc||msg]
+[+] msg: [see "doc msg"]
 [-] copy (FileCopy): FileName||FileDestination||Overwrite?
 [-] move, ren (FileRemove, FileRename): FileName||FileDestination
 [-] delete (FileDelete): FileName 
