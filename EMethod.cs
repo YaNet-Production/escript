@@ -5,7 +5,7 @@ using System.Text;
 
 namespace escript
 {
-    class EMethod
+    public class EMethod
     {
         public List<string> Code = new List<string>();
         public string Name = "NULL";

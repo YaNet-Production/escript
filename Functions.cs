@@ -11,8 +11,10 @@ using System.Runtime.InteropServices;
 
 namespace escript
 {
-    class Functions
+    public class Functions
     {
+        public Dictionary<string, int> ConsoleColors = new Dictionary<string, int>();
+
         #region imports
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
@@ -23,6 +25,10 @@ namespace escript
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
         const int SW_SHOWMINIMIZED = 2;
+
+        [DllImport("winmm.dll")]
+        public static extern uint mciSendString(
+            string lpstrCommand, string lpstrReturnString, uint uReturnLength, uint hWndCallback);
         #endregion
 
         public List<EMethod> Methods;
@@ -35,32 +41,73 @@ namespace escript
         //    Labels = labels;
         //}
 
-        public object Compare(object one, object p, object two, object ifOkDoThis, object el)
+        public object Compare(string one, string p, string two, string ifOkDoThis, string el = "null")
         {
             return ifvar(one, p, two, ifOkDoThis, el);
         }
 
-        public object ifvar(object one, object p, object two, object ifOkDoThis, object el)
+        public object ifvar(string one, string condition, string two, string ifOkDoThis, string elseDoThis = "null")
         {
             try
             {
                 int first = int.Parse(one.ToString()), second = int.Parse(two.ToString());
-                if (p.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; } 
-                if (p.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
-                if (p.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
-                if (p.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
-                if (p.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
+                if (condition.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; } 
+                if (condition.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
+                if (condition.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
+                if (condition.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
+                if (condition.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
             }
             catch
             {
-                if (p.ToString() == "==")
+                if (condition.ToString() == "==")
                 {
                     if (one.ToString() == two.ToString()) { Cmd.Process(ifOkDoThis.ToString(), Methods, Labels); return 1; }
                 }
                 else return -1;
             }
-            if(!el.ToString().ToLower().StartsWith("null")) Cmd.Process(el.ToString(), Methods, Labels);
+            if(!elseDoThis.ToString().ToLower().StartsWith("null")) Cmd.Process(elseDoThis.ToString(), Methods, Labels);
             return 0;
+        }
+
+        public string mciOpenAndPlay(string fileName, string alias = "escript")
+        {
+            mciClose(alias);
+            mciOpen(fileName, alias);
+            return mciPlay(alias);
+        }
+
+        public string mciPlay(string alias = "escript")
+        {
+            return mciSendCommand("play " + alias);
+        }
+
+        public string mciOpen(string fileName, string alias = "escript")
+        {
+            return mciSendCommand("open \"" + fileName + "\" alias " + alias);
+        }
+
+        public string mciClose(string alias = "escript")
+        {
+            return mciSendCommand("close " + alias);
+        }
+
+
+
+        public string mciSendCommand(string command, string returnString = "null", string returnLength = "0", string HwndCallback = "0")
+        {
+            try
+            {
+                uint rLen = uint.Parse(returnLength);
+                uint hw = uint.Parse(HwndCallback);
+                string rStr = null;
+                if (returnString.ToLower() != "null") rStr = returnString;
+                uint result = mciSendString(command, rStr, rLen, hw);
+                if (result == 0) return "1";
+                else return result.ToString();
+            }
+            catch (Exception ex) {
+                Program.ConWrLine("ERROR: " + ex.Message);
+                return "0"; }
         }
 
         public string web_get(object Url, object Data)
@@ -148,12 +195,7 @@ namespace escript
             Console.Beep();
             return 1;
         }
-
-        public object Beep_Advanced(object p1, object p2)
-        {
-            Program.ConWrLine("WARNING: Beep_Advanced is BeepEx now");
-            return BeepEx(p1, p2);
-        }
+        
 
         public object CheckUpdates()
         {
@@ -177,9 +219,9 @@ namespace escript
             return "1";
         }
 
-        public object BeepEx(object p1, object p2)
+        public object BeepEx(object frequency, object duration)
         {
-            Console.Beep(int.Parse(p1.ToString()), int.Parse(p2.ToString()));
+            Console.Beep(int.Parse(frequency.ToString()), int.Parse(duration.ToString()));
             return 1;
         }
 
@@ -206,12 +248,12 @@ namespace escript
             return Environment.UserDomainName;
         }
 
-        public object Times(object t, object vr, object cmd)
+        public object Times(string howManyTimes, string command, string infoVariable = "for")
         {
-            for (int a = 0; a < int.Parse(t.ToString()); a++)
+            for (int a = 0; a < int.Parse(howManyTimes.ToString()); a++)
             {
-                Cmd.CmdParams[vr.ToString()] = a.ToString();
-                Cmd.Process(Cmd.Str(cmd.ToString()), Methods, Labels);
+                Cmd.CmdParams[infoVariable.ToString()] = a.ToString();
+                Cmd.Process(Cmd.Str(command.ToString()), Methods, Labels);
             }
             return "1";
         }
@@ -236,23 +278,23 @@ namespace escript
             return Environment.MachineName;
         }
 
-        public object FileCopy(string source, string destFname, string overwriteFile)
+        public object FileCopy(string fileName, string destination, string overwriteFile = "0")
         {
             bool ov = false;
             if (overwriteFile.StartsWith("1")) ov = true;
             try
             {
-                File.Copy(source, destFname, ov);
+                File.Copy(fileName, destination, ov);
                 return "1";
             }
             catch (Exception ex) { throw ex; }
         }
 
-        public object FileMove(string source, string destFname)
+        public object FileMove(string moveFrom, string moveTo)
         {
             try
             {
-                File.Move(source, destFname);
+                File.Move(moveFrom, moveTo);
                 return "1";
             }
             catch (Exception ex) { throw ex; }
@@ -268,10 +310,108 @@ namespace escript
             catch (Exception ex) { throw ex; }
         }
 
-        public object FileRename(string source, string result)
+        public object UseTextTest(string method)
         {
-            return FileMove(source, result);
+            System.Reflection.MethodInfo mth = this.GetType().GetMethod(method);
+            if (mth == null) return "null";
+            var Args = mth.GetParameters();
+
+            ConsoleColor ca = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Program.ConWrite("USE: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            if (method == "ifvar") method = "if";
+            if (method == "Times") method = "for";
+            Program.ConWrite(method + " ");
+            for (int i = 0;i<Args.Length;i++)
+            {
+                Console.ForegroundColor = ConsoleColor.Gray;
+                string arg = "[" + Args[i].Name;
+                if (Args[i].DefaultValue.ToString().Length >= 1) arg += " = " + Args[i].DefaultValue;
+                Program.ConWrite(arg + "]");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                if (i != (Args.Length-1)) Program.ConWrite(Cmd.CmdParams["splitArgs"]);
+            }
+            Program.ConWrLine("");
+            Console.ForegroundColor = ca;
+            return "1";
         }
+
+        public object GetMethod(string methodName)
+        {
+            //if(methodName.Length == 0)
+            //{
+            //    Program.ConWrLine(UseTextTest("GetMethod"));
+            //    return "0";
+            //}
+            System.Reflection.MethodInfo mth = this.GetType().GetMethod(methodName);
+            if (mth == null) return "0";
+            var Args = mth.GetParameters();
+            Program.ConWrLine("Method: " + mth.Name);
+            for (int i = 0; i < Args.Length; i++)
+            {
+                Program.ConWrLine("[Argument " + i + "] " + Args[i].Name + " = " + Args[i].DefaultValue);
+            }
+            return "1";
+        }
+        public object dir(string directory = "null")
+        {
+            ConsoleColor co = Console.ForegroundColor;
+            string c = directory;
+            if(c.ToLower().StartsWith("null")) c = ReturnCurrentDirectory().ToString();
+            Console.ForegroundColor = ConsoleColor.White;
+            Program.ConWrLine(" ");
+            Program.ConWrLine("   Directory: " + c);
+            try
+            {
+                var dirs = Directory.EnumerateDirectories(c);
+                var files = Directory.EnumerateFiles(c);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Program.ConWrLine("   " + files.Count<string>() + " files, " + dirs.Count<string>() + " directories");
+                Program.ConWrLine(" ");
+                DirectoryInfo i = null;
+                foreach (var dir in dirs)
+                {
+                    i = new DirectoryInfo(dir);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Program.ConWrLine("<DIR>\t\t" + i.Name);
+                }
+
+                FileInfo fi = null;
+                foreach (var f in files)
+                {
+                    fi = new FileInfo(f);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    if (fi.Extension.ToLower() == ".es") Console.ForegroundColor = ConsoleColor.Green;
+                    if (fi.Extension.ToLower() == ".exe") Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    if (fi.Extension.ToLower() == ".bat" || fi.Extension.ToLower() == ".cmd") Console.ForegroundColor = ConsoleColor.Gray;
+
+                    string size = (fi.Length / 1000) + " KB";
+                    if ((fi.Length / 1000) <= 0)
+                        size = fi.Length + " B";
+                    Program.ConWrLine("<" + fi.Extension + ">\t" + size + "\t" + fi.Name);
+                }
+            }
+            catch (Exception ex)
+            {
+                Program.ConWrLine("ERROR: " + ex.Message);
+                return "0";
+            }
+            Console.ForegroundColor = co;
+            return "1";
+        }
+
+        public object FileRename(string renameFrom, string renameTo)
+        {
+            return FileMove(renameFrom, renameTo);
+        }
+        public object rename(string renameFrom, string renameTo) { return FileMove(renameFrom, renameTo); }
+        public object ren(string renameFrom, string renameTo) { return FileMove(renameFrom, renameTo); }
+        public object move(string moveFrom, string moveTo) { return FileMove(moveFrom, moveTo); }
+        public object delete(string fileName) { return FileDelete(fileName); }
+
+        public object copy(string fileName, string destination, string overwrite = "0") { return FileCopy(fileName, destination, overwrite); }
+        public object exit() { return Exit(); }
 
         private ConsoleColor GetConsoleColor(int n)
         {
@@ -297,22 +437,51 @@ namespace escript
             }
         }
 
-        public object SetColor(string fg)
+        public object doc(string topic = "FirstHelp")
         {
-            if (!fg.ToLower().StartsWith("null"))
+            return GetDocumentation(topic);
+        }
+
+        public object man(string topic = "FirstHelp")
+        {
+            return GetDocumentation(topic);
+        }
+
+        public object SetColor(string foregroundColor = "15")
+        {
+            ConsoleColor cc = ConsoleColor.White;
+            try
             {
-                var cc = GetConsoleColor(int.Parse(fg));
-                Console.ForegroundColor = cc;
-                Program.ScriptColor = cc;
+                cc = GetConsoleColor(int.Parse(foregroundColor));
             }
+            catch
+            {
+                foreach(var v in ConsoleColors)
+                {
+                    if(foregroundColor.ToLower() == v.Key.ToLower())
+                    {
+                        cc = GetConsoleColor(v.Value);
+                        break;
+                    }
+                }
+            }
+            Console.ForegroundColor = cc;
+            Program.ScriptColor = cc;
             return "1";
         }
 
+        public object color(string foregroundColor = "15") { return SetColor(foregroundColor); }
+
         public object Help()
         {
-            Program.ConWrLine("To get documentation use: GetDocumentation FirstHelp");
+            Program.ConWrLine("To get help type: GetDocumentation");
             Program.ConWrLine("Internet connection is required.");
             return "1";
+        }
+
+        public object update()
+        {
+            return UpdateProgram();
         }
 
 
@@ -366,23 +535,36 @@ namespace escript
             return "1";
         }
 
-        public object Start(string fileName, string arguments, string waitForExit)
+        public object StartProgram(string fileName, string arguments = "", string waitForExit = "0")
         {
             Process a = new Process();
             a.StartInfo.FileName = fileName;
             if (!arguments.ToLower().StartsWith("null")) a.StartInfo.Arguments = arguments;
 
-            a.Start();
-            if(waitForExit.ToLower().StartsWith("1")) a.WaitForExit();
+            try
+            {
+                a.Start();
+                if (waitForExit.ToLower().StartsWith("1")) a.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                Program.ConWrLine(ex.Message);
+                return 0;
+            }
 
             return "1";
         }
 
+        public object start(string fileName, string arguments = "", string waitForExit = "0")
+        {
+            return StartProgram(fileName, arguments, waitForExit);
+        }
 
-        public object GetDocumentation(object method)
+
+        public object GetDocumentation(string topic = "FirstHelp")
         {
             WebClient client = new WebClient();
-            string url = "https://raw.githubusercontent.com/feel-the-dz3n/escript/master/documentation/" + method + ".txt";
+            string url = "https://raw.githubusercontent.com/feel-the-dz3n/escript/master/documentation/" + topic + ".txt";
             string text = client.DownloadString(url); 
             if(text.StartsWith("REDIRECT:"))
             {
@@ -392,6 +574,10 @@ namespace escript
             return "1";
         }
 
+        public object ver() { return Version(); }
+        public object winver() { return OSVersion(); }
+        public object msg(string caption, string text, string icon, string type) { return ShowMessageBox(caption, text, icon, type); }
+
         public object cls() { return Clear(); }
 
         public object Clear()
@@ -400,7 +586,15 @@ namespace escript
             return "1";
         }
 
-        public object ShowMessageBox(object caption, object text, object icon, object type)
+        public object TestMethod(string a1 = "Default Argument 1", string a2 = "Default Argument 2", string a3 = "Default Argument 3")
+        {
+            Program.ConWrLine("a1 : " + a1);
+            Program.ConWrLine("a2 : " + a2);
+            Program.ConWrLine("a3 : " + a3);
+            return "1";
+        }
+
+        public object ShowMessageBox(string caption, string text, string icon, string type)
         {
             var r = MessageBox.Show(text.ToString(), caption.ToString(), GetMsgBoxBtns(int.Parse(type.ToString())), GetMsgBoxIcon(int.Parse(icon.ToString())));
             return r.ToString();
@@ -474,11 +668,14 @@ namespace escript
         }
         
 
-        public object Sleep(string time)
+        public object ThreadSleep(string time)
         {
             Thread.Sleep(int.Parse(time));
             return "1";
         }
+
+        public object sleep(string time) { return ThreadSleep(time); }
+        public object wait(string time) { return ThreadSleep(time); }
 
         public object Version()
         {
@@ -505,5 +702,27 @@ namespace escript
         //    if (o.ShowDialog() == DialogResult.OK) return o.FileName;
         //    return "0";
         //}
+
+        public Functions()
+        {
+            ConsoleColors.Add("Black", 0);
+            ConsoleColors.Add("DarkBlue", 1);
+            ConsoleColors.Add("DarkGreen", 2);
+            ConsoleColors.Add("DarkCyan", 3);
+            ConsoleColors.Add("DarkRed", 4);
+            ConsoleColors.Add("DarkMagenta", 5);
+            ConsoleColors.Add("DarkYellow", 6);
+            ConsoleColors.Add("Gray", 7);
+            ConsoleColors.Add("DarkGray", 8);
+            ConsoleColors.Add("Blue", 9);
+            ConsoleColors.Add("Green", 10);
+            ConsoleColors.Add("Cyan", 11);
+            ConsoleColors.Add("Red", 12);
+            ConsoleColors.Add("Magenta", 13);
+            ConsoleColors.Add("Yellow", 14);
+            ConsoleColors.Add("White", 15);
+
+            // foreach (var v in ConsoleColors) Program.ConWrLine(String.Format("[{0}] {1}", v.Value, v.Key));
+        }
     }
 }

@@ -1,3 +1,12 @@
+[3.0.0.0]
+- command processing method rewritten
+- fixed bug when methods in fuctions was ignored
+- added a lot of functions (see "doc||Commands" for details)
+- updated documentation
+- redesign
+- output improved! now you know if something bad happend
+- added Create/Read/Edit/Delete File Test
+
 [2.0.0.0]
 - added new methods
 - fixed critical bugs

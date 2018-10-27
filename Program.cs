@@ -72,12 +72,15 @@ namespace escript
                 }
                 else
                 {
-                    if (Cmd.CmdParams["showCommands"] == "1") Program.ConWrLine(Cmd.CmdParams["invintation"] + line);
+                    if (Cmd.CmdParams["showCommands"] == "1") Program.ConWrLine(Cmd.CmdParams["invitation"] + line);
                     if (line.StartsWith("break")) break;
 
                     string result = Cmd.Process(Cmd.Str(line), Methods, Labels).ToString();
                     SetResult(result);
-                    if (Cmd.CmdParams["showResult"] == "1") Program.ConWrLine(Cmd.CmdParams["result"]);
+                    if (Cmd.CmdParams["showResult"] == "1") 
+                    {
+                        PrintResult(Cmd.CmdParams["result"]);
+                    }
                 }
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -95,7 +98,14 @@ namespace escript
             Console.WriteLine(text);
             if (api != null) api.trigger(text.ToString());
         }
-        static void SetResult(string result)
+
+        public static void ConWrite(object text)
+        {
+            Console.Write(text);
+            if (api != null) api.trigger(text.ToString());
+        }
+
+        public static void SetResult(string result)
         {
             Cmd.CmdParams["result"] = result;
         }
@@ -113,7 +123,7 @@ namespace escript
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.CursorLeft = 0;
                     Console.CursorTop = 0;
-                    Program.ConWrLine(" = ESCRIPT " + latestVersion + " is available. You can update using UpdateProgram command.");
+                    Program.ConWrLine("   ESCRIPT " + latestVersion + " is available. You can update using UpdateProgram command.");
                     Console.ForegroundColor = c;
                     Console.CursorLeft = x;
                     Console.CursorTop = y;
@@ -124,6 +134,40 @@ namespace escript
 
             }
         }
+        public static void Debug(string text, ConsoleColor col = ConsoleColor.DarkGray)
+        {
+            if(Cmd.CmdParams["programDebug"] == "1")
+            {
+                Console.ForegroundColor = col;
+                ConWrLine("[DEBUG] " + text);
+            }
+        }
+
+        public static void PrintResult(string result)
+        {
+            ConsoleColor aaaaa = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            ConWrite("Result: ");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            ConWrite(result);
+            if(result == "-1")
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                ConWrite(" (error)");
+            }
+            if (result == "0")
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                ConWrite(" (not completed/error)");
+            }
+            if (result == "1")
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                ConWrite(" (ok)");
+            }
+            ConWrLine("");
+            Console.ForegroundColor = aaaaa;
+        }
 
         public static void Init(string[] args, bool overwrite = true, API ap = null)
         {
@@ -131,7 +175,7 @@ namespace escript
             api = ap;
             if (overwrite)
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.Title = "ESCRIPT " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 //Program.ConWrLine(Console.Title);
@@ -139,10 +183,15 @@ namespace escript
             }
             
             Program.ConWrLine(" ");
+            if (overwrite) Console.ForegroundColor = ConsoleColor.Green;
             Program.ConWrLine(" = ESCRIPT by Dz3n | version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            if (overwrite) Console.ForegroundColor = ConsoleColor.Gray;
             Program.ConWrLine(" = https://github.com/feel-the-dz3n/escript");
             Program.ConWrLine(" = https://vk.com/dz3n.escript");
             Program.ConWrLine(" = https://discord.gg/jXcjuqv");
+            Program.ConWrLine(" ");
+            if (overwrite) Console.ForegroundColor = ConsoleColor.White;
+            Program.ConWrLine("   Need help? Type: help");
             Program.ConWrLine(" ");
             
             if (overwrite)
@@ -158,11 +207,19 @@ namespace escript
             Cmd.CmdParams.Add("result", "-");
             Cmd.CmdParams.Add("splitArgs", "||");
             Cmd.CmdParams.Add("inputText", "ReadLine: ");
+            Cmd.CmdParams.Add("invitation", "ESCRIPT> ");
             Cmd.CmdParams.Add("showResult", "0");
             Cmd.CmdParams.Add("showCommands", "0");
-            Cmd.CmdParams.Add("invintation", "ESCRIPT> ");
+            Cmd.CmdParams.Add("programDebug", "0");
 
+#if !DEBUG
+            if(args.Contains<string>("-debug"))
+#endif
+            {
+                Cmd.CmdParams["programDebug"] = "1";
+            }
 
+            Debug("Environment formed", ConsoleColor.DarkGreen);
             
             if (overwrite)
             {
@@ -174,13 +231,16 @@ namespace escript
                         while (true)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write(Cmd.CmdParams["invintation"]);
+                            Console.Write(Cmd.CmdParams["invitation"]);
                             Console.ForegroundColor = ConsoleColor.White;
                             string line = Console.ReadLine();
                             Console.ForegroundColor = ScriptColor;
                             if (line.StartsWith("break")) break;
                             SetResult(Cmd.Process(Cmd.Str(line), null, null));
-                            if (Cmd.CmdParams["showResult"] == "1") Program.ConWrLine(Cmd.CmdParams["result"]);
+                            if (Cmd.CmdParams["showResult"] == "1")
+                            {
+                                PrintResult(Cmd.CmdParams["result"]);
+                            }
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
                         }
@@ -221,34 +281,45 @@ namespace escript
                                 w.WriteLine("Clear");
                                 w.WriteLine("echo ");
                                 w.WriteLine("SetColor 12");
-                                w.WriteLine("echo ESCRIPT Installation");
-                                w.WriteLine("echo =====================");
+                                w.WriteLine("echo  = ESCRIPT $version Installation");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
                                 w.WriteLine("echo ");
                                 w.WriteLine("SetColor 15");
-                                w.WriteLine("echo The installation was canceled by user");
-                                w.WriteLine("echo ");
+                                w.WriteLine("echo                       The installation was canceled by user");
+                                w.WriteLine("set inputText null");
+                                w.WriteLine("echo ^ReadKey");
                                 w.WriteLine("}");
 
+                                w.WriteLine("Version");
+                                w.WriteLine("set version $result");
 
                                 w.WriteLine("Clear");
                                 w.WriteLine("echo ");
                                 w.WriteLine("SetColor 10");
-                                w.WriteLine("echo ESCRIPT Installation");
-                                w.WriteLine("echo =====================");
-                                w.WriteLine("SetColor 2");
-                                w.WriteLine("echo * this installation is also script, but generated (install.es)");
+                                w.WriteLine("echo  = ESCRIPT $version Installation");
+                                w.WriteLine("SetColor DarkGray");
+                                w.WriteLine("echo    this installation is also script, but generated (install.es)");
                                 
                                 w.WriteLine("echo ");
                                 w.WriteLine("echo ");
-                                w.WriteLine("SetColor 15");
-                                w.WriteLine("echo Welcome to ESCRIPT installation!");
                                 w.WriteLine("echo ");
-                                w.WriteLine("echo Do you want to install ESCRIPT?");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo ");
+                                w.WriteLine("SetColor 15");
+                                w.WriteLine("echo                       Welcome to ESCRIPT installation!");
+                                w.WriteLine("echo ");
+                                w.WriteLine("echo                       Do you want to install ESCRIPT?");
                                 w.WriteLine("SetColor 7");
-                                w.WriteLine("echo (admin rights will be requested)");
+                                w.WriteLine("echo                       (admin rights will be requested)");
                                 w.WriteLine("echo ");
                                 w.WriteLine("SetColor 14");
-                                w.WriteLine("set inputText y/n: ");
+                       w.WriteLine("set inputText                                                 y/n: ");
                                 w.WriteLine("set install ^ReadLine");
                                 w.WriteLine("if $install||==||y||InstallEscriptYes||Canceled");
                                 
@@ -261,7 +332,7 @@ namespace escript
                             Console.Clear();
                             string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
                             Program.ConWrLine("Associating *.es files...");
-                            FileAssociation.Associate("ESCRIPT file", me);
+                            FileAssociation.Associate("ESCRIPT file", me + ",1");
                             Console.ForegroundColor = ConsoleColor.Green;
                             Program.ConWrLine("ESCRIPT was installed!");
                             Thread.Sleep(2000);
@@ -311,7 +382,9 @@ namespace escript
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.Write("\nProgram stopped. Press 'R' to restart, 'D' for debug or any other key to exit ");
+                    Console.Write("\nBACHOK POTIK. ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("R - restart; D - set; another key - exit ");
                     var key = Console.ReadKey().Key;
 
                     Program.ConWrLine("\n");

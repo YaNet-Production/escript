@@ -14,22 +14,26 @@ namespace escript
         private const string FILE_EXTENSION = ".es";
         private const long SHCNE_ASSOCCHANGED = 0x8000000L;
         private const uint SHCNF_IDLIST = 0x0U;
+        private static string ProductName = "escript";
 
         public static void Associate(string description, string icon)
         {
-            Registry.ClassesRoot.CreateSubKey(FILE_EXTENSION).SetValue("", Application.ProductName);
+            Registry.ClassesRoot.CreateSubKey(FILE_EXTENSION).SetValue("", ProductName);
 
-            if (Application.ProductName != null && Application.ProductName.Length > 0)
+            if (ProductName != null && ProductName.Length > 0)
             {
-                using (RegistryKey key = Registry.ClassesRoot.CreateSubKey(Application.ProductName))
+                using (RegistryKey key = Registry.ClassesRoot.CreateSubKey(ProductName))
                 {
                     if (description != null)
                         key.SetValue("", description);
 
                     if (icon != null)
-                        key.CreateSubKey("DefaultIcon").SetValue("", ToShortPathName(icon));
+                        key.CreateSubKey("DefaultIcon").SetValue("", icon);
 
                     key.CreateSubKey(@"Shell\Open\Command").SetValue("", ToShortPathName(Application.ExecutablePath) + " \"%1\"");
+
+                    key.CreateSubKey(@"Shell\editNotepad").SetValue("", "Edit with Notepad");
+                    key.CreateSubKey(@"Shell\editNotepad\Command").SetValue("", "notepad.exe" + " \"%1\"");
                 }
             }
 
@@ -44,7 +48,7 @@ namespace escript
         public static void Remove()
         {
             Registry.ClassesRoot.DeleteSubKeyTree(FILE_EXTENSION);
-            Registry.ClassesRoot.DeleteSubKeyTree(Application.ProductName);
+            Registry.ClassesRoot.DeleteSubKeyTree(ProductName);
         }
 
         [DllImport("shell32.dll", SetLastError = true)]

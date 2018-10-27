@@ -34,10 +34,22 @@ namespace escript
             {
                 if (command.Split(' ').Length <= 1)
                 {
+                    ConsoleColor cccc = Console.ForegroundColor;
+                    int idx = 0;
                     foreach (var item in CmdParams)
                     {
-                        Program.ConWrLine(item.Key + " = " + item.Value);
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Program.ConWrite("[" + idx + "] ");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Program.ConWrite(item.Key);
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Program.ConWrite(" = ");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Program.ConWrite(item.Value);
+                        Program.ConWrLine("");
+                        idx++;
                     }
+                    Console.ForegroundColor = cccc;
                 }
                 else if (command.Split(' ').Length >= 3)
                 {
@@ -79,7 +91,14 @@ namespace escript
                             for (int idx = 0; idx < m.Code.Count; idx++)
                             {
                                 CmdParams["workingMethod"] = m.Name;
-                                Cmd.Process(Cmd.Str(m.Code[idx]), Methods, Labels);
+                                if (Cmd.CmdParams["showCommands"] == "1") Program.ConWrLine(Cmd.CmdParams["invitation"] + m.Name + "> " + m.Code[idx]);
+                                string res = Cmd.Process(Cmd.Str(m.Code[idx]), Methods, Labels).ToString();
+                                Program.SetResult(res);
+                                if (Cmd.CmdParams["showResult"] == "1")
+                                {
+                                    Program.PrintResult(Cmd.CmdParams["result"]);
+                                }
+
                                 CmdParams.Remove("workingMethod");
                             }
 
@@ -94,19 +113,59 @@ namespace escript
                     MethodInfo mth = fnc.GetType().GetMethod(command.Split(' ')[0]);
                     try
                     {
+                        //var Args = mth.GetParameters();
+                        //Program.ConWrLine("Method: " + mth.Name + ", arguments:");
+                        //for (int i = 0; i < Args.Length; i++)
+                        //{
+                        //    Program.ConWrLine(Args[i].Name + " = " + Args[i].DefaultValue);
+                        //}
+
                         string p = StrSp(command, ' ', 1);
                         if (p.Contains(CmdParams["splitArgs"]))
                         {
                             object[] objs = p.Split(new string[] { CmdParams["splitArgs"] }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
+                            var Args = mth.GetParameters();
 
+                            if(objs.Length < Args.Length)
+                            {
+                                for (int i = 0; i < Args.Length; i++)
+                                {
+                                    try
+                                    {
+                                        object aaa = objs[i];
+                                        if (aaa == null) objs[i] = Args[i].DefaultValue;
+                                    }
+                                    catch
+                                    {
+                                        var ox = objs.ToList();
+                                        ox.Add(Args[i].DefaultValue);
+                                        objs = ox.ToArray();
+                                    }
+                                }
+                            }
+                           
 
                             return mth.Invoke(fnc, objs).ToString();
 
                         }
                         else
                         {
+                            if (mth == null) throw new System.NullReferenceException();
+                            //Program.ConWrLine("no splitArgs");
+                            if (p.Length == 0)
+                            {
+                                throw new Exception("ERROR: Wrong arguments");
+                            }
 
-                            return mth.Invoke(fnc, new object[] { p }).ToString();
+                            var Args = mth.GetParameters();
+                            List<object> oneArgParams = new List<object>();
+                            oneArgParams.Add(p);
+                            for (int i = 1; i < Args.Length; i++)
+                            {
+                                oneArgParams.Add(Args[i].DefaultValue);
+                            }
+
+                            return mth.Invoke(fnc, oneArgParams.ToArray()).ToString();
 
                         }
                     }
@@ -117,9 +176,19 @@ namespace escript
                     {
                         try
                         {
-                            return mth.Invoke(fnc, new object[] { }).ToString();
+                            var Args = mth.GetParameters();
+                            List<object> defaultParams = new List<object>();
+                            for(int i = 0; i < Args.Length; i++)
+                            {
+                                defaultParams.Add(Args[i].DefaultValue);
+                            }
+                            return mth.Invoke(fnc, defaultParams.ToArray()).ToString();
                         }
-                        catch { Program.ConWrLine(ex.Message); return "-1"; }
+                        catch {
+                            Program.ConWrLine(ex.Message);
+                            Process("UseTextTest " + command.Split(' ')[0], Methods, Labels);
+                            return "-1";
+                        }
 
                     }
                 }
@@ -127,7 +196,14 @@ namespace escript
             }
             string lt = command;
             if (command.Contains(' ')) lt = command.Split(' ')[0];
-            Program.ConWrLine("No such method/command: " + lt);
+            if (lt == "if") Process("UseTextTest ifvar", Methods, Labels);
+            else if (lt == "for") Process("UseTextTest Times", Methods, Labels);
+            else
+            {
+                Program.ConWrLine("No such method/command: " + lt);
+                Program.ConWrLine("Need help? Type: help");
+            }
+            
             return "0";
         }
         public static string StrSp(string text, char split = ' ', int startIdx = 0)
@@ -166,12 +242,12 @@ namespace escript
         }
         public static string ReadConsoleLine()
         {
-            if (CmdParams["inputText"] != "") Console.Write(CmdParams["inputText"]);
+            if (CmdParams["inputText"] != "null") Console.Write(CmdParams["inputText"]);
             return Console.ReadLine();
         }
         public static string ReadConsoleKey()
         {
-            if (CmdParams["inputText"] != "") Console.Write(CmdParams["inputText"]);
+            if (CmdParams["inputText"] != "null") Console.Write(CmdParams["inputText"]);
             string k = Console.ReadKey().KeyChar.ToString();
             Program.ConWrLine("");
             return k;
