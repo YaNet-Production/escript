@@ -163,9 +163,9 @@ namespace escript
 
         public object TCP_SetTriggers(object triggerMsg, object triggerDisconnected, object triggerConnected)
         {
-            Cmd.CmdParams["TCP_triggerMsg"] = triggerMsg.ToString();
-            Cmd.CmdParams["TCP_triggerDisconnected"] = triggerDisconnected.ToString();
-            Cmd.CmdParams["TCP_triggerConnected"] = triggerConnected.ToString();
+            Cmd.Variables["TCP_triggerMsg"] = triggerMsg.ToString();
+            Cmd.Variables["TCP_triggerDisconnected"] = triggerDisconnected.ToString();
+            Cmd.Variables["TCP_triggerConnected"] = triggerConnected.ToString();
             return 1;
         }
 
@@ -252,7 +252,7 @@ namespace escript
         {
             for (int a = 0; a < int.Parse(howManyTimes.ToString()); a++)
             {
-                Cmd.CmdParams[infoVariable.ToString()] = a.ToString();
+                Cmd.Variables[infoVariable.ToString()] = a.ToString();
                 Cmd.Process(Cmd.Str(command.ToString()), Methods, Labels);
             }
             return "1";
@@ -310,6 +310,16 @@ namespace escript
             catch (Exception ex) { throw ex; }
         }
 
+        public object title(string title = "null") { return SetTitle(title); }
+
+        public object SetTitle(string title = "null")
+        {
+            string version = "ESCRIPT " + ver();
+            if (title != "null") version = title + " | " + version;
+            Console.Title = version;
+            return 1;
+        }
+
         public object UseTextTest(string method)
         {
             System.Reflection.MethodInfo mth = this.GetType().GetMethod(method);
@@ -330,7 +340,7 @@ namespace escript
                 if (Args[i].DefaultValue.ToString().Length >= 1) arg += " = " + Args[i].DefaultValue;
                 Program.ConWrite(arg + "]");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                if (i != (Args.Length-1)) Program.ConWrite(Cmd.CmdParams["splitArgs"]);
+                if (i != (Args.Length-1)) Program.ConWrite(Cmd.Variables["splitArgs"]);
             }
             Program.ConWrLine("");
             Console.ForegroundColor = ca;
@@ -354,6 +364,8 @@ namespace escript
             }
             return "1";
         }
+
+        public object ls(string directory = "null") { return dir(directory); }
         public object dir(string directory = "null")
         {
             ConsoleColor co = Console.ForegroundColor;
@@ -470,6 +482,17 @@ namespace escript
             return "1";
         }
 
+        public object Break()
+        {
+            return Stop();
+        }
+
+        public object Stop()
+        {
+            Program.StopProgram = true;
+            return 1;
+        }
+
         public object color(string foregroundColor = "15") { return SetColor(foregroundColor); }
 
         public object Help()
@@ -555,6 +578,21 @@ namespace escript
             return "1";
         }
 
+        public object DWM(string windowHandle = "null", int left = -1, int right = -1, int top = -1, int bottom = -1)
+        {
+            if (System.Environment.OSVersion.Version.Major >= 6)
+            {
+                if (Aero.DwmIsCompositionEnabled())
+                {
+                    IntPtr h = GetConsoleWindow();
+                    if (windowHandle.ToLower() != "null") h = (IntPtr)int.Parse(windowHandle);
+                    Aero.Glass(h, left, right, top, bottom);
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
         public object start(string fileName, string arguments = "", string waitForExit = "0")
         {
             return StartProgram(fileName, arguments, waitForExit);
@@ -573,6 +611,20 @@ namespace escript
             echo(text);
             return "1";
         }
+
+        //public object import(string fileName, string log = "0")
+        //{
+        //    FileInfo f = new FileInfo(fileName);
+        //    System.Reflection.Assembly asm = System.Reflection.Assembly.LoadFile(f.FullName);
+        //    string a = asm.GetName().Name;
+        //    Program.ConWrLine(a);
+        //    System.Reflection.MethodInfo[] b = asm.GetType(asm.GetName().Name).GetMethods();
+        //    foreach(var m in b)
+        //    {
+        //        Program.ConWrLine(m.Name);
+        //    }
+        //    return 0;
+        //}
 
         public object ver() { return Version(); }
         public object winver() { return OSVersion(); }
@@ -594,9 +646,15 @@ namespace escript
             return "1";
         }
 
+        public object Debug()
+        {
+            Cmd.Variables["programDebug"] = "1";
+            return Debugger.Launch();
+        }
+
         public object ShowMessageBox(string caption, string text, string icon, string type)
         {
-            var r = MessageBox.Show(text.ToString(), caption.ToString(), GetMsgBoxBtns(int.Parse(type.ToString())), GetMsgBoxIcon(int.Parse(icon.ToString())));
+            var r = MessageBox.Show(text, caption, GetMsgBoxBtns(int.Parse(type)), GetMsgBoxIcon(int.Parse(icon)));
             return r.ToString();
         }
         private MessageBoxButtons GetMsgBoxBtns(int type)

@@ -31,7 +31,7 @@ namespace escript
                 new Thread(msg).Start();
                 foreach (var m in currentMethods)
                 {
-                    if (m.Name == Cmd.CmdParams["TCP_triggerConnected"])
+                    if (m.Name == Cmd.Variables["TCP_triggerConnected"])
                     {
                         Cmd.Process(m.Name, currentMethods, currentLabels);
                     }
@@ -54,7 +54,7 @@ namespace escript
             IsConnected = false;
             foreach (var m in currentMethods)
             {
-                if (m.Name == Cmd.CmdParams["TCP_triggerDisconnected"])
+                if (m.Name == Cmd.Variables["TCP_triggerDisconnected"])
                 {
                     Cmd.Process(m.Name, currentMethods, currentLabels);
                 }
@@ -79,11 +79,11 @@ namespace escript
                 while (true)
                 {
                     string msg = srReceiver.ReadLine();
-                    Cmd.CmdParams["tcpMsg"] = msg;
+                    Cmd.Variables["tcpMsg"] = msg;
                     if (msg == null) throw new Exception("TCP says null");
                     foreach (var m in currentMethods)
                     {
-                        if (m.Name == Cmd.CmdParams["TCP_triggerMsg"])
+                        if (m.Name == Cmd.Variables["TCP_triggerMsg"])
                         {
                             Cmd.Process(m.Name, currentMethods, currentLabels);
                         }

@@ -1,3 +1,14 @@
+[3.1.0.0]
+- fixed "break" function. Now it's Stop & Break method.
+- added SetTitle (title) method
+- added variables: workingScriptName and workingScriptFullName
+- added ls (dir)
+- added DWM method
+- now when you start script window's title will be changed to it's name
+- now you can add new lines! just write ~n~
+- fixed bug: $splitArgs In String = Crash
+- fixed bug: CheckUpdates Everywhere
+
 [3.0.0.0]
 - command processing method rewritten
 - fixed bug when methods in fuctions was ignored

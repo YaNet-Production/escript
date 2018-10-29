@@ -9,8 +9,8 @@ Available commands (v2.1.0.0):
 [-] ^ReadKey (will be replaced by pressed key everywhere!)
 [+] set (shows variables)
 [+] set: variable newValue (sets variable's new value)
-[-] dir - display files and folders in current directory
-[-] dir: directory - display files and folders in directory
+[-] dir (ls) - display files and folders in current directory
+[-] dir (ls): directory - display files and folders in directory
 [+] if: [see "doc if"]
 [+] for: [see "doc for"]
 [-] WebGet Url||Data
@@ -51,6 +51,8 @@ Available commands (v2.1.0.0):
 [-] mciClose: alias = escript - closes an alias
 [-] mciOpen: filename||alias = escript - opens an alias
 [-] mciPlay: alias = escript - plays an alias
+[-] Break (Stop) - ends main loop
+[-] DWM - see "GetMethod DWM" for details
 
 Special topics:
 MsgBoxSpecial, Colors

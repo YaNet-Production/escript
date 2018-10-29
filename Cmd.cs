@@ -13,12 +13,12 @@ namespace escript
     {
         
         private static Functions fnc = new Functions();
-        public static Dictionary<string, string> CmdParams = new Dictionary<string, string>();
+        public static Dictionary<string, string> Variables = new Dictionary<string, string>();
         public static string Process(string command, List<EMethod> Methods, Dictionary<string, int> Labels)
         {
             if (String.IsNullOrWhiteSpace(command)) return "0";
             //Program.ConWrLine(command);
-            CmdParams["previousCommand"] = command;
+            Variables["previousCommand"] = command;
             if (command.StartsWith("help") || command == "?")
             {
                 return Process("Help", Methods, Labels);
@@ -36,7 +36,7 @@ namespace escript
                 {
                     ConsoleColor cccc = Console.ForegroundColor;
                     int idx = 0;
-                    foreach (var item in CmdParams)
+                    foreach (var item in Variables)
                     {
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Program.ConWrite("[" + idx + "] ");
@@ -60,15 +60,15 @@ namespace escript
                         Program.ConWrLine("Error");
                         return "0";
                     }
-                    if (CmdParams.ContainsKey(key)) CmdParams.Remove(key);
-                    CmdParams.Add(key, l);
+                    if (Variables.ContainsKey(key)) Variables.Remove(key);
+                    Variables.Add(key, l);
                 }
                 else
                 {
                     string key = command.Remove(0, "set ".Length).Split(' ')[0];
                     Program.ConWrLine(key);
-                    if (!CmdParams.ContainsKey(key)) return "0";
-                    CmdParams.Remove(key);
+                    if (!Variables.ContainsKey(key)) return "0";
+                    Variables.Remove(key);
                 }
                 return "1";
             }
@@ -90,16 +90,16 @@ namespace escript
                             //Program.ConWrLine("Running " + m.Name + " method!");
                             for (int idx = 0; idx < m.Code.Count; idx++)
                             {
-                                CmdParams["workingMethod"] = m.Name;
-                                if (Cmd.CmdParams["showCommands"] == "1") Program.ConWrLine(Cmd.CmdParams["invitation"] + m.Name + "> " + m.Code[idx]);
+                                Variables["workingMethod"] = m.Name;
+                                if (Cmd.Variables["showCommands"] == "1") Program.ConWrLine(Cmd.Variables["invitation"] + m.Name + "> " + m.Code[idx]);
                                 string res = Cmd.Process(Cmd.Str(m.Code[idx]), Methods, Labels).ToString();
                                 Program.SetResult(res);
-                                if (Cmd.CmdParams["showResult"] == "1")
+                                if (Cmd.Variables["showResult"] == "1")
                                 {
-                                    Program.PrintResult(Cmd.CmdParams["result"]);
+                                    Program.PrintResult(Cmd.Variables["result"]);
                                 }
 
-                                CmdParams.Remove("workingMethod");
+                                Variables.Remove("workingMethod");
                             }
 
                             return "1";
@@ -121,9 +121,13 @@ namespace escript
                         //}
 
                         string p = StrSp(command, ' ', 1);
-                        if (p.Contains(CmdParams["splitArgs"]))
+                        if (p.Contains(Variables["splitArgs"]))
                         {
-                            object[] objs = p.Split(new string[] { CmdParams["splitArgs"] }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
+                            object[] objs = p.Split(new string[] { Variables["splitArgs"] }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
+                            for(int i = 0; i < objs.Length; i++)
+                            {
+                                objs[i] = objs[i].ToString().Replace("^split^", Variables["splitArgs"]);
+                            }
                             var Args = mth.GetParameters();
 
                             if(objs.Length < Args.Length)
@@ -224,7 +228,6 @@ namespace escript
             {
                 if (tmp[c].Contains("^ReadLine")) tmp[c] = tmp[c].Replace("^ReadLine", ReadConsoleLine());
                 if (tmp[c].Contains("^ReadKey")) tmp[c] = tmp[c].Replace("^ReadKey", ReadConsoleKey());
-
             }
 
             string result = "";
@@ -233,21 +236,24 @@ namespace escript
                 if (a == 0) result += tmp[a];
                 else result += " " + tmp[a];
             }
-            foreach (var a in CmdParams)
+            foreach (var a in Variables)
             {
-                result = result.Replace("$" + a.Key, a.Value);
+                result = result.Replace("$" + a.Key, a.Value.Replace(Variables["splitArgs"], "^split^"));
+                // We can't process varible which contains splitArgs
+                // so let's replace || with ?
+                // :(
             }
-            result = result.Replace("&#dollar;", "$");
+            result = result.Replace("&#dollar;", "$").Replace("~n~", "\n");
             return result;
         }
         public static string ReadConsoleLine()
         {
-            if (CmdParams["inputText"] != "null") Console.Write(CmdParams["inputText"]);
+            if (Variables["inputText"] != "null") Console.Write(Variables["inputText"]);
             return Console.ReadLine();
         }
         public static string ReadConsoleKey()
         {
-            if (CmdParams["inputText"] != "null") Console.Write(CmdParams["inputText"]);
+            if (Variables["inputText"] != "null") Console.Write(Variables["inputText"]);
             string k = Console.ReadKey().KeyChar.ToString();
             Program.ConWrLine("");
             return k;

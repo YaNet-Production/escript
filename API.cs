@@ -15,7 +15,7 @@ namespace escript
         public int Initialize()
         {
             Program.Init(new string[] { }, false, this);
-            Variables = Cmd.CmdParams;
+            Variables = Cmd.Variables;
             return 1;
         }
 

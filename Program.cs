@@ -11,13 +11,14 @@ namespace escript
 {
     class Program
     {
+        public static bool StopProgram = false;
         public static ConsoleColor ScriptColor = ConsoleColor.White;
         static API api = null;
         public static string Out = "";
         public static int a = 0;
         public static void RunScript(string file)
         {
-
+            new Thread(CheckUpdates).Start();
             StreamReader reader = new StreamReader(file);
             string[] fromfile = reader.ReadToEnd().Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
             reader.Close();
@@ -26,6 +27,11 @@ namespace escript
 
             Dictionary<string, int> Labels = new Dictionary<string, int>();
             List<EMethod> Methods = new List<EMethod>();
+
+            FileInfo f = new FileInfo(file);
+            Cmd.Variables.Add("workingScriptName", f.Name);
+            Cmd.Variables.Add("workingScriptFullName", f.FullName);
+            Cmd.Process("title " + f.Name, null, null);
 
             for (int m = 0; m < fromfile.Length; m++)//methods
             {
@@ -72,15 +78,16 @@ namespace escript
                 }
                 else
                 {
-                    if (Cmd.CmdParams["showCommands"] == "1") Program.ConWrLine(Cmd.CmdParams["invitation"] + line);
-                    if (line.StartsWith("break")) break;
-
+                    if (Cmd.Variables["showCommands"] == "1") Program.ConWrLine(Cmd.Variables["invitation"] + line);
+                    
                     string result = Cmd.Process(Cmd.Str(line), Methods, Labels).ToString();
                     SetResult(result);
-                    if (Cmd.CmdParams["showResult"] == "1") 
+                    if (Cmd.Variables["showResult"] == "1") 
                     {
-                        PrintResult(Cmd.CmdParams["result"]);
+                        PrintResult(Cmd.Variables["result"]);
                     }
+
+                    if (StopProgram) break;
                 }
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -107,7 +114,7 @@ namespace escript
 
         public static void SetResult(string result)
         {
-            Cmd.CmdParams["result"] = result;
+            Cmd.Variables["result"] = result;
         }
         public static void CheckUpdates()
         {
@@ -136,7 +143,7 @@ namespace escript
         }
         public static void Debug(string text, ConsoleColor col = ConsoleColor.DarkGray)
         {
-            if(Cmd.CmdParams["programDebug"] == "1")
+            if(Cmd.Variables["programDebug"] == "1")
             {
                 Console.ForegroundColor = col;
                 ConWrLine("[DEBUG] " + text);
@@ -171,7 +178,6 @@ namespace escript
 
         public static void Init(string[] args, bool overwrite = true, API ap = null)
         {
-            new Thread(CheckUpdates).Start();
             api = ap;
             if (overwrite)
             {
@@ -194,6 +200,7 @@ namespace escript
             Program.ConWrLine("   Need help? Type: help");
             Program.ConWrLine(" ");
             
+            
             if (overwrite)
             {
                 Console.ForegroundColor = ScriptColor;
@@ -203,20 +210,20 @@ namespace escript
 #if DEBUG
             Debugger.Launch();
 #endif
-            Cmd.CmdParams.Clear();
-            Cmd.CmdParams.Add("result", "-");
-            Cmd.CmdParams.Add("splitArgs", "||");
-            Cmd.CmdParams.Add("inputText", "ReadLine: ");
-            Cmd.CmdParams.Add("invitation", "ESCRIPT> ");
-            Cmd.CmdParams.Add("showResult", "0");
-            Cmd.CmdParams.Add("showCommands", "0");
-            Cmd.CmdParams.Add("programDebug", "0");
+            Cmd.Variables.Clear();
+            Cmd.Variables.Add("result", "-");
+            Cmd.Variables.Add("splitArgs", "||");
+            Cmd.Variables.Add("inputText", "ReadLine: ");
+            Cmd.Variables.Add("invitation", "ESCRIPT> ");
+            Cmd.Variables.Add("showResult", "0");
+            Cmd.Variables.Add("showCommands", "0");
+            Cmd.Variables.Add("programDebug", "0");
 
 #if !DEBUG
             if(args.Contains<string>("-debug"))
 #endif
             {
-                Cmd.CmdParams["programDebug"] = "1";
+                Cmd.Variables["programDebug"] = "1";
             }
 
             Debug("Environment formed", ConsoleColor.DarkGreen);
@@ -227,22 +234,23 @@ namespace escript
                 {
                     if (args.Length <= 0)
                     {
-                        Cmd.CmdParams["showResult"] = "1";
+                        new Thread(CheckUpdates).Start();
+                        Cmd.Variables["showResult"] = "1";
                         while (true)
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write(Cmd.CmdParams["invitation"]);
+                            Console.Write(Cmd.Variables["invitation"]);
                             Console.ForegroundColor = ConsoleColor.White;
                             string line = Console.ReadLine();
                             Console.ForegroundColor = ScriptColor;
-                            if (line.StartsWith("break")) break;
                             SetResult(Cmd.Process(Cmd.Str(line), null, null));
-                            if (Cmd.CmdParams["showResult"] == "1")
+                            if (Cmd.Variables["showResult"] == "1")
                             {
-                                PrintResult(Cmd.CmdParams["result"]);
+                                PrintResult(Cmd.Variables["result"]);
                             }
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
+                            if (StopProgram) break;
                         }
                     }
                     else if (File.Exists(args[0]))
@@ -336,7 +344,7 @@ namespace escript
                             Console.ForegroundColor = ConsoleColor.Green;
                             Program.ConWrLine("ESCRIPT was installed!");
                             Thread.Sleep(2000);
-                            Cmd.CmdParams.Clear();
+                            Cmd.Variables.Clear();
                             Main(new string[] { });
                         }
                         if (args.Contains<string>("-installNext"))
@@ -380,9 +388,10 @@ namespace escript
 
                 while (true)
                 {
+                    Cmd.Process("ShowConsole", null, null);
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.BackgroundColor = ConsoleColor.Black;
-                    Console.Write("\nBACHOK POTIK. ");
+                    Console.Write("\n = Completed. ");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Write("R - restart; D - set; another key - exit ");
                     var key = Console.ReadKey().Key;

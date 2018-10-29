@@ -34,3 +34,5 @@ $invintation - command line invintation. Default: "ESCRIPT> "
 $inputText - ^ReadLine and ^ReadKey invintation.
 $showResult - echo $result after command completion (1 or 0)
 $showCommands - shows command's names when doing it. Only for scripts. (1 or 0)
+$workingScriptName
+$workingScriptFullName
