@@ -1,4 +1,4 @@
-# ESCRIPT by Dz3n
+# ESCRIPT (for Windows) by Dz3n
 With ESCRIPT you can create and run your own (and not your) powerful scripts. 
 
 ### ESCRIPT Core for Linux x86/x64/ARM
