@@ -10,4 +10,4 @@ Example:
 doc Commands
 doc Scripts
 
-WARNING: This documentation is intended for version 2.1.0.0 and higher. If you own an outdated version, you should update the program.
+WARNING: This documentation is intended for version 4.0.0.0 and higher. If you own an outdated version, you should update the program.

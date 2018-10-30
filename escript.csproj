@@ -57,9 +57,11 @@
     <Compile Include="Cmd.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="EMethod.cs" />
+    <Compile Include="EVariable.cs" />
     <Compile Include="FileAssociation.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="Aero.cs" />
+    <Compile Include="Variables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPConnection.cs" />

@@ -161,11 +161,17 @@ namespace escript
             return Out;
         }
 
-        public object TCP_SetTriggers(object triggerMsg, object triggerDisconnected, object triggerConnected)
+        public object CommandInterpreter()
         {
-            Cmd.Variables["TCP_triggerMsg"] = triggerMsg.ToString();
-            Cmd.Variables["TCP_triggerDisconnected"] = triggerDisconnected.ToString();
-            Cmd.Variables["TCP_triggerConnected"] = triggerConnected.ToString();
+            Program.CommandLine();
+            return "1";
+        }
+
+        public object TCP_SetTriggers(string triggerMsg, string triggerDisconnected, string triggerConnected)
+        {
+            Variables.Set("TCP_triggerMsg", triggerMsg);
+            Variables.Set("TCP_triggerDisconnected", triggerDisconnected);
+            Variables.Set("TCP_triggerConnected",triggerConnected);
             return 1;
         }
 
@@ -252,7 +258,7 @@ namespace escript
         {
             for (int a = 0; a < int.Parse(howManyTimes.ToString()); a++)
             {
-                Cmd.Variables[infoVariable.ToString()] = a.ToString();
+                Variables.Set(infoVariable.ToString(), a.ToString());
                 Cmd.Process(Cmd.Str(command.ToString()), Methods, Labels);
             }
             return "1";
@@ -340,7 +346,7 @@ namespace escript
                 if (Args[i].DefaultValue.ToString().Length >= 1) arg += " = " + Args[i].DefaultValue;
                 Program.ConWrite(arg + "]");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                if (i != (Args.Length-1)) Program.ConWrite(Cmd.Variables["splitArgs"]);
+                if (i != (Args.Length-1)) Program.ConWrite(Variables.GetValue("splitArgs"));
             }
             Program.ConWrLine("");
             Console.ForegroundColor = ca;
@@ -354,6 +360,7 @@ namespace escript
             //    Program.ConWrLine(UseTextTest("GetMethod"));
             //    return "0";
             //}
+
             System.Reflection.MethodInfo mth = this.GetType().GetMethod(methodName);
             if (mth == null) return "0";
             var Args = mth.GetParameters();
@@ -638,6 +645,68 @@ namespace escript
             return "1";
         }
 
+        public object set(string name = "null", string value = "null") { return SetVar(name, value); }
+
+        public object SetVar(string name = "null", string value = "null")
+        {
+            if (name.ToLower() == "null") return VarList();
+
+            Variables.Set(name, value);
+            return "1";
+        }
+
+        public object unset(string name) { return RemoveVar(name); }
+
+        public object RemoveVar(string name)
+        {
+            return Variables.Remove(name);
+        }
+
+        public object VarCreated(string name)
+        {
+            EVariable v = Variables.GetVariable(name);
+            if (v == null) return 0;
+            else return v.Created.ToString();
+        }
+        public object VarEdited(string name)
+        {
+            EVariable v = Variables.GetVariable(name);
+            if (v == null) return 0;
+            else return v.Edited.ToString();
+        }
+
+        public object VarReinit()
+        {
+            Variables.Initialize();
+            return "1";
+        }
+
+        public object VarCount()
+        {
+            return Variables.VarList.Count;
+        }
+
+        public object VarList()
+        {
+            ConsoleColor cccc = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Program.ConWrLine(String.Format("Variables ({0}):", Variables.VarList.Count));
+            for (int idx = 0; idx < Variables.VarList.Count; idx++)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Program.ConWrite("[" + idx + "] ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Program.ConWrite(Variables.VarList[idx].Name);
+                Console.ForegroundColor = ConsoleColor.White;
+                Program.ConWrite(" = ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Program.ConWrite(Variables.VarList[idx].Value);
+                Program.ConWrLine("");
+            }
+            Console.ForegroundColor = cccc;
+            return "1";
+        }
+
         public object TestMethod(string a1 = "Default Argument 1", string a2 = "Default Argument 2", string a3 = "Default Argument 3")
         {
             Program.ConWrLine("a1 : " + a1);
@@ -648,7 +717,7 @@ namespace escript
 
         public object Debug()
         {
-            Cmd.Variables["programDebug"] = "1";
+            Variables.Set("programDebug", "1");
             return Debugger.Launch();
         }
 
@@ -748,6 +817,16 @@ namespace escript
         public object ReturnOSVersion()
         {
             return OSVersion();
+        }
+
+        public object ToUpper(string text)
+        {
+            return text.ToUpper();
+        }
+
+        public object ToLower(string text)
+        {
+            return text.ToLower();
         }
 
         //public object OpenFileDialog(string title, string filter)

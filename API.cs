@@ -11,11 +11,10 @@ namespace escript
         public delegate void MethodContainer();
         public event MethodContainer onNewOutput;
 
-        public Dictionary<string, string> Variables = new Dictionary<string, string>();
+        //public Dictionary<string, string> Variables = new Dictionary<string, string>();
         public int Initialize()
         {
             Program.Init(new string[] { }, false, this);
-            Variables = Cmd.Variables;
             return 1;
         }
 

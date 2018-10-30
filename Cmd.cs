@@ -13,12 +13,11 @@ namespace escript
     {
         
         private static Functions fnc = new Functions();
-        public static Dictionary<string, string> Variables = new Dictionary<string, string>();
         public static string Process(string command, List<EMethod> Methods, Dictionary<string, int> Labels)
         {
             if (String.IsNullOrWhiteSpace(command)) return "0";
             //Program.ConWrLine(command);
-            Variables["previousCommand"] = command;
+            Variables.Set("previousCommand", command);
             if (command.StartsWith("help") || command == "?")
             {
                 return Process("Help", Methods, Labels);
@@ -30,48 +29,48 @@ namespace escript
             {
                 return "1";
             }
-            else if (command.StartsWith("set"))
-            {
-                if (command.Split(' ').Length <= 1)
-                {
-                    ConsoleColor cccc = Console.ForegroundColor;
-                    int idx = 0;
-                    foreach (var item in Variables)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        Program.ConWrite("[" + idx + "] ");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Program.ConWrite(item.Key);
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Program.ConWrite(" = ");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Program.ConWrite(item.Value);
-                        Program.ConWrLine("");
-                        idx++;
-                    }
-                    Console.ForegroundColor = cccc;
-                }
-                else if (command.Split(' ').Length >= 3)
-                {
-                    string key = command.Remove(0, "set ".Length).Split(' ')[0];
-                    string l = StrSp(command.Remove(0, "set ".Length), ' ', 1);
-                    if (String.IsNullOrWhiteSpace(key) || String.IsNullOrWhiteSpace(l))
-                    {
-                        Program.ConWrLine("Error");
-                        return "0";
-                    }
-                    if (Variables.ContainsKey(key)) Variables.Remove(key);
-                    Variables.Add(key, l);
-                }
-                else
-                {
-                    string key = command.Remove(0, "set ".Length).Split(' ')[0];
-                    Program.ConWrLine(key);
-                    if (!Variables.ContainsKey(key)) return "0";
-                    Variables.Remove(key);
-                }
-                return "1";
-            }
+            //else if (command.StartsWith("set"))
+            //{
+            //    if (command.Split(' ').Length <= 1)
+            //    {
+            //        ConsoleColor cccc = Console.ForegroundColor;
+            //        int idx = 0;
+            //        foreach (var item in Variables)
+            //        {
+            //            Console.ForegroundColor = ConsoleColor.Gray;
+            //            Program.ConWrite("[" + idx + "] ");
+            //            Console.ForegroundColor = ConsoleColor.Yellow;
+            //            Program.ConWrite(item.Key);
+            //            Console.ForegroundColor = ConsoleColor.White;
+            //            Program.ConWrite(" = ");
+            //            Console.ForegroundColor = ConsoleColor.Green;
+            //            Program.ConWrite(item.Value);
+            //            Program.ConWrLine("");
+            //            idx++;
+            //        }
+            //        Console.ForegroundColor = cccc;
+            //    }
+            //    else if (command.Split(' ').Length >= 3)
+            //    {
+            //        string key = command.Remove(0, "set ".Length).Split(' ')[0];
+            //        string l = StrSp(command.Remove(0, "set ".Length), ' ', 1);
+            //        if (String.IsNullOrWhiteSpace(key) || String.IsNullOrWhiteSpace(l))
+            //        {
+            //            Program.ConWrLine("Error");
+            //            return "0";
+            //        }
+            //        if (Variables.ContainsKey(key)) Variables.Remove(key);
+            //        Variables.Add(key, l);
+            //    }
+            //    else
+            //    {
+            //        string key = command.Remove(0, "set ".Length).Split(' ')[0];
+            //        Program.ConWrLine(key);
+            //        if (!Variables.ContainsKey(key)) return "0";
+            //        Variables.Remove(key);
+            //    }
+            //    return "1";
+            //}
             else
             {
                 if (Methods != null && Labels != null)
@@ -90,13 +89,13 @@ namespace escript
                             //Program.ConWrLine("Running " + m.Name + " method!");
                             for (int idx = 0; idx < m.Code.Count; idx++)
                             {
-                                Variables["workingMethod"] = m.Name;
-                                if (Cmd.Variables["showCommands"] == "1") Program.ConWrLine(Cmd.Variables["invitation"] + m.Name + "> " + m.Code[idx]);
+                                Variables.SetVariable("workingMethod", m.Name);
+                                if (Variables.GetValue("showCommands") == "1") Program.ConWrLine(Variables.GetValue("invitation") + m.Name + "> " + m.Code[idx]);
                                 string res = Cmd.Process(Cmd.Str(m.Code[idx]), Methods, Labels).ToString();
                                 Program.SetResult(res);
-                                if (Cmd.Variables["showResult"] == "1")
+                                if (Variables.GetValue("showResult") == "1")
                                 {
-                                    Program.PrintResult(Cmd.Variables["result"]);
+                                    Program.PrintResult(Variables.GetValue("result"));
                                 }
 
                                 Variables.Remove("workingMethod");
@@ -121,12 +120,12 @@ namespace escript
                         //}
 
                         string p = StrSp(command, ' ', 1);
-                        if (p.Contains(Variables["splitArgs"]))
+                        if (p.Contains(Variables.GetValue("splitArgs")))
                         {
-                            object[] objs = p.Split(new string[] { Variables["splitArgs"] }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
+                            object[] objs = p.Split(new string[] { Variables.GetValue("splitArgs") }, StringSplitOptions.RemoveEmptyEntries).ToArray<object>();
                             for(int i = 0; i < objs.Length; i++)
                             {
-                                objs[i] = objs[i].ToString().Replace("^split^", Variables["splitArgs"]);
+                                objs[i] = objs[i].ToString().Replace("^split^", Variables.GetValue("splitArgs"));
                             }
                             var Args = mth.GetParameters();
 
@@ -236,24 +235,24 @@ namespace escript
                 if (a == 0) result += tmp[a];
                 else result += " " + tmp[a];
             }
-            foreach (var a in Variables)
+            for( int i = 0; i < Variables.VarList.Count; i++)
             {
-                result = result.Replace("$" + a.Key, a.Value.Replace(Variables["splitArgs"], "^split^"));
-                // We can't process varible which contains splitArgs
-                // so let's replace || with ?
-                // :(
+                result = result.Replace("$" + Variables.VarList[i].Name, Variables.VarList[i].Value.Replace(Variables.GetValue("splitArgs"), "^split^"));
+                // We can't process varible which contains $splitArgs (||)
+                // so let's replace || with ^split^
+                // then we will replace ^split^ back to ||
             }
             result = result.Replace("&#dollar;", "$").Replace("~n~", "\n");
             return result;
         }
         public static string ReadConsoleLine()
         {
-            if (Variables["inputText"] != "null") Console.Write(Variables["inputText"]);
+            if (Variables.GetValue("inputText") != "null") Console.Write(Variables.GetValue("inputText"));
             return Console.ReadLine();
         }
         public static string ReadConsoleKey()
         {
-            if (Variables["inputText"] != "null") Console.Write(Variables["inputText"]);
+            if (Variables.GetValue("inputText") != "null") Console.Write(Variables.GetValue("inputText"));
             string k = Console.ReadKey().KeyChar.ToString();
             Program.ConWrLine("");
             return k;

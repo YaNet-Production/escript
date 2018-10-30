@@ -36,3 +36,17 @@ $showResult - echo $result after command completion (1 or 0)
 $showCommands - shows command's names when doing it. Only for scripts. (1 or 0)
 $workingScriptName
 $workingScriptFullName
+$startTime
+
+You can remove variables using "unset" ("RemoveVar") method.
+
+To get date of creation or date of edition use:
+VarCreated name
+VarEdited name
+
+To get all variables count use:
+VarCount
+
+To reinitialize variables list (remove all) use:
+VarReinit
+* not recommended to use it in scripts, this may broke in runtime

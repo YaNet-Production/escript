@@ -3,12 +3,17 @@
 * in some arguments you should answer to questions. DO NOT USE yes OR no AS ARGUMENTS! Just write 1 if yes/true and 0 if no/false.
 * argument values after = are default values. You may omit them.
 
-Available commands (v2.1.0.0): 
+Available commands (v4.0.0.0): 
 [+] echo: text
 [-] ^ReadLine (will be replaced by written text everywhere!)
 [-] ^ReadKey (will be replaced by pressed key everywhere!)
 [+] set (shows variables)
-[+] set: variable newValue (sets variable's new value)
+[+] set: variable||newValue (sets variable's new value)
+[+] set - see "doc set" for details
+[-] unset (RemoveVar): name - remove variable
+[-] VarCreated, VarEdited: name - returns some dates
+[-] VarReinit - reinit variables system (remove all)
+[-] VarCount - returns all variables count
 [-] dir (ls) - display files and folders in current directory
 [-] dir (ls): directory - display files and folders in directory
 [+] if: [see "doc if"]
