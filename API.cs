@@ -5,28 +5,26 @@ using System.Text;
 
 namespace escript
 {
-    public class API
+    public static class API
     {
-        public string output = "";
-        public delegate void MethodContainer();
-        public event MethodContainer onNewOutput;
+        public delegate void WriteEventMethod(object text);
+        public static event WriteEventMethod WriteEvent;
 
-        //public Dictionary<string, string> Variables = new Dictionary<string, string>();
-        public int Initialize()
+        public delegate void WriteLineEventMethod(object text);
+        public static event WriteLineEventMethod WriteLineEvent;
+
+        public static void Start()
         {
-            Program.Init(new string[] { }, false, this);
-            return 1;
+            Start(new List<string>());
         }
 
-        public void trigger(string text)
+        public static void Start(List<string> args)
         {
-            output = text;
-            onNewOutput();
+            GlobalVars.UsingAPI = true;
+            Program.Main(args.ToArray());
         }
-
-        public object Process(string command)
-        {
-            return Cmd.Process(Cmd.Str(command), null, null);
-        }
+        
+        internal static void WriteLine(object text) { WriteLineEvent(text); }
+        internal static void Write(object text) { WriteEvent(text); }
     }
 }

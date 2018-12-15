@@ -1,0 +1,14 @@
+D:\VSProjects\escript-master\ESLib\bin\Release\02.ico
+D:\VSProjects\escript-master\ESLib\bin\Release\InsertIcons.exe
+D:\VSProjects\escript-master\ESLib\bin\Release\01.ico
+D:\VSProjects\escript-master\ESLib\bin\Release\Icons.cmd
+D:\VSProjects\escript-master\ESLib\bin\Release\ESLib.dll
+D:\VSProjects\escript-master\ESLib\bin\Release\ESLib.pdb
+D:\VSProjects\escript-master\ESLib\bin\Release\escript.exe
+D:\VSProjects\escript-master\ESLib\bin\Release\escript.exe.config
+D:\VSProjects\escript-master\ESLib\obj\Release\ESLib.csproj.CoreCompileInputs.cache
+D:\VSProjects\escript-master\ESLib\obj\Release\ESLib.csproj.CopyComplete
+D:\VSProjects\escript-master\ESLib\obj\Release\ESLib.dll
+D:\VSProjects\escript-master\ESLib\obj\Release\ESLib.pdb
+D:\VSProjects\escript-master\ESLib\bin\Release\escript.pdb
+D:\VSProjects\escript-master\ESLib\obj\Release\ESLib.csprojAssemblyReference.cache

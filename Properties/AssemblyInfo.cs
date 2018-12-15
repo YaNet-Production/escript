@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Resources;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -6,10 +7,10 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("ESCRIPT")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("ESCRIPT is a powerful command interpreter")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dz3n")]
-[assembly: AssemblyProduct("escript")]
+[assembly: AssemblyProduct("ESCRIPT")]
 [assembly: AssemblyCopyright("Copyright © Dz3n 2017-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +33,7 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyVersion("5.0.7006.1")]
+[assembly: AssemblyFileVersion("5.0.7006.1")]
+[assembly: NeutralResourcesLanguage("en")]
+

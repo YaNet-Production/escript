@@ -1,0 +1,17 @@
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\02.ico
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\InsertIcons.exe
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\01.ico
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\Icons.cmd
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\escript-api-test.exe
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\escript-api-test.pdb
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\escript.exe
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\escript.pdb
+D:\VSProjects\escript-master\escript-api-test\bin\Debug\escript.exe.config
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.csprojAssemblyReference.cache
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript_api_test.Form1.resources
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript_api_test.Properties.Resources.resources
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.csproj.GenerateResource.cache
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.csproj.CoreCompileInputs.cache
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.csproj.CopyComplete
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.exe
+D:\VSProjects\escript-master\escript-api-test\obj\Debug\escript-api-test.pdb

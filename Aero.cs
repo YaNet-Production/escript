@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+#if !IsCore
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -74,26 +76,38 @@ namespace escript
         [DllImport("dwmapi.dll", PreserveSig = false)]
         public static extern bool DwmIsCompositionEnabled();
 
+        public static bool Fine()
+        {
+            if (System.Environment.OSVersion.Version.Major >= 6)
+            {
+                if (DwmIsCompositionEnabled()) return true;
+            }
+            return false;
+        }
         public static void Glass(IntPtr windowHandle, int left = -1, int right = -1, int top = -1, int bottom = -1)
         {
             //WindowInteropHelper windowInterop = new WindowInteropHelper(win);
             //IntPtr windowHandle = windowInterop.Handle;
             //HwndSource mainWindowSrc = HwndSource.FromHwnd(windowHandle);
             //mainWindowSrc.CompositionTarget.BackgroundColor = Colors.Transparent;
-            Margins margins = GetMargins(windowHandle, left, right, top, bottom);
-            int returnVal = DwmExtendFrameIntoClientArea(windowHandle, ref margins);
-            if ((returnVal < 0))
+            if (Fine())
             {
-                throw new NotSupportedException("?5@0F8O 7025@H8;0AL =5C40G=>");
-            }
-            else
-            {
-                const int dwmwaNcrenderingPolicy = 2;
-                var dwmncrpDisabled = 2;
+                Margins margins = GetMargins(windowHandle, left, right, top, bottom);
+                int returnVal = DwmExtendFrameIntoClientArea(windowHandle, ref margins);
+                if ((returnVal < 0))
+                {
+                    throw new NotSupportedException("?5@0F8O 7025@H8;0AL =5C40G=>");
+                }
+                else
+                {
+                    const int dwmwaNcrenderingPolicy = 2;
+                    var dwmncrpDisabled = 2;
 
-                DwmSetWindowAttribute(windowHandle, dwmwaNcrenderingPolicy, ref dwmncrpDisabled, sizeof(int));
+                    DwmSetWindowAttribute(windowHandle, dwmwaNcrenderingPolicy, ref dwmncrpDisabled, sizeof(int));
+                }
             }
-
         }
     }
 }
+
+#endif

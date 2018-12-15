@@ -1,0 +1,44 @@
+[17.11.2018 15:48:13] [DEBUG] Time: 17.11.2018 15:48:13
+[17.11.2018 15:48:13] [COMMAND] set invitation||ESCRIPT {ver major}> 
+[17.11.2018 15:48:13] [COMMAND] ver major
+[17.11.2018 15:48:13] [COMMAND] Result: 5
+[17.11.2018 15:48:13] [DEBUG] {PARSE} 1 - ESCRIPT {ver major}>  -> 5
+[17.11.2018 15:48:13] [COMMAND] Result: 1
+[17.11.2018 15:48:13] [COMMAND] Import D:\VSProjects\escript-master\ESLib\bin\Release\ESLib.dll
+[17.11.2018 15:48:13] [DEBUG] [ESLib.dll] Type: ESLib.EFuncInvoke
+[17.11.2018 15:48:13] [DEBUG] [ESLib.dll] Found: ESLib.EFuncInvoke
+[17.11.2018 15:48:13] [DEBUG] [ESLib.dll] Calling: ESLib_Initialize
+[17.11.2018 15:48:13]  
+   ESCRIPT 5.0[17.11.2018 15:48:13]  Standard
+[17.11.2018 15:48:13]    Copyright (C) Dz3n 2017-2018
+[17.11.2018 15:48:13]    Build 6895 17.11.2018 15:48:00
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13]    OS: Microsoft Windows NT 6.1.7601 Service Pack 1
+[17.11.2018 15:48:13]    https://github.com/feel-the-dz3n/escript | https://discord.gg/jXcjuqv
+[17.11.2018 15:48:13]    https://vk.com/dz3n.escript
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13] [COMMAND] title
+[17.11.2018 15:48:13] [COMMAND] Result: 1
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13] ESCRIPT Example Library (ESLib.dll) loaded!
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13] Be sure, that method names are unique. Example:
+[17.11.2018 15:48:13] ESLib1_Initialize
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13] Available methods in this DLL: TestLib(string text)
+[17.11.2018 15:48:13] 
+[17.11.2018 15:48:13] [COMMAND] Result: 1
+[17.11.2018 15:48:13] [COMMAND] Import D:\VSProjects\escript-master\ESLib\bin\Release\ESLib.pdb
+[17.11.2018 15:48:13] System.BadImageFormatException: Ожидалось, что модуль содержит манифест сборки. (Исключение из HRESULT: 0x80131018)
+   в System.Reflection.RuntimeAssembly.nLoadFile(String path, Evidence evidence)
+   в System.Reflection.Assembly.LoadFile(String path)
+   в escript.ImportLibClass..ctor(String fileName, Functions functions, String text) в D:\VSProjects\escript-master\Cmd.cs:строка 23
+   в escript.Functions.Import(String fileName, String typeName) в D:\VSProjects\escript-master\Functions.cs:строка 39
+[17.11.2018 15:48:13] [COMMAND] Result: -1
+[17.11.2018 15:48:13] [DEBUG] Environment formed
+[17.11.2018 15:48:13] [DEBUG] SCRIPT Resource: 0x0000
+[17.11.2018 15:48:13] [COMMAND] ShowConsole
+[17.11.2018 15:48:13] [COMMAND] Result: True
+[17.11.2018 15:48:13] Need help? Type: help
+[17.11.2018 15:48:13] To install this copy of ESCRIPT type: install
+ESCRIPT 5> 

@@ -14,12 +14,10 @@ namespace escript
         private static StreamWriter swSender;
         private static StreamReader srReceiver;
         private static TcpClient tcpServer;
-        private static List<EMethod> currentMethods;
         private static Dictionary<string, int> currentLabels;
 
-        public static int Connect(string IP, int PORT, List<EMethod> mth, Dictionary<string, int> lbls)
+        public static int Connect(string IP, int PORT, Dictionary<string, int> lbls)
         {
-            currentMethods = mth;
             currentLabels = lbls;
             try
             {
@@ -29,11 +27,12 @@ namespace escript
                 tcpServer.Connect(IP, PORT);
                 IsConnected = true;
                 new Thread(msg).Start();
-                foreach (var m in currentMethods)
+                for (int i = 0; i < GlobalVars.Methods.Count; i++)
                 {
+                    var m = GlobalVars.Methods[i];
                     if (m.Name == Variables.GetValue("TCP_triggerConnected"))
                     {
-                        Cmd.Process(m.Name, currentMethods, currentLabels);
+                        Cmd.Process(m.Name, currentLabels);
                     }
                 }
                 return 1;
@@ -52,11 +51,12 @@ namespace escript
         public static void Disconnect()
         {
             IsConnected = false;
-            foreach (var m in currentMethods)
+            for (int i = 0; i < GlobalVars.Methods.Count; i++)
             {
+                var m = GlobalVars.Methods[i];
                 if (m.Name == Variables.GetValue("TCP_triggerDisconnected"))
                 {
-                    Cmd.Process(m.Name, currentMethods, currentLabels);
+                    Cmd.Process(m.Name, currentLabels);
                 }
             }
             tcpServer.Close();
@@ -81,18 +81,19 @@ namespace escript
                     string msg = srReceiver.ReadLine();
                     Variables.Set("tcpMsg", msg);
                     if (msg == null) throw new Exception("TCP says null");
-                    foreach (var m in currentMethods)
+                    for (int i = 0; i < GlobalVars.Methods.Count; i++)
                     {
+                        var m = GlobalVars.Methods[i];
                         if (m.Name == Variables.GetValue("TCP_triggerMsg"))
                         {
-                            Cmd.Process(m.Name, currentMethods, currentLabels);
+                            Cmd.Process(m.Name, currentLabels);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Program.ConWrLine("TCP ERROR: " + ex.Message); Disconnect();
+                EConsole.WriteLine("TCP ERROR: " + ex.Message); Disconnect();
             }
         }
 

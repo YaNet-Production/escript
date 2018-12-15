@@ -1,0 +1,25 @@
+Folder 1: D:\vsprojects\escript-master
+Folder 2: Core
+01.ico [escript-master] 21.10.2018 21:03:43 = [Core] 21.10.2018 21:03:43
+02.ico [escript-master] 21.10.2018 21:03:43 = [Core] 21.10.2018 21:03:43
+Aero.cs [escript-master] 19.11.2018 22:03:52 = [Core] 19.11.2018 22:03:52
+Cmd.cs [escript-master] 02.12.2018 20:46:45 > [Core] 02.12.2018 16:24:54
+EVariable.cs [escript-master] 21.11.2018 20:04:43 = [Core] 21.11.2018 20:04:43
+FileAssociation.cs [escript-master] 29.11.2018 15:39:09 = [Core] 29.11.2018 15:39:09
+Functions.cs [escript-master] 02.12.2018 16:47:55 = [Core] 02.12.2018 16:47:55
+GlobalVars.cs [escript-master] 01.12.2018 19:16:41 = [Core] 01.12.2018 19:16:41
+Program.cs [escript-master] 02.12.2018 16:00:58 = [Core] 02.12.2018 16:00:58
+Variables.cs [escript-master] 02.12.2018 16:47:55 = [Core] 02.12.2018 16:47:55
+TCPConnection.cs [escript-master] 19.11.2018 15:16:58 = [Core] 19.11.2018 15:16:58
+ConsoleMessageBox.cs [escript-master] 16.11.2018 20:10:46 = [Core] 16.11.2018 20:10:46
+EConsole.cs [escript-master] 01.12.2018 19:16:41 = [Core] 01.12.2018 19:16:41
+InstallScript.es [escript-master] 29.11.2018 15:27:36 = [Core] 29.11.2018 15:27:36
+TemplateScript.es [escript-master] 21.11.2018 20:15:11 = [Core] 21.11.2018 20:15:11
+ExampleFolder.es [escript-master] 17.11.2018 16:46:02 = [Core] 17.11.2018 16:46:02
+InsertIcons.exe [escript-master] 06.11.2018 21:11:54 = [Core] 06.11.2018 21:11:54
+ESCode.cs [escript-master] 01.12.2018 19:33:37 = [Core] 01.12.2018 19:33:37
+UpdateScript.es [escript-master] 26.11.2018 18:26:39 = [Core] 26.11.2018 18:26:39
+API.cs [escript-master] 02.12.2018 13:06:48 = [Core] 02.12.2018 13:06:48
+Functions.es [escript-master] 02.12.2018 16:27:47 = [Core] 02.12.2018 16:27:47
+EMethod.cs [escript-master] 18.11.2018 18:08:31 = [Core] 18.11.2018 18:08:31
+Done

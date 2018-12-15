@@ -1,0 +1,28 @@
+[03.12.2018 14:59:49] [DEBUG] Start NewFromCode
+[03.12.2018 14:59:49] [DEBUG] Added method: install, line: 81
+[03.12.2018 14:59:49] [DEBUG] End NewFromCode
+[03.12.2018 14:59:49] [DEBUG] escript.Functions.es imported
+[03.12.2018 14:59:49] [DEBUG] Time: 03.12.2018 14:59:49
+[03.12.2018 14:59:49] [COMMAND] set invitation||ESCRIPT {ver major}> 
+[03.12.2018 14:59:49] [COMMAND] ver major
+[03.12.2018 14:59:49] [COMMAND] Result: 5
+[03.12.2018 14:59:49] [DEBUG] {PARSE} 1 - ESCRIPT {ver major}>  -> 5
+[03.12.2018 14:59:49] [COMMAND] Result: 1
+[03.12.2018 14:59:49] [DEBUG] Environment formed
+[03.12.2018 14:59:49] [DEBUG] SCRIPT Resource: 0x0000
+[03.12.2018 14:59:49] [COMMAND] ShowConsole
+[03.12.2018 14:59:49]  
+   ESCRIPT 5.0[03.12.2018 14:59:49]  Standard
+[03.12.2018 14:59:49]    Copyright (C) Dz3n 2017-2018
+[03.12.2018 14:59:49]    Build 6911 03.12.2018 14:59:30
+[03.12.2018 14:59:49] 
+[03.12.2018 14:59:49]    OS: Microsoft Windows NT 6.1.7601 Service Pack 1
+[03.12.2018 14:59:49]    https://github.com/feel-the-dz3n/escript | https://discord.gg/jXcjuqv
+[03.12.2018 14:59:49]    https://vk.com/dz3n.escript
+[03.12.2018 14:59:49] 
+[03.12.2018 14:59:49] [COMMAND] title
+[03.12.2018 14:59:49] [COMMAND] Result: 1
+[03.12.2018 14:59:49] [COMMAND] Result: True
+[03.12.2018 14:59:49] Need help? Type: help
+[03.12.2018 14:59:49] To install this copy of ESCRIPT type: install
+ESCRIPT 5> 

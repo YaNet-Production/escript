@@ -1,0 +1,95 @@
+[02.12.2018 15:54:39] [DEBUG] Time: 02.12.2018 15:54:39
+[02.12.2018 15:54:39] [COMMAND] set invitation||ESCRIPT {ver major}> 
+[02.12.2018 15:54:39] [COMMAND] ver major
+[02.12.2018 15:54:39] [COMMAND] Result: 5
+[02.12.2018 15:54:39] [DEBUG] {PARSE} 1 - ESCRIPT {ver major}>  -> 5
+[02.12.2018 15:54:39] [COMMAND] Result: 1
+[02.12.2018 15:54:39] [DEBUG] Environment formed
+[02.12.2018 15:54:39] [DEBUG] SCRIPT Resource: 0x0000
+[02.12.2018 15:54:39] [DEBUG] Start NewFromCode
+[02.12.2018 15:54:39] [DEBUG] Added method: Main, line: 161
+[02.12.2018 15:54:39] [DEBUG] Added method: SetForce, line: 221
+[02.12.2018 15:54:39] [DEBUG] Can't remove dirt from string! Индекс находился вне границ массива.
+[02.12.2018 15:54:39] [DEBUG] Can't remove dirt from string! Индекс находился вне границ массива.
+[02.12.2018 15:54:39] [DEBUG] Added method: eUpdate, line: 461
+[02.12.2018 15:54:39] [DEBUG] Added method: ShowError, line: 521
+[02.12.2018 15:54:39] [DEBUG] End NewFromCode
+[02.12.2018 15:54:39] [DEBUG] Start RunScript
+[02.12.2018 15:54:39] [COMMAND] title UpdateScript.es
+[02.12.2018 15:54:39] [COMMAND] Result: 1
+[02.12.2018 15:54:39] [DEBUG] 'Main' found! Calling it!
+[02.12.2018 15:54:39] [COMMAND] Main
+[02.12.2018 15:54:39] [DEBUG] Running Main method!
+[02.12.2018 15:54:39] [COMMAND] echo $args
+[02.12.2018 15:54:39] [DEBUG] $args -> List[2] ^(^ 0:C:\Users\Dz3n\AppData\Local\Temp\UpdateScript.es 1:latest ^)^
+[02.12.2018 15:54:39] List[2] { 0:C:\Users\Dz3n\AppData\Local\Temp\UpdateScript.es 1:latest }
+[02.12.2018 15:54:39] [COMMAND] Result: 1
+[02.12.2018 15:54:39] [COMMAND] if {ListContains args||force}||==||1||SetForce
+[02.12.2018 15:54:39] [COMMAND] ListContains args||force
+[02.12.2018 15:54:39] [COMMAND] Result: 0
+[02.12.2018 15:54:39] [DEBUG] {PARSE} 0 - {ListContains args||force} -> 0
+[02.12.2018 15:54:39] [COMMAND] Result: 0
+[02.12.2018 15:54:39] [COMMAND] $r=ListGetValue args||1
+[02.12.2018 15:54:39] [COMMAND] Result: latest
+[02.12.2018 15:54:39] [COMMAND] $verUrl=#$stuffServerUpdateFiles/$r-version.txt
+[02.12.2018 15:54:39] [DEBUG] $stuffServer -> https://raw.githubusercontent.com/feel-the-dz3n/escript-stuff/master/
+[02.12.2018 15:54:39] [DEBUG] $r -> latest
+[02.12.2018 15:54:39] [COMMAND] Result: https://raw.githubusercontent.com/feel-the-dz3n/escript-stuff/master/UpdateFiles/latest-version.txt
+[02.12.2018 15:54:39] [COMMAND] $vf=DownloadText $verUrl
+[02.12.2018 15:54:39] [DEBUG] $verUrl -> https://raw.githubusercontent.com/feel-the-dz3n/escript-stuff/master/UpdateFiles/latest-version.txt
+[02.12.2018 15:54:40] [COMMAND] Result: 5.0.6904.33227
+[02.12.2018 15:54:40] [COMMAND] if {StringLength $r}||<=||0||{#set r||latest}
+[02.12.2018 15:54:40] [DEBUG] $r -> latest
+[02.12.2018 15:54:40] [COMMAND] StringLength latest
+[02.12.2018 15:54:40] [COMMAND] Result: 6
+[02.12.2018 15:54:40] [DEBUG] {PARSE} 0 - {StringLength latest} -> 6
+[02.12.2018 15:54:40] [COMMAND] #set r||latest
+[02.12.2018 15:54:40] [COMMAND] Result: set r||latest
+[02.12.2018 15:54:40] [DEBUG] {PARSE} 3 - {#set r||latest} -> set r||latest
+[02.12.2018 15:54:40] [COMMAND] Result: 0
+[02.12.2018 15:54:40] [COMMAND] if $vf||!=||null||{#$text=#ESCRIPT $vf ($r) is available. Do you want to download and install it?~n~~n~* You can update later by typing "update" command.~n~(escript-$r)}||{#$text=#Do you want to download and install the latest version of ESCRIPT?~n~(escript-$r)}
+[02.12.2018 15:54:40] [DEBUG] $r -> latest
+[02.12.2018 15:54:40] [DEBUG] $vf -> 5.0.6904.33227
+[02.12.2018 15:54:40] [COMMAND] #$text=#ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] Result: $text=#ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:54:40] [DEBUG] {PARSE} 3 - {#$text=#ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)} -> $text=#ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] #$text=#Do you want to download and install the latest version of ESCRIPT?
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] Result: $text=#Do you want to download and install the latest version of ESCRIPT?
+(escript-latest)
+[02.12.2018 15:54:40] [DEBUG] {PARSE} 4 - {#$text=#Do you want to download and install the latest version of ESCRIPT?
+(escript-latest)} -> $text=#Do you want to download and install the latest version of ESCRIPT?
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] $text=#ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] Result: ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:54:40] [COMMAND] Result: 1
+[02.12.2018 15:54:40] [COMMAND] $msgResult=msg ESCRIPT Update||$text||question||yesno
+[02.12.2018 15:54:40] [DEBUG] $text -> ESCRIPT 5.0.6904.33227 (latest) is available. Do you want to download and install it?
+
+* You can update later by typing "update" command.
+(escript-latest)
+[02.12.2018 15:55:01] [COMMAND] Result: No
+[02.12.2018 15:55:01] [COMMAND] if $msgResult||==||Yes||eUpdate
+[02.12.2018 15:55:01] [DEBUG] $msgResult -> No
+[02.12.2018 15:55:01] [COMMAND] Result: 0
+[02.12.2018 15:55:01] [COMMAND] if $programDebug||==||0||Exit 1||Break
+[02.12.2018 15:55:01] [DEBUG] $programDebug -> 0
+[02.12.2018 15:55:01] [COMMAND] Exit 1

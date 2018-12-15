@@ -1,0 +1,1 @@
+InsertIcons escript.exe 01.ico;02.ico > InsertIcons.log
