@@ -1,0 +1,1 @@
+ReplaceSource.exe %CD% Core files.txt
