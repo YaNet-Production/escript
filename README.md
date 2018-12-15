@@ -49,3 +49,7 @@ The compilation process is designed to be done on Windows.
 [GitHub](https://github.com/feel-the-dz3n/escript)<br>
 [Discord](https://discord.gg/jXcjuqv)<br>
 [VK](https://vk.com/dz3n.escript)<br>
+
+## Credits
+
+[Dz3n](https://github.com/feel-the-dz3n)
