@@ -16,7 +16,7 @@ There are two editions of ESCRIPT:
 - **Core** (uses .NET Core to work, works on Linux, MacOS and Windows with different architectures)
 - **Standard** (uses .NET Framework 4 to work, works only on Windows XP and later and on [ReactOS](https://github.com/reactos/reactos))
 
-ESCRIPT is mainly designed for *.NET Framework*, but code can be compiled with *.NET Core*, because [ESCRIPT Core code](https://github.com/feel-the-dz3n/escript/tree/Core) has `IsCore` compiler directive.
+ESCRIPT is mainly designed for *.NET Framework*, but code can be compiled with *.NET Core*, because [ESCRIPT Core code](https://github.com/feel-the-dz3n/escript/master/Core) has `IsCore` compiler directive.
 
 ## Editing and building ESCRIPT source
 
