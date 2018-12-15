@@ -40,6 +40,8 @@ public object CheckIsCore()
   #endif
 }
 ```
+Not all files will be replaced, only which mentioned in `files.txt`:
+```01.ico;02.ico;Aero.cs;Cmd.cs;EVariable.cs;FileAssociation.cs;Functions.cs;GlobalVars.cs;Program.cs;Variables.cs;TCPConnection.cs;ConsoleMessageBox.cs;EConsole.cs;InstallScript.es;TemplateScript.es;ExampleFolder.es;InsertIcons.exe;ESCode.cs;UpdateScript.es;API.cs;Functions.es;EMethod.cs```
 
 #### Note
 The compilation process is designed to be done on Windows.
