@@ -49,7 +49,7 @@ namespace escript
             {
                 if (btn.Checked) return btn.Text;
             }
-            return "";
+            return "null";
         }
         
 

@@ -43,13 +43,13 @@ namespace escript
                 if (fileName.Contains(".es") || fileName.Contains(".esh"))
                 {
                     new ESCode(fileName);
-                    return "1";
+                    return EResult.Cmd.Done;
                 }
                 else
                 {
                     ImportLibClass i = new ImportLibClass(fileName, this, typeName);
                     GlobalVars.LoadedLibs.Add(i);
-                    return "1";
+                    return EResult.Cmd.Done;
                 }
             }
             catch (Exception ex)
@@ -70,14 +70,14 @@ namespace escript
                         Program.Debug(fileName + ":\r\n" + code);
 
                         new ESCode(ESCode.SplitCode(code));
-                        return "1";
+                        return EResult.Cmd.Done;
                     }
-                    return "0";
+                    return EResult.Cmd.Fail;
 #else
                     return "-1";
 #endif
                 }
-                
+
                 EConsole.WriteLine(ex.ToString());
                 return "-1";
             }
@@ -88,7 +88,7 @@ namespace escript
             return If(one, p, two, ifOkDoThis, el);
         }
 
-        public object Logo()
+        public void Logo()
         {
             EConsole.WriteLine("         `-://:-.                          ");
             EConsole.WriteLine("    `.-////////////:-`                     ");
@@ -108,35 +108,39 @@ namespace escript
             EConsole.WriteLine("   ..........://///////.                   ");
             EConsole.WriteLine("     ```.....:////:-.``                    ");
             EConsole.WriteLine("          ```--..`                         ");
-            return "1";
         }
 
+        public string ToString(string Long, string Format)
+        {
+            return long.Parse(Long).ToString(Format);
+        }
+        
         public object If(string one, string condition, string two, string ifOkDoThis, string elseDoThis = "null")
         {
             try
             {
                 int first = int.Parse(one.ToString()), second = int.Parse(two.ToString());
-                if (condition.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
-                if (condition.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
-                if (condition.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
-                if (condition.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
-                if (condition.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
-                if (condition.ToString() == "!=") if (first != second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
+                if (condition.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
+                if (condition.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
+                if (condition.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
+                if (condition.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
+                if (condition.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
+                if (condition.ToString() == "!=") if (first != second) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
             }
             catch
             {
                 if (condition.ToString() == "==")
                 {
-                    if (one.ToString() == two.ToString()) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
+                    if (one.ToString() == two.ToString()) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
                 }
                 else if (condition.ToString() == "!=")
                 {
-                    if (one.ToString() != two.ToString()) { Cmd.Process(ifOkDoThis.ToString(), Labels); return 1; }
+                    if (one.ToString() != two.ToString()) { Cmd.Process(ifOkDoThis.ToString(), Labels); return EResult.Cmd.Done; }
                 }
                 else return -1;
             }
             if (!elseDoThis.ToString().ToLower().StartsWith("null")) Cmd.Process(elseDoThis.ToString(), Labels);
-            return 0;
+            return EResult.Cmd.Fail;
         }
 
         public object cd(string directory = "null") { return ChangeDir(directory); }
@@ -145,34 +149,34 @@ namespace escript
         {
             if (directory.ToLower() == "null") return ReturnCurrentDirectory();
             Directory.SetCurrentDirectory(directory);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
-        public string mciOpenAndPlay(string fileName, string alias = "escript")
+        public object mciOpenAndPlay(string fileName, string alias = "escript")
         {
             mciClose(alias);
             mciOpen(fileName, alias);
             return mciPlay(alias);
         }
 
-        public string mciPlay(string alias = "escript")
+        public object mciPlay(string alias = "escript")
         {
             return mciSendCommand("play " + alias);
         }
 
-        public string mciOpen(string fileName, string alias = "escript")
+        public object mciOpen(string fileName, string alias = "escript")
         {
             return mciSendCommand("open \"" + fileName + "\" alias " + alias);
         }
 
-        public string mciClose(string alias = "escript")
+        public object mciClose(string alias = "escript")
         {
             return mciSendCommand("close " + alias);
         }
 
 
 
-        public string mciSendCommand(string command, string returnString = "null", string returnLength = "0", string HwndCallback = "0")
+        public object mciSendCommand(string command, string returnString = "null", string returnLength = "0", string HwndCallback = "0")
         {
 #if !IsCore
             try
@@ -182,16 +186,16 @@ namespace escript
                 string rStr = null;
                 if (returnString.ToLower() != "null") rStr = returnString;
                 uint result = GlobalVars.mciSendString(command, rStr, rLen, hw);
-                if (result == 0) return "1";
+                if (result == 0) return EResult.Cmd.Done;
                 else return result.ToString();
             }
             catch (Exception ex)
             {
                 EConsole.WriteLine("ERROR: " + ex.Message);
-                return "0";
+                return EResult.Cmd.Fail;
             }
 #else
-            return "0";
+            return EResult.Cmd.Fail;
 #endif
         }
 
@@ -211,13 +215,13 @@ namespace escript
             return result.ToString();
         }
 
-        public string ShowWindow(string handle, string command = "5")
+        public object ShowWindow(string handle, string command = "5")
         {
 #if !IsCore
             if (GlobalVars.ShowWindow((IntPtr)int.Parse(handle), int.Parse(command)))
 #endif
-                return "1";
-            return "0";
+                return EResult.Cmd.Done;
+            return EResult.Cmd.Fail;
         }
 
         public string web_get(object Url, object Data)
@@ -266,20 +270,20 @@ namespace escript
 
         public object IsConsoleCreated()
         {
-            if (EConsole.IsConsoleOk) return "1";
-            else return "0";
+            if (EConsole.IsConsoleOk) return EResult.Cmd.Done;
+            else return EResult.Cmd.Fail;
         }
 
         public object CreateConsole()
         {
             EConsole.CreateConsole();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ConsoleSetFont(string fontFamily = "Consolas", string clearScreen = "1")
         {
 #if !IsCore
-            if(EConsole.cWnd != null)
+            if (EConsole.cWnd != null)
             {
                 EConsole.cWnd.SetFont(fontFamily);
                 if (StringToBool(clearScreen))
@@ -287,9 +291,9 @@ namespace escript
                     Clear();
                     PrintIntro();
                 }
-                return "1";
+                return EResult.Cmd.Done;
             }
-            return "0";
+            return EResult.Cmd.Fail;
 #else
             return "-1";
 #endif
@@ -298,7 +302,7 @@ namespace escript
         //public object PrintResult(string result, string prefix = "")
         //{
         //    Program.PrintResult(result, prefix);
-        //    return "1";
+        //    return EResult.Cmd.Done;
         //}
 
         public object ConsoleSetFontSize(string size = "10,35", string clearScreen = "1")
@@ -312,9 +316,9 @@ namespace escript
                     Clear();
                     PrintIntro();
                 }
-                return "1";
+                return EResult.Cmd.Done;
             }
-            return "0";
+            return EResult.Cmd.Fail;
 #else
             return "-1";
 #endif
@@ -323,7 +327,7 @@ namespace escript
         public object CommandInterpreter()
         {
             Program.CommandLine();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object TCP_SetTriggers(string triggerMsg, string triggerDisconnected, string triggerConnected)
@@ -331,13 +335,13 @@ namespace escript
             Variables.Set("TCP_triggerMsg", triggerMsg);
             Variables.Set("TCP_triggerDisconnected", triggerDisconnected);
             Variables.Set("TCP_triggerConnected", triggerConnected);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object TCP_Disconnect()
         {
             TCPConnection.Disconnect();
-            return 1;
+            return EResult.Cmd.Done;
         }
         public object TCP_Connect(object ip, object port)
         {
@@ -347,7 +351,7 @@ namespace escript
         public object TCP_Send(object text)
         {
             TCPConnection.Send(text.ToString());
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object Write(string text = "null", string color = "null")
@@ -357,7 +361,7 @@ namespace escript
             if (color != "null") SetColor(color);
             EConsole.Write(text);
             if (color != "null") SetColor(oldColor);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object echo(string text = "null", string color = "null")
@@ -368,37 +372,37 @@ namespace escript
         public object Beep()
         {
             Console.Beep();
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ConsoleSetBuffer(int width, int height)
         {
             Console.SetBufferSize(width, height);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ConsoleSetWindowSize(int width, int height)
         {
             Console.SetWindowSize(width, height);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ConsoleSetWindowPosition(int x, int y)
         {
             Console.SetWindowPosition(x, y);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ConsoleSetCursorPosition(int x, int y)
         {
             Console.SetCursorPosition(x, y);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object StringStartsWith(string text, string value)
         {
-            if (text.StartsWith(value)) return "1";
-            else return "0";
+            if (text.StartsWith(value)) return EResult.Cmd.Done;
+            else return EResult.Cmd.Fail;
         }
 
         public object StringLength(string text)
@@ -408,8 +412,8 @@ namespace escript
 
         public object StringContains(string text, string contains)
         {
-            if (text.Contains(contains)) return "1";
-            return "0";
+            if (text.Contains(contains)) return true;
+            return false;
         }
 
         public object StringTrim(string text, string symbol = "null")
@@ -451,15 +455,15 @@ namespace escript
             }
         }
 
-        public string IsInt(string text)
+        public object IsInt(string text)
         {
             try
             {
                 int.Parse(text);
-                return "1";
+                return true;
             }
             catch { }
-            return "0";
+            return false;
         }
 
         public object IsFileLocked(string path)
@@ -482,15 +486,15 @@ namespace escript
         {
             Debug();
             string code =
-@"$a=a
-$b=b
-$c=c
-$d=d
-$something=test
-$i=love
-$e=script
-$lol=kek
-$cheburek=null";
+@"
+    {
+        echo it's block
+        echo and the end
+    }
+    {
+        echo 2nd block
+    }
+";
 
             MethodAdd("debx (IgnoreCleanup)", code);
             Cmd.Process("debx");
@@ -563,7 +567,7 @@ $cheburek=null";
         public object CheckUpdates()
         {
             Program.CheckUpdates();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object SetStatusProgress(string value = "-2")
@@ -578,11 +582,11 @@ $cheburek=null";
                 {
                     statusWnd.SetProgress(int.Parse(value));
                 }));
-                return "1";
+                return EResult.Cmd.Done;
             }
-            return "0";
+            return EResult.Cmd.Fail;
 #else
-            return "0";
+            return EResult.Cmd.Fail;
 #endif
         }
 
@@ -607,7 +611,7 @@ $cheburek=null";
                 list.Content.Add(p.Id.ToString());
             }
             Variables.SetVariableObject(variable, list);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ProcessGetPid(string name)
@@ -631,13 +635,13 @@ $cheburek=null";
             {
                 Process.GetProcessesByName(nameOrPid).FirstOrDefault().Kill();
             }
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object SetStatus(string caption, string status = "null", string value = "-2", string createNew = "0")
         {
 #if !IsCore
-            if(status == "null")
+            if (status == "null")
             {
                 status = caption;
                 caption = "Status";
@@ -674,7 +678,7 @@ $cheburek=null";
 #else
             EConsole.WriteLine(status);
 #endif
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object HideStatus() // Todo
@@ -682,31 +686,32 @@ $cheburek=null";
 #if !IsCore
             if (statusWnd != null)
             {
-                statusWnd.Dispose();
+                if (statusWnd.InvokeRequired) statusWnd.Invoke(new Action(() => { statusWnd.Dispose(); }));
+                else statusWnd.Dispose();
                 statusWnd = null;
-                return "1";
+                return EResult.Cmd.Done;
             }
 #endif
-            return "0";
+            return EResult.Cmd.Fail;
         }
 
         public object DirExists(string dirName)
         {
-            if (Directory.Exists(dirName)) return "1";
-            return "0";
+            if (Directory.Exists(dirName)) return EResult.Cmd.Done;
+            return EResult.Cmd.Fail;
         }
 
         public object FileExists(string fileName)
         {
-            if (File.Exists(fileName)) return "1";
-            return "0";
+            if (File.Exists(fileName)) return EResult.Cmd.Done;
+            return EResult.Cmd.Fail;
         }
 
         public object DeleteDir(string dirName)
         {
             if (!Directory.Exists(dirName)) return "-2";
             Directory.Delete(dirName);
-            return "0";
+            return EResult.Cmd.Fail;
         }
 
         public object MakeDir(string dirName)
@@ -715,12 +720,12 @@ $cheburek=null";
             try
             {
                 Directory.CreateDirectory(dirName);
-                return "1";
+                return EResult.Cmd.Done;
             }
             catch
             {
             }
-            return "0";
+            return EResult.Cmd.Fail;
         }
 
         //        public object InstallESCRIPT()
@@ -737,16 +742,16 @@ $cheburek=null";
         //            }
         //            p.Start();
         //            Environment.Exit(0);
-        //            return "1";
+        //            return EResult.Cmd.Done;
         //#else
-        //            return "0";
+        //            return EResult.Cmd.Fail;
         //#endif
         //        }
 
         public object BeepEx(object frequency, object duration)
         {
             Console.Beep(int.Parse(frequency.ToString()), int.Parse(duration.ToString()));
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object WriteLine(string line = "null", string color = "null")
@@ -756,13 +761,13 @@ $cheburek=null";
             if (color != "null") SetColor(color);
             EConsole.WriteLine(line);
             if (color != "null") SetColor(oldColor);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object Exit(string code = "0")
         {
             Environment.Exit(int.Parse(code));
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ReturnUsername()
@@ -794,7 +799,7 @@ $cheburek=null";
             }
             Variables.Remove(enumIdxVar);
             Variables.Remove(enumValueVar);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object DebugText(string text, string foregroundColor = "white")
@@ -816,7 +821,7 @@ $cheburek=null";
                 }
             }
             Program.Debug("[SCRIPT] " + text, cc);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object For(string start, string stop, string command, string infoVariable = "for")
@@ -827,7 +832,7 @@ $cheburek=null";
                 Variables.Set(infoVariable.ToString(), a.ToString());
                 Cmd.Process(command.ToString(), Labels);
             }
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object Exception(object text)
@@ -855,6 +860,67 @@ $cheburek=null";
             return Environment.MachineName;
         }
 
+        public object CopyEx(string Source, string Destination, string Pattern = "*", string Overwrite = "0", string IncludeSubFolders = "1")
+        {
+            
+            if (File.Exists(Source))
+            {
+                FileInfo s = new FileInfo(Source);
+                // file
+                Program.Debug($"{s.FullName} -> {Destination}");
+                //s.CopyTo(Destination, StringToBool(Overwrite));
+                return EResult.Cmd.Done;
+            }
+            else
+            {
+                if (Directory.Exists(Source))
+                {
+                    DirectoryInfo d = new DirectoryInfo(Source);
+                    // directory
+                    var files = d.EnumerateFiles(Pattern);
+                    foreach (var file in files)
+                    {
+                        Program.Debug($"{file.FullName} -> {Destination}");
+                        //file.CopyTo(Destination, StringToBool(Overwrite));
+                    }
+
+                    if (StringToBool(IncludeSubFolders))
+                    {
+                        var subfiles = EEnumerateSubFolders(d.FullName, Pattern);
+                        foreach (var subfile in subfiles)
+                        {
+                            var dest = Path.Combine(Destination, subfile.FullName.Replace(d.FullName, ""));
+                            Program.Debug($"{subfile.FullName} -> {dest}");
+                        }
+                    }
+
+                    return EResult.Cmd.Done;
+                }
+                else return EResult.Cmd.GetError("Source not found");
+            }
+        }
+
+        private List<FileInfo> EEnumerateSubFolders(string folder, string pattern = "*")
+        {
+            List<FileInfo> list = new List<FileInfo>();
+            var dirs = new DirectoryInfo(folder).EnumerateDirectories();
+            foreach (var dir in dirs)
+            {
+                var files = dir.EnumerateFiles(pattern);
+                foreach (var file in files)
+                    list.Add(file);
+
+                var dirs2 = dir.EnumerateDirectories(pattern);
+                foreach(var d2 in dirs2)
+                {
+                    var t = EEnumerateSubFolders(d2.FullName, pattern);
+                    foreach(var item in t)
+                        list.Add(item);
+                }
+            }
+            return list;
+        }
+
         public object FileCopy(string fileName, string destination, string overwriteFile = "0")
         {
             bool ov = false;
@@ -862,7 +928,7 @@ $cheburek=null";
             try
             {
                 File.Copy(fileName, destination, ov);
-                return "1";
+                return EResult.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -908,7 +974,7 @@ $cheburek=null";
                 }
             }
 
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public Dictionary<MethodInfo, object> WhereIsMethod(string name)
@@ -943,56 +1009,56 @@ $cheburek=null";
         {
             EDictionary list = new EDictionary();
             Variables.SetVariableObject(variable, list);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object DictEdit(string variable, string key, object value)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content[key] = value;
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object DictAdd(string variable, object key, object value)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Add(key, value);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object DictRemove(string variable, object key)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Remove(key);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object DictReverse(string variable)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Reverse();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object DictClear(string variable)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Clear();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
         public object DictContainsKey(string variable, object key)
         {
             var list = (Variables.GetValueObject(variable) as EDictionary);
-            if (list.Content.ContainsKey(key)) return 1;
-            return 0;
+            if (list.Content.ContainsKey(key)) return true;
+            return false;
         }
         public object DictContainsValue(string variable, object value)
         {
             var list = (Variables.GetValueObject(variable) as EDictionary);
-            if (list.Content.ContainsValue(value)) return 1;
-            return 0;
+            if (list.Content.ContainsValue(value)) return true;
+            return false;
         }
 
         public object DictInfo(string variable)
@@ -1017,14 +1083,14 @@ $cheburek=null";
         {
             EList list = new EList();
             Variables.SetVariableObject(variable, list);
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object ListEdit(string variable, string index, object value)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content[int.Parse(index)] = value;
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ListAdd(string variable, object value)
@@ -1038,21 +1104,21 @@ $cheburek=null";
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Remove(item);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ListReverse(string variable)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Reverse();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ListClear(string variable)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Clear();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
@@ -1070,8 +1136,8 @@ $cheburek=null";
 
         public object ListContains(string variable, object item)
         {
-            if ((int)ListGetIndex(variable, item) == -1) return 0;
-            return 1;
+            if ((int)ListGetIndex(variable, item) == -1) return false;
+            return true;
         }
 
         public object ListInfo(string variable)
@@ -1095,7 +1161,7 @@ $cheburek=null";
 
             (Variables.GetValueObject(variable) as EList).DefaultIndex = int.Parse(value);
 
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
@@ -1180,7 +1246,7 @@ $cheburek=null";
             try
             {
                 File.Move(moveFrom, moveTo);
-                return "1";
+                return EResult.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -1190,7 +1256,7 @@ $cheburek=null";
             try
             {
                 File.Delete(fileName);
-                return "1";
+                return EResult.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -1210,9 +1276,11 @@ $cheburek=null";
             w.SetText(text);
             w.SetCaption(title);
             if (multiline == "0") w.NoLines();
-            string result = w.ShowDialog().ToString();
-            Variables.Set("dialogText", Cmd.ProcessString(w.GetInput().Replace("||", "^split^").Replace("{", "^(^").Replace("}", "^)^")));
-            return result;
+            if (w.ShowDialog() == DialogResult.OK)
+            {
+                return Cmd.ProcessString(w.GetInput().Replace("||", "^split^").Replace("{", "^(^").Replace("}", "^)^"));
+            }
+            else return false;
 #else
             return ConsoleTextBox(title, text);
 #endif
@@ -1237,9 +1305,13 @@ $cheburek=null";
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public object ChoiceWindow(string title, string text, string vListButtons, string defButton = "null", string removeVariable = "1")
+        public object ChoiceWindow(string title, string text, string buttons, string defButton = "null")
         {
-            string vResult = "dialogText";
+            return ChoiceWindowEx(title, text, StringSplit(buttons, ";"), defButton, "1");
+        }
+    
+        public object ChoiceWindowEx(string title, string text, string vListButtons, string defButton = "null", string removeVariable = "1")
+        {
 
             if (Variables.GetValue("forceConsole") == "1") return -1;
 #if !IsCore
@@ -1254,10 +1326,10 @@ $cheburek=null";
 
             string result = w.ShowDialog().ToString();
 
-            if (removeVariable == "1") Variables.Remove(vListButtons);
+            if (StringToBool(removeVariable)) Variables.Remove(vListButtons);
 
-            Variables.Set(vResult, w.Get());
-            return result;
+            //Variables.Set(vResult, w.Get());
+            return w.Get();
 #else
             return -1;
 #endif
@@ -1275,7 +1347,7 @@ $cheburek=null";
 #endif
             if (title != "null") version = title + " | " + version;
             EConsole.Title = version;
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object UseTextTest(string method, string printUse = "1", string customPrint = "0")
@@ -1326,13 +1398,15 @@ $cheburek=null";
                 }
                 EConsole.WriteLine("");
                 EConsole.ForegroundColor = ca;
-                return "1";
+                return EResult.Cmd.Done;
 
             }
             else
             {
                 for (int x = 0; x < GlobalVars.Methods.Count; x++) if (GlobalVars.Methods[x].Name == method)
                     {
+                        if (GlobalVars.Methods[x].Options.Contains("Hidden")) return EResult.Cmd.Done;
+
                         ConsoleColor ca = EConsole.ForegroundColor;
                         EConsole.ForegroundColor = ConsoleColor.Yellow;
                         if (printUse == "1")
@@ -1358,7 +1432,7 @@ $cheburek=null";
                             }
                         EConsole.WriteLine("");
                         EConsole.ForegroundColor = ca;
-                        return "1";
+                        return EResult.Cmd.Done;
                     }
             }
             return "null";
@@ -1369,7 +1443,7 @@ $cheburek=null";
             //if(methodName.Length == 0)
             //{
             //    EConsole.WriteLine(UseTextTest("GetMethod"));
-            //    return "0";
+            //    return EResult.Cmd.Fail;
             //}
             System.Reflection.MethodInfo mth = null;
 
@@ -1391,14 +1465,14 @@ $cheburek=null";
             }
 
 
-            if (mth == null) return "0";
+            if (mth == null) return EResult.Cmd.Fail;
             var Args = mth.GetParameters();
             EConsole.WriteLine("Method: " + mth.Name);
             for (int i = 0; i < Args.Length; i++)
             {
                 EConsole.WriteLine("[Argument " + i + "] " + Args[i].Name + " = " + Args[i].DefaultValue);
             }
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ls(string directory = "null") { return dir(directory); }
@@ -1443,10 +1517,10 @@ $cheburek=null";
             catch (Exception ex)
             {
                 EConsole.WriteLine("ERROR: " + ex.Message);
-                return "0";
+                return EResult.Cmd.Fail;
             }
             EConsole.ForegroundColor = co;
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object FileRename(string renameFrom, string renameTo)
@@ -1504,9 +1578,9 @@ $cheburek=null";
         //            mThread.SetApartmentState(ApartmentState.STA);
         //            mThread.Start();
         //            Thread.Sleep(2000);
-        //            return "1";
+        //            return EResult.Cmd.Done;
         //#else
-        //            return "0";
+        //            return EResult.Cmd.Fail;
         //#endif
         //        }
 
@@ -1535,7 +1609,7 @@ $cheburek=null";
             }
             EConsole.ForegroundColor = cc;
             Program.ScriptColor = cc;
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
@@ -1560,12 +1634,12 @@ $cheburek=null";
                 }
             }
             EConsole.WriteLine("Total: " + count);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ConvertScript(string fileName, string outName = "null", string iconPath = "null", string anykey = "0")
         {
-            if (iconPath != "null" && outName == "null") return "0";
+            if (iconPath != "null" && outName == "null") return EResult.Cmd.Fail;
 
             Process source = Process.GetCurrentProcess();
             Process target = new Process();
@@ -1581,7 +1655,7 @@ $cheburek=null";
             target.Start();
             target.WaitForExit();
             Variables.Set("convertResult", target.ExitCode.ToString());
-            return "1;" + target.ExitCode.ToString();
+            return "CMD_DONE_EXIT_CODE_" + target.ExitCode.ToString();
         }
 
 
@@ -1589,7 +1663,7 @@ $cheburek=null";
         public object Stop()
         {
             GlobalVars.StopProgram = true;
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object color(string foregroundColor = "15") { return SetColor(foregroundColor); }
@@ -1605,7 +1679,7 @@ $cheburek=null";
             EConsole.WriteLine("Get/set current directory: cd [directory]");
             EConsole.WriteLine("Update program: UpdateProgram");
             EConsole.WriteLine("Create script using template: CreateScript [fileName]");
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object update(string r = "latest")
@@ -1635,7 +1709,7 @@ $cheburek=null";
         //{
         //    Process.Start(path, "-install");
         //    Environment.Exit(0);
-        //    return "1";
+        //    return EResult.Cmd.Done;
         //}
 
         public object UpdateProgram(string r = "latest")
@@ -1649,7 +1723,7 @@ $cheburek=null";
             eInstance.StartInfo.FileName = GlobalVars.GetAboutMe().FullName;
             eInstance.StartInfo.Arguments = String.Format("\"{0}\" \"{1}\"", uScriptPath, r);
             eInstance.Start();
-            return "1";
+            return EResult.Cmd.Done;
         }
         public object WriteFile(string filename, string data, string notClearFile)
         {
@@ -1678,7 +1752,7 @@ $cheburek=null";
         {
             WebClient w = new WebClient();
             w.DownloadFile(url, filename);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object StartProgram(string fileName, string arguments = "null", string waitForExit = "0", string asAdmin = "0")
@@ -1690,22 +1764,14 @@ $cheburek=null";
 
             if (arguments != "null") a.StartInfo.Arguments = arguments;
 
-            try
+            a.Start();
+            if (waitForExit.ToLower().StartsWith("1"))
             {
-                a.Start();
-                if (waitForExit.ToLower().StartsWith("1"))
-                {
-                    a.WaitForExit();
-                    return a.ExitCode;
-                }
-            }
-            catch (Exception ex)
-            {
-                EConsole.WriteLine(ex.Message);
-                return -1;
+                a.WaitForExit();
+                return a.ExitCode;
             }
 
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object Return(string text, string breakMethod = "1")
@@ -1733,11 +1799,11 @@ $cheburek=null";
                     IntPtr h = GlobalVars.GetConsoleWindowHandle();
                     if (windowHandle.ToLower() != "null") h = (IntPtr)int.Parse(windowHandle);
                     Aero.Glass(h, left, right, top, bottom);
-                    return 1;
+                    return EResult.Cmd.Done;
                 }
             }
 #endif
-            return 0;
+            return EResult.Cmd.Fail;
         }
 
         public object GetAsyncKeyState(string vKey)
@@ -1764,7 +1830,7 @@ $cheburek=null";
                 {
                     if (Enum.GetName(typeof(Keys), i).ToLower() == keyCodeOrName.ToLower()) return Keyboard.GetKeyStateX((Keys)i);
                 }
-                return -1;
+                return EResult.Cmd.GetError("KEY_NOT_FOUND");
             }
 #else
             return -1;
@@ -1778,8 +1844,8 @@ $cheburek=null";
             {
                 int keyCode = int.Parse(key);
                 bool result = Keyboard.IsKeyDown(Keyboard.KeyCodeToKey(keyCode));
-                if (result) return 1;
-                else return 0;
+                if (result) return true;
+                else return false;
             }
             catch
             {
@@ -1788,11 +1854,11 @@ $cheburek=null";
                     if (Enum.GetName(typeof(Keys), i).ToLower() == key.ToLower())
                     {
                         bool result = Keyboard.IsKeyDown((Keys)i);
-                        if (result) return 1;
-                        else return 0;
+                        if (result) return true;
+                        else return false;
                     }
                 }
-                return -1;
+                return EResult.Cmd.GetError("KEY_NOT_FOUND");
             }
 #else
             return -1;
@@ -1826,7 +1892,7 @@ $cheburek=null";
                     }
                     return b.ToString();
                 }
-            return "0";
+            return EResult.Cmd.Fail;
         }
 
         public object GetDocumentation(string topic = "FirstHelp", string version = "null")
@@ -1842,7 +1908,7 @@ $cheburek=null";
                 return GetDocumentation(text.Replace("REDIRECT:", ""));
             }
             echo(text);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         //public object import(string fileName, string log = "0")
@@ -1856,7 +1922,7 @@ $cheburek=null";
         //    {
         //        EConsole.WriteLine(m.Name);
         //    }
-        //    return 0;
+        //    return EResult.Cmd.Fail;
         //}
         
 
@@ -1866,7 +1932,7 @@ $cheburek=null";
         public object Clear()
         {
             EConsole.Clear();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object set(string name = "null", string value = "null") { return SetVar(name, value); }
@@ -1878,7 +1944,7 @@ $cheburek=null";
             string workingMethod = Variables.GetValue("workingMethod");
 
             Variables.Set(name, Cmd.RemoveHot(value), new List<string> { "Method=" + workingMethod });
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object unset(string name) { return RemoveVar(name); }
@@ -1891,23 +1957,23 @@ $cheburek=null";
         public object VarCreated(string name)
         {
             EVariable v = Variables.GetVariable(name);
-            if (v == null) return 0;
+            if (v == null) return EResult.Cmd.Fail;
             else return v.Created.ToString();
         }
         public object VarEdited(string name)
         {
             EVariable v = Variables.GetVariable(name);
-            if (v == null) return 0;
+            if (v == null) return EResult.Cmd.Fail;
             else return v.Edited.ToString();
         }
 
         public object VarReinit(string addSystem = "1")
         {
             Variables.Initialize(StringToBool(addSystem));
-            return "1";
+            return EResult.Cmd.Done;
         }
 
-        public string BoolToString(string b)
+        public object BoolToString(string b)
         {
             if (b.ToLower() == "true" || b == "1") return "1";
             else return "0";
@@ -1960,20 +2026,31 @@ $cheburek=null";
                     if (Variables.VarList[idx].Options.Contains("Hidden")) continue;
                 }
 
-                if (returnIt == "0") EConsole.ForegroundColor = ConsoleColor.DarkGray;
-                if (returnIt == "0") EConsole.Write("[" + idx + "] ");
-                if (returnIt == "0") EConsole.ForegroundColor = ConsoleColor.Yellow;
-                if (returnIt == "0") EConsole.Write(Variables.VarList[idx].Name);
-                if (returnIt == "0") EConsole.ForegroundColor = ConsoleColor.White;
-                if (returnIt == "0") EConsole.Write(" = ");
-                if (returnIt == "0") EConsole.ForegroundColor = ConsoleColor.Green;
-                if (returnIt == "0") EConsole.Write(Variables.VarList[idx].Value);
-                if (returnIt == "0") EConsole.WriteLine("");
-                if (returnIt == "1") r.AppendLine("[" + idx + "] " + Variables.VarList[idx].Name + " = " + Variables.VarList[idx].Value);
+                string add = "";
+
+                if (Variables.VarList[idx].Value.GetType() == typeof(string))
+                    add = "";// "(default) ";
+                else if (Variables.VarList[idx].Value.GetType() == typeof(EList))
+                    add = "(list) ";
+                else if (Variables.VarList[idx].Value.GetType() == typeof(EDictionary))
+                    add = "(dict) ";
+                else
+                    add = $"({Variables.VarList[idx].Value.GetType().Name}) ";
+
+                if (returnIt == "0")
+                {
+                    EConsole.Write("[" + idx + "] ", ConsoleColor.DarkGray);
+                    EConsole.Write(Variables.VarList[idx].Name, ConsoleColor.Yellow);
+                    EConsole.Write(" = ", ConsoleColor.White);
+                    EConsole.Write(add, ConsoleColor.DarkGray);
+                    EConsole.Write(Variables.VarList[idx].Value, ConsoleColor.Green);
+                    EConsole.WriteLine("");
+                }
+                if (returnIt == "1") r.AppendLine($"[{idx}] {Variables.VarList[idx].Name} = {add}{Variables.VarList[idx].Value}");
             }
             EConsole.ForegroundColor = cccc;
             if (returnIt == "1") return r.ToString();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object TestMethod(string a1 = "Default Argument 1", string a2 = "Default Argument 2", string a3 = "Default Argument 3")
@@ -1982,7 +2059,7 @@ $cheburek=null";
             EConsole.WriteLine("a1 : " + a1, true, ConsoleColor.Red);
             EConsole.WriteLine("a2 : " + a2, true, ConsoleColor.Green);
             EConsole.WriteLine("a3 : " + a3, true, ConsoleColor.Blue);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
@@ -2003,7 +2080,7 @@ $cheburek=null";
         //{
         //    Exception e = new Exception(message);
         //    Variables.SetVariableObject(variable, e);
-        //    return "1";
+        //    return EResult.Cmd.Done;
         //}
 
         //public static string Throw(string exceptionVariable)
@@ -2018,7 +2095,7 @@ $cheburek=null";
             Variables.Set("useCustomConsole", "0");
             EConsole.Kill();
             EConsole.CreateConsole();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object ForceGUIConsole()
@@ -2026,7 +2103,7 @@ $cheburek=null";
             Variables.Set("useCustomConsole", "1");
             EConsole.Kill();
             EConsole.CreateConsole();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object Debug(string debugger = "0", string showCmd = "1", string showResult = "1", string showConsole = "1")
@@ -2040,7 +2117,7 @@ $cheburek=null";
             Variables.Set("showCommands", showCmd);
             Variables.Set("showResult", showResult);
             if (debugger == "1") Debugger.Launch();
-            return 1;
+            return EResult.Cmd.Done;
         }
 
         public object msg(string caption, string text = "null", string icon = "none", string type = "ok") { return ShowMessageBox(caption, text, icon, type); }
@@ -2072,8 +2149,8 @@ $cheburek=null";
         {
             FileAssociation.FILE_EXTENSION = extension;
 
-            if (FileAssociation.IsAssociated) return "1";
-            else return "0";
+            if (FileAssociation.IsAssociated) return EResult.Cmd.Done;
+            else return EResult.Cmd.Fail;
         }
 
         public object assoc(string appPath, string extension, string productName, string description, string icon = "")
@@ -2081,22 +2158,21 @@ $cheburek=null";
             FileAssociation.FILE_EXTENSION = extension;
             FileAssociation.ProductName = productName;
             FileAssociation.Associate(appPath, description, icon);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
-        public object RunScript(string fileName, string code = "null")
+        public object RunCode(string code)
         {
-            if (code.ToLower() != "1")
-            {
-                ESCode script = new ESCode(ESCode.SplitCode(code, new string[] { "~n~" }));
-                script.RunScript();
-            }
-            else
-            {
-                ESCode script = new ESCode(fileName);
-                script.RunScript();
-            }
-            return "1";
+            ESCode script = new ESCode(ESCode.SplitCode(code, new string[] { "~n~" }));
+            script.RunScript();
+            return EResult.Cmd.Done;
+        }
+
+        public object RunScript(string fileName)
+        {
+            ESCode script = new ESCode(fileName);
+            script.RunScript();
+            return EResult.Cmd.Done;
         }
 
         public object Restart(string runAs = "0", string addArgs = "null")
@@ -2123,38 +2199,38 @@ $cheburek=null";
             if (Variables.GetValue("forceConsole") == "1") target.StartInfo.Arguments += "-console ";
             if (runAs == "1")
             {
-                if (GlobalVars.IgnoreRunAsAdmin) return "1";
+                if (GlobalVars.IgnoreRunAsAdmin) return EResult.Cmd.Done;
                 if(Environment.OSVersion.Version.Major > 5) target.StartInfo.Verb = "runas";
                 target.StartInfo.Arguments += "-ignoreRunasRestart";
             }
             //EConsole.WriteLine("Final args: " + target.StartInfo.Arguments);
-            //return "1";
+            //return EResult.Cmd.Done;
             try
             {
                 if (!target.Start())
-                    return "0";
+                    return EResult.Cmd.Fail;
             }
             catch (System.ComponentModel.Win32Exception e)
             {
                 //Cancelled
                 if (e.NativeErrorCode == 1223)
-                    return "0";
+                    return EResult.Cmd.Fail;
             }
             Environment.Exit(0);
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object CreateScript(string fileName, string overwrite = "0")
         {
             FileInfo f = new FileInfo(fileName);
-            if (File.Exists(f.FullName) && overwrite != "1") return "0";
+            if (File.Exists(f.FullName) && overwrite != "1") return EResult.Cmd.Fail;
 
             string fName = f.FullName;
             if (!f.Name.Contains(".es")) fName = fName + ".es";
 
             Program.WriteResourceToFile("escript.TemplateScript.es", fName);
 
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object UpdateScript(string fileName, string oldVersion)
@@ -2162,6 +2238,43 @@ $cheburek=null";
 
             return "-1";
         }
+
+        public object FileDialog(string title = "null", string filter = "null", string multiselect = "0")
+        {
+#if !IsCore
+            OpenFileDialog of = new OpenFileDialog();
+            if (title != "null") of.Title = title;
+            if (filter != "null") of.Filter = filter;
+            of.Multiselect = StringToBool(multiselect);
+            if (of.ShowDialog() == DialogResult.OK)
+            {
+                if (of.Multiselect)
+                {
+                    string variable = RandomString("20");
+                    EList list = new EList();
+                    list.Content = of.FileNames.ToList<object>();
+                    Variables.SetVariableObject(variable, list);
+                    return variable;
+                }
+                else return of.FileName;
+            }
+#endif
+            return "null";
+        }
+
+        public object FolderDialog(string description = "null")
+        {
+#if !IsCore
+            FolderBrowserDialog of = new FolderBrowserDialog();
+            if (description != "null") of.Description = description;
+            if (of.ShowDialog() == DialogResult.OK)
+            {
+                return of.SelectedPath;
+            }
+#endif
+            return "null";
+        }
+
 
         public object ShowMessageBox(string caption, string text = "null", string icon = "none", string type = "ok")
         {
@@ -2238,13 +2351,13 @@ $cheburek=null";
 #endif
         public object HideConsole()
         {
-            if (!EConsole.IsConsoleOk) return "0";
-            if (Variables.GetValue("forceConsole") == "1") return "0";
+            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
+            if (Variables.GetValue("forceConsole") == "1") return EResult.Cmd.Fail;
 #if !IsCore
             var handle = GlobalVars.GetConsoleWindowHandle();
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_HIDE).ToString();
 #else
-            return 0;
+            return EResult.Cmd.Fail;
 #endif
         }
 
@@ -2255,29 +2368,29 @@ $cheburek=null";
             var handle = GlobalVars.GetConsoleWindowHandle();
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_SHOW).ToString();
 #else
-            return 0;
+            return EResult.Cmd.Fail;
 #endif
         }
         
 
         public object GetConsoleWindowHandle()
         {
-            if (!EConsole.IsConsoleOk) return "0";
+            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
 #if !IsCore
             return GlobalVars.GetConsoleWindowHandle().ToString();
 #else
-            return 0;
+            return EResult.Cmd.Fail;
 #endif
         }
 
         public object MinimizeConsole()
         {
-            if (!EConsole.IsConsoleOk) return "0";
+            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
 #if !IsCore
             var handle = GlobalVars.GetConsoleWindowHandle(); 
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_SHOWMINIMIZED).ToString();
 #else
-            return 0;
+            return EResult.Cmd.Fail;
 #endif
         }
 
@@ -2290,7 +2403,7 @@ $cheburek=null";
         public object ThreadSleep(string time)
         {
             Thread.Sleep(int.Parse(time));
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object sleep(string time) { return ThreadSleep(time); }
@@ -2309,7 +2422,7 @@ $cheburek=null";
             GlobalVars.UserThreads.Add(newThread);
             newThread.Start();
 
-            return 1;
+            return EResult.Cmd.Done;
         }
         
         public object ThreadList()
@@ -2325,7 +2438,7 @@ $cheburek=null";
         public object ThreadAbort(string id)
         {
             GlobalVars.UserThreads[int.Parse(id)].Abort();
-            return "1";
+            return EResult.Cmd.Done;
         }
 
 
@@ -2335,7 +2448,7 @@ $cheburek=null";
             {
                 GlobalVars.UserThreads[i].Abort();
             }
-            return "1";
+            return EResult.Cmd.Done;
         }
 
         public object MethodGetCode(string name)
@@ -2344,16 +2457,16 @@ $cheburek=null";
             {
                 if (GlobalVars.Methods[i].Name == name) { return GlobalVars.Methods[i].GetCode(); }
             }
-            return 0;
+            return EResult.Cmd.Fail;
         }
 
         public object MethodRemove(string name)
         {
             for(int i =0;i<GlobalVars.Methods.Count;i++)
             {
-                if (GlobalVars.Methods[i].Name == name) { GlobalVars.Methods.Remove(GlobalVars.Methods[i]); return 1; }
+                if (GlobalVars.Methods[i].Name == name) { GlobalVars.Methods.Remove(GlobalVars.Methods[i]); return EResult.Cmd.Done; }
             }
-            return 0;
+            return EResult.Cmd.Fail;
         }
 
         public object MethodAdd(string name, string code)
@@ -2371,9 +2484,9 @@ $cheburek=null";
             catch (Exception ex)
             {
                 EConsole.WriteLine(ex.ToString());
-                return "0";
+                return EResult.Cmd.Fail;
             }
-            return "1";
+            return EResult.Cmd.Done;
         }
         /*
         public object EnumerateGetPath()
@@ -2383,13 +2496,13 @@ $cheburek=null";
                 string n = Enum.GetName(typeof(Environment.SpecialFolder), i);
                 EConsole.WriteLine("SpecialFolder.Add(\"" + n + "\", " + i + ");");
             }
-            return "1";
+            return EResult.Cmd.Done;
         }*/
 
         public object PrintIntro()
         {
             EConsole.PrintIntro();
-            return 1;
+            return EResult.Cmd.Done;
         }
 
 
@@ -2432,7 +2545,7 @@ $cheburek=null";
         //        Filter = filter
         //    };
         //    if (o.ShowDialog() == DialogResult.OK) return o.FileName;
-        //    return "0";
+        //    return EResult.Cmd.Fail;
         //}
 
         public Functions()

@@ -5,12 +5,29 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{68EAF385-64B8-4CD7-AF11-70784907FFF1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>escript</RootNamespace>
     <AssemblyName>escript</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -21,6 +38,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,6 +49,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>
@@ -44,6 +65,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -54,36 +76,103 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="ChoiceWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChoiceWindow.designer.cs">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Cmd.cs" />
-    <Compile Include="ConsoleHelper.cs" />
+    <Compile Include="ConsoleMessageBox.cs" />
+    <Compile Include="CustomConsoleWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomConsoleWindow.Designer.cs">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EResult.cs" />
+    <Compile Include="ESCode.cs" />
+    <Compile Include="EConsole.cs" />
     <Compile Include="EMethod.cs" />
     <Compile Include="EVariable.cs" />
     <Compile Include="FileAssociation.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="Aero.cs" />
+    <Compile Include="GlobalVars.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StatusWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StatusWindow.Designer.cs">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextBoxWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextBoxWindow.Designer.cs">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Variables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TCPConnection.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="02.ico">
+    <EmbeddedResource Include="02.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChoiceWindow.resx">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomConsoleWindow.resx">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusWindow.resx">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextBoxWindow.resx">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="01.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="about.rtf" />
+    <None Include="app.config" />
     <None Include="app.manifest" />
+    <EmbeddedResource Include="ExampleFolder.es" />
+    <EmbeddedResource Include="Functions.es" />
     <None Include="Icons.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="InsertIcons.exe">
+    <EmbeddedResource Include="InsertIcons.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstallScript.es" />
+    <EmbeddedResource Include="TemplateScript.es" />
+    <EmbeddedResource Include="UpdateScript.es" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)$(OutDir)Icons.cmd</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

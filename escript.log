@@ -1,0 +1,25 @@
+[19.11.2018 22:52:29]  
+   ESCRIPT 5.0 Standard
+[19.11.2018 22:52:30]    Copyright (C) Dz3n 2017-2018
+[19.11.2018 22:52:30] 
+[19.11.2018 22:52:30]  = OS: Microsoft Windows NT 6.1.7601 Service Pack 1
+[19.11.2018 22:52:30]  = https://github.com/feel-the-dz3n/escript
+[19.11.2018 22:52:30]  = https://vk.com/dz3n.escript
+[19.11.2018 22:52:30]  = https://discord.gg/jXcjuqv
+[19.11.2018 22:52:30]  
+[19.11.2018 22:52:30] [DEBUG] Time: 19.11.2018 22:52:30
+[19.11.2018 22:52:30] [DEBUG] Environment formed
+[19.11.2018 22:52:30] [DEBUG] SCRIPT Resource: 0x0000
+[Process] ShowConsole
+[19.11.2018 22:52:31] Need help? Type: help
+ESCRIPT> [Process] CompileScript
+[19.11.2018 22:52:36] ERROR: Wrong arguments
+[Process] UseTextTest CompileScript
+USE: CompileScript [fileName]||[outName = null][19.11.2018 22:52:36] 
+Result: -1 (error)[19.11.2018 22:52:36] 
+ESCRIPT> [Process] help
+[Process] Help
+[19.11.2018 22:52:38] To get help type: GetDocumentation
+[19.11.2018 22:52:38] Internet connection is required.
+Result: 1 (ok)[19.11.2018 22:52:38] 
+ESCRIPT> 

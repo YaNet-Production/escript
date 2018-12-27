@@ -115,7 +115,7 @@ func InstallEscriptYes
 	SetStatus Installing ESCRIPT - Copying Files||Installing in: $esfolder~n~~n~P.S.: This window is a part of a script. You can create your own script with own window! That's so easy! See documentation and InstallScript.es source code (generated in current folder) for details!||75
 
 	copy $ppath||$dest||1
-	if $result||!=||1||{#ShowError Can't copy $ppath to $dest.}
+	if $result||!=||$cmdDone$||{#ShowError Can't copy $ppath to $dest.}
 
 	SetStatusProgress 100
 	if {ListContains args||-fast}||!=||1||sleep 2350

@@ -7,11 +7,11 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("ESCRIPT")]
-[assembly: AssemblyDescription("ESCRIPT is a powerful command interpreter")]
+[assembly: AssemblyDescription("ESCRIPT is a powerful command interpreter which reminds programming language")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dz3n")]
 [assembly: AssemblyProduct("ESCRIPT")]
-[assembly: AssemblyCopyright("Copyright © Dz3n 2017-2018")]
+[assembly: AssemblyCopyright("Copyright © Dz3n 2017-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номер построения и номер редакции по умолчанию, 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.0.7006.1")]
-[assembly: AssemblyFileVersion("5.0.7006.1")]
+[assembly: AssemblyVersion("5.0.7009.1")]
+[assembly: AssemblyFileVersion("5.0.7009.1")]
 [assembly: NeutralResourcesLanguage("en")]
 

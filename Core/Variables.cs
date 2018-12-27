@@ -47,6 +47,11 @@ namespace escript
             }
         }
 
+        public static bool GetBool(string name)
+        {
+            return GlobalVars.StringToBool(GetValue(name));
+        }
+
         public static string GetValue(string name, bool replace = true)
         {
             EVariable a = GetVariable(name);
@@ -139,7 +144,10 @@ namespace escript
                     Add(name, value, new List<string>() { "System" });
                 }
             }
-            
+
+            Add("cmdDone", EResult.Cmd.Done.ToString(), new List<string>() { "ESCRIPT", "ReadOnly", "Results" });
+            Add("cmdFail", EResult.Cmd.Fail.ToString(), new List<string>() { "ESCRIPT", "ReadOnly", "Results" });
+
             SetVariableObject("args", new EList(), new List<string>() { "ESCRIPT" });
             if (args != null)
             {
@@ -172,7 +180,7 @@ namespace escript
                                         // #{#{DateTimeNow}} -> {DateTimeNow} -> xx.xx.xx xx:xx:xx
                                         // [SCREEN] xx.xx.xx xx:xx:xx
            
-            Add("dollarIgnoreBadCmd", "1", new List<string>() { "ESCRIPT" }); // example: 
+            Add("invokeIgnoreBadCmd", "1", new List<string>() { "ESCRIPT" }); // example: 
                                             // $kek=Something
                                             //
                                             // If method "Something" not found and dollarIgnoreBadCmd = 1
@@ -188,6 +196,7 @@ namespace escript
             Add("taskTimeout", "3000", new List<string>() { "ESCRIPT", "Hidden" });
             Add("varParseWithEnd", "1", new List<string>() { "ESCRIPT", "Hidden" }); // if 1, variables will be parsed like "$variable$". if 0, like "$variable"
             Add("abortAfterBreak", "1", new List<string>() { "ESCRIPT" });
+            Add("exitAfterBreak", "0", new List<string>() { "ESCRIPT" });
 
             Program.Debug("Time: " + DateTime.Now.ToString(), ConsoleColor.DarkGreen);
         }

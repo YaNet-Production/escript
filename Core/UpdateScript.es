@@ -20,7 +20,7 @@ func Main
 
 	HideStatus
 
-	if $vf||==||-1||ShowError Can't fetch data from the server
+	if $vf||!=||$cmdDone$||ShowError Can't fetch data from the server
 
 	if $vf||!=||null||{#$text=#ESCRIPT $vf ($r) is available. Do you want to download and install it?~n~~n~* You can update later by typing "update" command.~n~(escript-$r)}||{#$text=#Do you want to download and install the latest version of ESCRIPT?~n~(escript-$r)}
 	$msgResult=msg ESCRIPT Update||$text||question||yesno
@@ -51,7 +51,7 @@ func eUpdate
 	SetStatus Downloading ESCRIPT Update||$changelog
 	DownloadFile $downPath||$exePath
 
-	if $result||!=||1||ShowError Can't download ESCRIPT!
+	if $result||!=||$cmdDone$||ShowError Can't download ESCRIPT!
 
 	SetStatusProgress 100
 	SetStatus ESCRIPT Update Downloaded||$changelog||100

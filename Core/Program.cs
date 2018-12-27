@@ -385,49 +385,61 @@ namespace escript
 
         public static void PrintResult(string result, string prefix = "")
         {
-            ConsoleColor aaaaa = EConsole.ForegroundColor;
-            EConsole.ForegroundColor = ConsoleColor.DarkGray;
-            if (prefix != "") EConsole.Write(prefix);
-            EConsole.Write("Result: ");
-            EConsole.ForegroundColor = ConsoleColor.Gray;
-            EConsole.Write(result);
-            if (result == "-1")
+            if (prefix != "") EConsole.Write(prefix, ConsoleColor.DarkGray);
+            EConsole.Write("Result: ", ConsoleColor.DarkGray);
+            EConsole.Write(result, ConsoleColor.Gray);
+            /*if (result == "-1")
             {
                 EConsole.ForegroundColor = ConsoleColor.DarkRed;
                 EConsole.Write(" (error/-1)");
             }
-            if (result == "0" || result.ToLower() == "false")
+            else if (result == "0" || result.ToLower() == "false")
             {
                 EConsole.ForegroundColor = ConsoleColor.DarkYellow;
                 EConsole.Write(" (false/error/0)");
             }
-            if (result == "1" || result.ToLower() == "true")
+            else if (result == "1" || result.ToLower() == "true")
             {
                 EConsole.ForegroundColor = ConsoleColor.DarkGreen;
                 EConsole.Write(" (true/ok/1)");
             }
-            if (result == "CMD_NOT_FOUND")
+            else */if (result == "CMD_NOT_FOUND")
             {
-                EConsole.ForegroundColor = ConsoleColor.DarkGray;
-                EConsole.Write(" (command not found)");
+                EConsole.Write(" (command not found)", ConsoleColor.DarkGray);
             }
-            if (result.Length == 0)
+            else if (result.Length == 0)
             {
-                EConsole.ForegroundColor = ConsoleColor.DarkGray;
-                EConsole.Write(" (nothing or null)");
+                EConsole.Write(" (nothing or null)", ConsoleColor.DarkGray);
             }
-            if (result.StartsWith("SYNTAX_ERROR"))
+            else if (result == "ESCRIPT_ERROR_EXCEPTION")
             {
-                EConsole.ForegroundColor = ConsoleColor.DarkRed;
-                EConsole.Write(" (syntax error)");
+                EConsole.Write(" (invalid arguments or ESCRIPT issue)", ConsoleColor.DarkRed);
             }
-            if (result.StartsWith("ESCRIPT_ERROR"))
+            else if (result.StartsWith("SYNTAX_ERROR"))
             {
-                EConsole.ForegroundColor = ConsoleColor.DarkRed;
-                EConsole.Write(" (ESCRIPT error)");
+                EConsole.Write(" (syntax error)", ConsoleColor.DarkRed);
+            }
+            else if (result.StartsWith("ESCRIPT_ERROR"))
+            {
+                EConsole.Write(" (ESCRIPT error)", ConsoleColor.DarkRed);
+            }
+            else if (result.StartsWith("CMD_ERROR_NULL"))
+            {
+                EConsole.Write(" (unknown error)", ConsoleColor.DarkRed);
+            }
+            else if (result.StartsWith("CMD_ERROR"))
+            {
+                EConsole.Write(" (error)", ConsoleColor.DarkRed);
+            }
+            else if (result.StartsWith("CMD_DONE"))
+            {
+                EConsole.Write(" (done)", ConsoleColor.DarkGreen);
+            }
+            else if (result.StartsWith("CMD_FAIL"))
+            {
+                EConsole.Write(" (fail)", ConsoleColor.DarkYellow);
             }
             EConsole.WriteLine("");
-            EConsole.ForegroundColor = aaaaa;
         }
 
         //public static void PrintResult(string result, string prefix = "null")
@@ -464,7 +476,7 @@ namespace escript
                 EConsole.ReadKey();
                 Environment.Exit(100);
             }
-            if(args.Contains<string>("/convert"))
+            if (args.Contains<string>("/convert"))
             {
                 try
                 {
@@ -500,7 +512,8 @@ namespace escript
                     CompileScript(s.FullName, outFile.FullName, iconArg, anykey);
                     Environment.Exit(0);
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Cmd.Process("ShowConsole");
                     EConsole.ForegroundColor = ConsoleColor.Gray;
                     EConsole.WriteLine("ERROR: " + ex.Message);
@@ -542,7 +555,7 @@ namespace escript
             IntPtr resourceInfo = GlobalVars.FindResource(IntPtr.Zero, "script", (IntPtr)10);
             Debug("SCRIPT Resource: 0x" + resourceInfo.ToString("X4"));
 
-            if(resourceInfo != IntPtr.Zero)
+            if (resourceInfo != IntPtr.Zero)
             {
                 uint size = GlobalVars.SizeofResource(IntPtr.Zero, resourceInfo);
                 IntPtr pt = GlobalVars.LoadResource(IntPtr.Zero, resourceInfo);
@@ -552,13 +565,89 @@ namespace escript
                 Marshal.Copy(pt, bPtr, 0, (int)size);
                 string code = Encoding.ASCII.GetString(bPtr);
                 Debug("SCRIPT:\r\n" + code);
-                
+
                 ESCode script = new ESCode(ESCode.SplitCode(code));
                 script.RunScript();
 
                 Break();
             }
 #endif
+
+            if (args.Contains<string>("-close"))
+            {
+                if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
+                foreach (var p in Process.GetProcesses())
+                {
+                    try
+                    {
+                        if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                        if (p.ProcessName.ToLower() == "escript-update" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                    }
+                    catch { }
+                }
+            }
+            if (args.Contains<string>("-install"))
+            {
+                if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
+                string InstallScript = "InstallScript.es";
+
+                WriteResourceToFile("escript.InstallScript.es", InstallScript);
+
+                ESCode script = new ESCode(InstallScript);
+                script.RunScript();
+
+                Environment.Exit(0);
+            }
+            if (args.Contains<string>("-assoc"))
+            {
+                if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
+                string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
+#if !IsCore
+                //Cmd.Process("ShowConsole");
+
+                EConsole.WriteLine("Associating ESCRIPT files...");
+                try
+                {
+                    FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".es");
+                    FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".escript");
+                    FileAssociation.AssociateESCRIPT("ESCRIPT Header File", me, ".esh", "escriptheader", false);
+#if !IsCore
+                    FileAssociation.SHChangeNotify(FileAssociation.SHCNE_ASSOCCHANGED, FileAssociation.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+#endif
+                }
+                catch (Exception ex)
+                {
+                    EConsole.WriteLine("ERROR: " + ex.Message);
+                    Environment.Exit(21);
+                }
+                EConsole.WriteLine("Creating a script on the desktop...");
+                try
+                {
+                    string desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT.es");
+                    using (StreamWriter w = new StreamWriter(desktop))
+                    {
+                        w.WriteLine("start {GetProgramPath}");
+                        w.WriteLine("Exit");
+                    }
+
+                    desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT Folder.es");
+                    WriteResourceToFile("escript.ExampleFolder.es", desktop);
+                }
+                catch (Exception ex)
+                {
+                    EConsole.WriteLine("ERROR: " + ex.Message);
+                    Environment.Exit(21);
+                }
+#else
+                        EConsole.ForegroundColor = ConsoleColor.Red;
+                        EConsole.WriteLine("WARNING: ESCRIPT Core cannot be installed");
+#endif
+                EConsole.ForegroundColor = ConsoleColor.Green;
+                EConsole.WriteLine("ESCRIPT was installed!");
+                //Thread.Sleep(2000);
+                EConsole.WriteLine("");
+                Environment.Exit(0);
+            }
 
             try
             {
@@ -573,113 +662,41 @@ namespace escript
                     ESCode script = new ESCode(args[0]);
                     script.RunScript();
                 }
-                else
+                else if (!File.Exists(args[0]))
                 {
-                    if (args.Contains<string>("-close"))
-                    {
-                        if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
-                        foreach (var p in Process.GetProcesses())
-                        {
-                            try
-                            {
-                                if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
-                                if (p.ProcessName.ToLower() == "escript-update" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
-                            }
-                            catch { }
-                        }
-                    }
-                    if (args.Contains<string>("-install"))
-                    {
-                        if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
-                        string InstallScript = "InstallScript.es";
-
-                        WriteResourceToFile("escript.InstallScript.es", InstallScript);
-
-                        ESCode script = new ESCode(InstallScript);
-                        script.RunScript();
-
-                        Environment.Exit(0);
-                    }
-                    if (args.Contains<string>("-assoc"))
-                    {
-                        if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
-                        string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
-#if !IsCore
-                        //Cmd.Process("ShowConsole");
-
-                        EConsole.WriteLine("Associating ESCRIPT files...");
-                        try
-                        {
-                            FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".es");
-                            FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".escript");
-                            FileAssociation.AssociateESCRIPT("ESCRIPT Header File", me, ".esh", "escript", false);
-#if !IsCore
-                            FileAssociation.SHChangeNotify(FileAssociation.SHCNE_ASSOCCHANGED, FileAssociation.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
-#endif
-                        }
-                        catch (Exception ex)
-                        {
-                            EConsole.WriteLine("ERROR: " + ex.Message);
-                            Environment.Exit(21);
-                        }
-                        EConsole.WriteLine("Creating a script on the desktop...");
-                        try
-                        {
-                            string desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT.es");
-                            using (StreamWriter w = new StreamWriter(desktop))
-                            {
-                                w.WriteLine("start {GetProgramPath}");
-                                w.WriteLine("Exit");
-                            }
-
-                            desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT Folder.es");
-                            WriteResourceToFile("escript.ExampleFolder.es", desktop);
-                        }
-                        catch (Exception ex) {
-                            EConsole.WriteLine("ERROR: " + ex.Message);
-                            Environment.Exit(21);
-                        }
-#else
-                        EConsole.ForegroundColor = ConsoleColor.Red;
-                        EConsole.WriteLine("WARNING: ESCRIPT Core cannot be installed");
-#endif
-                        EConsole.ForegroundColor = ConsoleColor.Green;
-                        EConsole.WriteLine("ESCRIPT was installed!");
-                        //Thread.Sleep(2000);
-                        EConsole.WriteLine("");
-                        Environment.Exit(0);
-                    }
-                    //                    if (args.Contains<string>("-installNext"))
-                    //                    {
-                    //                        foreach (var p in Process.GetProcesses())
-                    //                        {
-                    //                            if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
-                    //                        }
-
-                    //                        string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                    //                        string destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT");
-                    //                        FileInfo aboutme = GetAboutMe();
-
-                    //                        if (aboutme.DirectoryName == destination && aboutme.Name.ToLower().StartsWith("escript.exe"))
-                    //                        {
-                    //                            EConsole.WriteLine("You can't do this. Use escript-install.exe or UpdateProgram method.");
-                    //                        }
-                    //                        else
-                    //                        {
-
-                    //                            EConsole.WriteLine("Installing ESCRIPT...");
-                    //#if !IsCore
-                    //                            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),"ESCRIPT"))) Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT"));
-                    //                            File.Copy(me, Path.Combine(destination, "escript.exe"), true);
-                    //#else
-                    //                            EConsole.WriteLine("Can't install ESCRIPT Core"); 
-                    //#endif
-                    //                            new Process() { StartInfo = { FileName = Path.Combine(destination, "escript.exe"), Arguments = "-close -assoc" } }.Start();
-                    //                            Cmd.Process("HideConsole", null, null);
-                    //                            Environment.Exit(0);
-                    //                        }
-                    //                    }
+                    CommandLine();
                 }
+                //                    if (args.Contains<string>("-installNext"))
+                //                    {
+                //                        foreach (var p in Process.GetProcesses())
+                //                        {
+                //                            if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
+                //                        }
+
+                //                        string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                //                        string destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT");
+                //                        FileInfo aboutme = GetAboutMe();
+
+                //                        if (aboutme.DirectoryName == destination && aboutme.Name.ToLower().StartsWith("escript.exe"))
+                //                        {
+                //                            EConsole.WriteLine("You can't do this. Use escript-install.exe or UpdateProgram method.");
+                //                        }
+                //                        else
+                //                        {
+
+                //                            EConsole.WriteLine("Installing ESCRIPT...");
+                //#if !IsCore
+                //                            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),"ESCRIPT"))) Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT"));
+                //                            File.Copy(me, Path.Combine(destination, "escript.exe"), true);
+                //#else
+                //                            EConsole.WriteLine("Can't install ESCRIPT Core"); 
+                //#endif
+                //                            new Process() { StartInfo = { FileName = Path.Combine(destination, "escript.exe"), Arguments = "-close -assoc" } }.Start();
+                //                            Cmd.Process("HideConsole", null, null);
+                //                            Environment.Exit(0);
+                //                        }
+                //                    }
+
             }
             catch (Exception ex)
             {
@@ -728,11 +745,17 @@ namespace escript
                 while (true)
                 {
                     Cmd.Process("ShowConsole");
-                    Cmd.Process("ThreadAbortAll");
-                    Cmd.Process("HideStatus");
                     EConsole.ForegroundColor = ConsoleColor.Red;
                     EConsole.Write("\nSTOP. ");
+                    if (Variables.GetBool("abortAfterBreak"))
+                    {
+                        Cmd.Process("ThreadAbortAll");
+                        Cmd.Process("HideStatus");
+                    }
                     EConsole.ForegroundColor = ConsoleColor.White;
+
+                    if (Variables.GetBool("exitAfterBreak")) Environment.Exit(0);
+
                     EConsole.Write("[L]og, [R]estart, [S]et, [C]ommand Interpreter, another key - exit ");
                     var key = EConsole.ReadKey().Key;
 
@@ -740,12 +763,7 @@ namespace escript
                     if (key == ConsoleKey.R)
                     {
                         Cmd.Process("HideConsole");
-
-#if !IsCore
-                        Application.Restart();
-#else
-                    Cmd.Process("Restart");
-#endif
+                        Cmd.Process("Restart");
                         Environment.Exit(0);
                     }
                     else if (key == ConsoleKey.S) Cmd.Process("set");
@@ -806,7 +824,10 @@ namespace escript
                 destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT"); 
             }
 
-            FileInfo f = new FileInfo(Path.Combine(destination, String.Format("escript{0}.log", stamp)));
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT")))
+                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT"));
+
+            FileInfo f = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT", String.Format("escript{0}.log", stamp)));
 
             if(File.Exists(f.FullName) && IsFileLocked(f))
             {
@@ -847,6 +868,7 @@ namespace escript
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            
             //EConsole.CreateConsole();
             //Cmd.HideConsoleTest();
             //#if !IsCore
@@ -857,6 +879,22 @@ namespace escript
 
 
             Variables.Initialize(true, args);
+            try
+            {
+                string f = GetLogFile();
+                if (f == null) throw new Exception();
+                log = new StreamWriter(f);
+                log.AutoFlush = true;
+                GlobalVars.LogFile = new FileInfo(f).FullName;
+
+#if DEBUG
+                Debugger.Launch();
+#endif
+            }
+            catch
+            {
+                log = null;
+            }
 
             if (args.Contains<string>("-noUiConsole") || Cmd.Process("IsKeyDown RShiftKey") == "1")
             {
@@ -889,21 +927,7 @@ namespace escript
             {
                 Thread.Sleep(500);
             }
-            try
-            {
-                string f = GetLogFile();
-                if (f == null) throw new Exception();
-                log = new StreamWriter(f);
-                log.AutoFlush = true;
-                GlobalVars.LogFile = new FileInfo(f).FullName;
-
-#if DEBUG
-                Debugger.Launch();
-#endif
-            }
-            catch {
-                log = null;
-            }
+            
             Init(args);
         }
 

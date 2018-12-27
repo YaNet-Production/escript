@@ -53,8 +53,6 @@ namespace escript
 
         public static string SyntaxCheck(string command)
         {
-            if (command.Contains("}{")) return "SYNTAX_ERROR_BAD_BUG";
-            ///if (command.Contains("{") && !command.Contains("}")) return "SYNTAX_ERROR";
             return "";
         }
 
@@ -65,7 +63,7 @@ namespace escript
         // Example:
         // Cmd.Process("if {msg caption||text||question||yesno}||==||Yes||Exit");
         //
-        public static string Process(string command, Dictionary<string, int> Labels = null, bool ignoreLog = false)
+        public static string Process(string command, Dictionary<string, int> Labels = null, bool ignoreLog = false, bool displayNoCmd = true)
         {
             if (Program.log != null && !ignoreLog && Variables.GetValue("ignoreLog") != "1") Program.log.WriteLine("[" + DateTime.Now.ToString() + "] [COMMAND] " + command); // write to the log
             if (ignoreLog) Variables.Set("ignoreLog", "1");
@@ -85,8 +83,7 @@ namespace escript
                 if (returnIn.EndsWith("$")) returnIn = returnIn.Remove(returnIn.Length - 1, 1);
                 //command = "set " + returnIn + Variables.GetValue("splitArgs") + command;
             }
-
-            bool displayNoCmd = true;
+            
             if (returnIn != "") displayNoCmd = false;
 
             command = ProcessString(command); // Parse command for some garbage and replace $variables... See Str for details
@@ -98,7 +95,7 @@ namespace escript
             {
                 if (result == "CMD_NOT_FOUND")
                 {
-                    if (Variables.GetValue("dollarIgnoreBadCmd") == "1")
+                    if (Variables.GetValue("invokeIgnoreBadCmd") == "1")
                     {
                         result = ProcessEx("#" + command, Labels);
                     }
@@ -275,6 +272,12 @@ namespace escript
                         theResult = mth.Invoke(target, objs);
                         if (theResult == null) theResult = "null";
 
+                        if(theResult.GetType() == typeof(bool))
+                        {
+                            if ((bool)theResult) return "1";
+                            else return "0";
+                        }
+
                         return theResult.ToString();
 
                     }
@@ -283,23 +286,19 @@ namespace escript
                     }
                     catch (ArgumentException ex)
                     {
-                        ConsoleColor g = EConsole.ForegroundColor;
-                        EConsole.ForegroundColor = ConsoleColor.Red;
-                        EConsole.WriteLine("ERROR: Invalid arguments");
+                        EConsole.WriteLine("ERROR: Invalid arguments", ConsoleColor.Red);
                         Program.Debug(ex.ToString(), ConsoleColor.DarkRed);
-                        EConsole.ForegroundColor = g;
                         Process("UseTextTest " + command.Split(' ')[0], Labels); // Call UseTextTest method to show arguments of command
-                        return "-1";
+
+                        return EResult.Syntax.GetError("Invalid arguments");
                     }
                     catch (TargetInvocationException ex)
                     {
-                        ConsoleColor g = EConsole.ForegroundColor;
-                        EConsole.ForegroundColor = ConsoleColor.Red;
-                        EConsole.WriteLine("ERROR: Can't invoke \"" + command.Split(' ')[0] + "\" method");
-                        Program.Debug(ex.ToString(), ConsoleColor.DarkRed);
-                        EConsole.ForegroundColor = g;
+                        EConsole.WriteLine("ERROR: Can't invoke \"" + command.Split(' ')[0] + "\" method because of exception:", ConsoleColor.DarkRed);
+                        EConsole.WriteLine(ex.InnerException.ToString(), ConsoleColor.Red);
                         Process("UseTextTest " + command.Split(' ')[0], Labels); // Call UseTextTest method to show arguments of command
-                        return "-1";
+
+                        return EResult.ESCRIPT.GetError("Exception");
                     }
                     catch (Exception ex)
                     {
@@ -315,13 +314,11 @@ namespace escript
                         }
                         catch
                         {
-                            ConsoleColor g = EConsole.ForegroundColor;
-                            EConsole.ForegroundColor = ConsoleColor.Red;
-                            EConsole.WriteLine(ex.GetType().Name + ": " + ex.Message);
+                            EConsole.WriteLine(ex.GetType().Name + ": " + ex.Message, ConsoleColor.Red);
                             Program.Debug(ex.StackTrace, ConsoleColor.DarkRed);
-                            EConsole.ForegroundColor = g;
-                            Process("UseTextTest " + command.Split(' ')[0], Labels); // Call UseTextTest method to show arguments of command
-                            return "-1";
+                            Process("UseTextTest " + command.Split(' ')[0], Labels, true); // Call UseTextTest method to show arguments of command
+
+                            return EResult.Cmd.GetError(ex.Message);
                         }
 
                     }
@@ -330,8 +327,8 @@ namespace escript
             }
             string lt = command;
             if (command.Contains(' ')) lt = command.Split(' ')[0];
-            if (lt == "if") Process("UseTextTest If", Labels);
-            else if (lt == "for") Process("UseTextTest For", Labels);
+            if (lt == "if") Process("UseTextTest If", Labels, true);
+            else if (lt == "for") Process("UseTextTest For", Labels, true);
             else if (lt == "return") Process("UseTextTest Return", Labels);
             else
             {
@@ -342,7 +339,7 @@ namespace escript
                 }
             }
 
-            return "CMD_NOT_FOUND";
+            return EResult.Cmd.Get("Not found").ToString();
         }
 
         public static object MethodCleanup(string MethodName)
@@ -540,32 +537,15 @@ namespace escript
             {
                 for (int i = 0; i < result.Length; i++)
                 {
-                    try
-                    {
+                    //try
+                    //{
                         // not using {{ }} anymore, use {# } instead
                         // example: 
                         // async {#msg 1||2||3||4}
 
-                        //if (result[i] == '{' && result[i + 1] == '{') // for {{}}
-                        //{
-                        //    StrPTest test = new StrPTest() { startIdx = i };
-                        //    for (int c = test.startIdx; c < result.Length; c++)
-                        //    {
-                        //        if (result[c] == '}' && result[c + 1] == '}')
-                        //        {
-                        //            test.text.Append("}}");
-                        //            test.endIdx = c + 2;
-                        //            break;
-                        //        }
-                        //        test.text.Append(result[c]);
-                        //    }
-                        //    i = test.endIdx;
-                        //    list.Add(test);
-                        //}
-
                         if (result[i] == '{' && result[i + 1] != '{') // for {}
                         {
-                            iString test = new iString() { startIdx = i };
+                            iString test = new iString() { startIdx = i, endIdx = -1 };
                             for (int c = test.startIdx; c < result.Length; c++)
                             {
                                 if (result[c] == '}')
@@ -576,14 +556,15 @@ namespace escript
                                 }
                                 test.text.Append(result[c]);
                             }
+                            if (test.endIdx == -1) throw new Exception("ESCRIPT_ERROR_INVALID_INVOKE");
                             i = test.endIdx;
                             list.Add(test);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Program.Debug(ex.ToString(), ConsoleColor.DarkRed);
-                    }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    Program.Debug(ex.ToString(), ConsoleColor.DarkRed);
+                    //}
                 }
             }
             return list;
@@ -630,8 +611,14 @@ namespace escript
                 if (icode.StartsWith("{") && icode.EndsWith("}"))
                 {
                     string clean = icode.Remove(0, 1).Remove(icode.Length - 2, 1);
-                    string result = Cmd.Process(clean, Labels);
-
+                    string result = Cmd.Process(clean, Labels, false, false);
+                    if (result == "CMD_NOT_FOUND")
+                    {
+                        if (Variables.GetValue("invokeIgnoreBadCmd") == "1")
+                        {
+                            result = Process("#" + clean, Labels);
+                        }
+                    }
                     //Program.Debug("{PARSE} " + arg + " -> " + result);
 
                     arg = arg.ToString().Replace(icode, result);

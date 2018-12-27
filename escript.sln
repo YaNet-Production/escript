@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "escript", "escript.csproj", "{68EAF385-64B8-4CD7-AF11-70784907FFF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESLib", "ESLib\ESLib.csproj", "{64460263-73F2-4AB1-A89D-474F13465032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "escript-api-test", "escript-api-test\escript-api-test.csproj", "{C30CCC1F-C113-44F5-8020-98DF3AE507EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{68EAF385-64B8-4CD7-AF11-70784907FFF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68EAF385-64B8-4CD7-AF11-70784907FFF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68EAF385-64B8-4CD7-AF11-70784907FFF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64460263-73F2-4AB1-A89D-474F13465032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64460263-73F2-4AB1-A89D-474F13465032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64460263-73F2-4AB1-A89D-474F13465032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64460263-73F2-4AB1-A89D-474F13465032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

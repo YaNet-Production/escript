@@ -17,6 +17,10 @@ namespace escript
             Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
             Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             labelVersion.Text = "ESCRIPT " + cVer.Major + "." + cVer.Minor;
+            MinimumSize = this.Size;
+            MaximumSize = new Size(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
         }
 
         public void SetText(string text)
@@ -36,8 +40,8 @@ namespace escript
             Program.Debug("maximumSymbol = " + maximumSymbol + ", width = " + width);
             Program.Debug("maximumLines = " + maximumLines + ", height = " + height);
 
-            if (height > Size.Height) Size = new Size(Size.Width, height);
-            if (width > Size.Width) Size = new Size(width, Size.Height);
+            //if (height > Size.Height) Size = new Size(Size.Width, height);
+            //if (width > Size.Width) Size = new Size(width, Size.Height);
             
             //if (text.Length >= 200) Size = new Size((Screen.PrimaryScreen.WorkingArea.Width/2), (Screen.PrimaryScreen.WorkingArea.Height - 80));
             label1.Text = text;
@@ -76,7 +80,6 @@ namespace escript
 
         private void TextBoxWindow_Load(object sender, EventArgs e)
         {
-
         }
     }
 }
