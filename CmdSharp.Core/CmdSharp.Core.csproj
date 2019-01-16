@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CmdSharp.Core</RootNamespace>
+    <AssemblyName>CmdSharp.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ECore\CommandProcessor.cs" />
+    <Compile Include="ECore\Environment\ClassesAndMethods.cs" />
+    <Compile Include="ECore\Environment\EnvironmentManager.cs" />
+    <Compile Include="ECore\Environment\EVariable.cs" />
+    <Compile Include="ECore\Environment\Variables.cs" />
+    <Compile Include="ECore\Parser\CommandNormalizer.cs" />
+    <Compile Include="ECore\Parser\CommandTypesClass.cs" />
+    <Compile Include="ECore\Parser\CompatibleTypesClass.cs" />
+    <Compile Include="ECore\Parser\ParserMain.cs" />
+    <Compile Include="ECore\CoreMain.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Stuff\Debug.cs" />
+    <Compile Include="Stuff\Exceptions.cs" />
+    <Compile Include="Stuff\Extensions.cs" />
+    <Compile Include="Stuff\FileAssociation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CmdSharp.Interop\CmdSharp.Interop.csproj">
+      <Project>{c83392d4-4699-4250-be82-ab8d05598a23}</Project>
+      <Name>CmdSharp.Interop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CmdSharp.Language\CmdSharp.Language.csproj">
+      <Project>{371cbff7-7d62-46fd-a374-c798a920cb1d}</Project>
+      <Name>CmdSharp.Language</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CmdSharp.UI\CmdSharp.UI.csproj">
+      <Project>{92d178b9-15dd-4b1c-b734-dd16c57f253f}</Project>
+      <Name>CmdSharp.UI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

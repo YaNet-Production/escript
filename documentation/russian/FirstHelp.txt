@@ -1,9 +1,0 @@
-Добро пожаловат в ESCRIPT!
-
-Использование документации (примеры):
-
-GetDocumentation AvailableMethods||english
-^ получить все доступные методы на английском языке
-
-GetDocumentation echo||russian
-^ получить документацию метода "echo" на русском языке
