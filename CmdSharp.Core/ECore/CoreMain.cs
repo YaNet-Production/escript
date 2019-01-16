@@ -310,6 +310,7 @@ namespace CmdSharp
         {
             try
             {
+                return; // TODO
 
                 Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
                 string currentVersion = cVer.ToString();
@@ -340,7 +341,7 @@ namespace CmdSharp
 
                     if (GlobalVars.IsCompiledScript || Variables.GetValue("workingScriptFullFileName").Length > 1)
                     {
-                        string uText = "ESCRIPT " + latestVersion + " is available. You can install it using \"update" + add + "\" command.";
+                        string uText = "cmd# " + latestVersion + " is available. You can install it using \"update" + add + "\" command.";
                         EConsole.WriteLine(uText);
                     }
                     else
@@ -465,7 +466,7 @@ namespace CmdSharp
 
             if (args.Contains<string>("-noUiConsole") || (bool)Cmd.Process("IsKeyDown(\"RShiftKey\");"))
             {
-                Variables.Set("useCustomConsole", false, new List<string>() { "ESCRIPT", "Hidden", "ReadOnly" });
+                Variables.Set("useCustomConsole", false, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
             }
 
             if (args.Contains<string>("-console") || (bool)Cmd.Process("IsKeyDown(\"LControlKey\");"))
@@ -493,7 +494,7 @@ namespace CmdSharp
             {
                 Cmd.Process("ShowConsole();");
                 EConsole.ForegroundColor = ConsoleColor.Gray;
-                EConsole.WriteLine("ESCRIPT <Script Path> [/help] [/convert] [-ignoreRunasRestart] [-console] [-debug] [-cmd] [-close] [-install]");
+                EConsole.WriteLine("CmdSharp <Script Path> [/help] [/convert] [-ignoreRunasRestart] [-console] [-debug] [-cmd] [-close] [-install]");
                 EConsole.WriteLine("");
                 EConsole.WriteLine("/help\t\t\tShow this article");
                 EConsole.WriteLine("-ignoreRunAsRestart\tIgnore 'Restart 1'");
@@ -550,11 +551,11 @@ namespace CmdSharp
                     EConsole.ForegroundColor = ConsoleColor.Gray;
                     EConsole.WriteLine("ERROR: " + ex.Message);
                     EConsole.WriteLine("");
-                    EConsole.WriteLine("Use: ESCRIPT <Script Path> /convert (<Compiled File Path>) (<Icon Path>)");
+                    EConsole.WriteLine("Use: CmdSharp <Script Path> /convert (<Compiled File Path>) (<Icon Path>)");
                     EConsole.WriteLine("Examples:");
-                    EConsole.WriteLine("escript \"MyScript.es\" /convert\twill be converted in MyScript.exe");
-                    EConsole.WriteLine("escript \"MyScript.es\" /convert \"C:\\Programs\\MyScript.exe\"");
-                    EConsole.WriteLine("escript \"MyScript.es\" /convert \"C:\\Programs\\MyScript.exe\" \"myicon.ico\"");
+                    EConsole.WriteLine("CmdSharp \"MyScript.es\" /convert\twill be converted in MyScript.exe");
+                    EConsole.WriteLine("CmdSharp \"MyScript.es\" /convert \"C:\\Programs\\MyScript.exe\"");
+                    EConsole.WriteLine("CmdSharp \"MyScript.es\" /convert \"C:\\Programs\\MyScript.exe\" \"myicon.ico\"");
                     EConsole.WriteLine("");
                     EConsole.WriteLine("If you want to insert icon, you must set <Compiled File Path>");
 
@@ -603,20 +604,6 @@ namespace CmdSharp
 
             }
 #endif
-
-            //    if (args.Contains<string>("-close"))
-            //{
-            //    if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
-            //    foreach (var p in Process.GetProcesses())
-            //    {
-            //        try
-            //        {
-            //            if (p.ProcessName.ToLower() == "escript" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
-            //            if (p.ProcessName.ToLower() == "escript-update" && p.Id != Process.GetCurrentProcess().Id) p.Kill();
-            //        }
-            //        catch { }
-            //    }
-            //}
             if (args.Contains<string>("-install"))
             {
                 if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
@@ -635,17 +622,17 @@ namespace CmdSharp
             }
             if (args.Contains<string>("-assoc"))
             {
-                if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean ESCRIPT or remove script information from resources manually.");
+                if (GlobalVars.IsCompiledScript) throw new Exception("Can't install compiled version. Please, use clean cmd# or remove script information from resources manually.");
                 string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
 #if !IsCore
                 //Cmd.Process("ShowConsole");
 
-                EConsole.WriteLine("Associating ESCRIPT files...");
+                EConsole.WriteLine("Associating cmd# files...");
                 try
                 {
-                    FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".es");
-                    FileAssociation.AssociateESCRIPT("ESCRIPT File", me, ".escript");
-                    FileAssociation.AssociateESCRIPT("ESCRIPT Header File", me, ".esh", "escriptheader", false);
+                    FileAssociation.AssociateESCRIPT("cmd# Script", me, ".cmdsharp");
+                    FileAssociation.AssociateESCRIPT("cmd# Script", me, ".cmdsharp");
+                    //FileAssociation.AssociateESCRIPT("ESCRIPT Header File", me, ".cmdsharp", "escriptheader", false);
 #if !IsCore
                     FileAssociation.SHChangeNotify(FileAssociation.SHCNE_ASSOCCHANGED, FileAssociation.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
 #endif
@@ -653,20 +640,16 @@ namespace CmdSharp
                 catch (Exception ex)
                 {
                     EConsole.WriteLine("ERROR: " + ex.Message);
-                    Environment.Exit(21);
+                    Environment.Exit(1);
                 }
-                EConsole.WriteLine("Creating a script on the desktop...");
+                EConsole.WriteLine("Creating desktop scripts...");
                 try
                 {
-                    string desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT.es");
-                    using (StreamWriter w = new StreamWriter(desktop))
-                    {
-                        w.WriteLine("start {GetProgramPath}");
-                        w.WriteLine("Exit");
-                    }
+                    string desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CmdSharp Console.cmdsharp");
+                    WriteResourceToFile("CmdSharp.Core.Scripts.Scripts.DesktopShortcut.cmdsharp", desktop);
 
-                    desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ESCRIPT Folder.es");
-                    WriteResourceToFile("escript.Stuff.ExampleFolder.es", desktop);
+                    desktop = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CmdSharp Folder.cmdsharp");
+                    WriteResourceToFile("CmdSharp.Core.Scripts.Scripts.ExampleFolder.cmdsharp", desktop);
                 }
                 catch (Exception ex)
                 {
@@ -678,7 +661,7 @@ namespace CmdSharp
                         EConsole.WriteLine("WARNING: ESCRIPT Core cannot be installed");
 #endif
                 EConsole.ForegroundColor = ConsoleColor.Green;
-                EConsole.WriteLine("ESCRIPT was installed!");
+                EConsole.WriteLine("CmdSharp installed!");
                 //Thread.Sleep(2000);
                 EConsole.WriteLine("");
                 Environment.Exit(0);
@@ -723,7 +706,7 @@ namespace CmdSharp
             if (!GlobalVars.UsingAPI)
                 Cmd.Process("ShowConsole();");
 
-            if (!isUnhandled) EConsole.WriteLine("[BACHOK POTIK ERROR]", ConsoleColor.Red);
+            if (!isUnhandled) EConsole.WriteLine("[HARD ERROR]", ConsoleColor.Red);
             else EConsole.WriteLine("[UNHANDLED EXCEPTION]", ConsoleColor.Red);
 
             EConsole.WriteLine(ex.ToString(), ConsoleColor.White);
@@ -791,8 +774,11 @@ namespace CmdSharp
             Variables.Set("showResult", "1");
             GlobalVars.StopProgram = false;
             EConsole.ForegroundColor = ConsoleColor.White;
-            EConsole.WriteLine("Need help? Type: help");
-            if(!GlobalVars.IsCompiledScript && !System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("\\ESCRIPT\\escript.exe")) EConsole.WriteLine("To install this copy of ESCRIPT type: install");
+            EConsole.WriteLine("Need help? Type: help();");
+
+            if(!GlobalVars.IsCompiledScript && !System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("\\CmdSharp\\CmdSharp.exe"))
+                EConsole.WriteLine("To install this copy of CmdSharp type: install();");
+
             while (true)
             {
                 EConsole.ForegroundColor = ConsoleColor.Green;
@@ -817,17 +803,11 @@ namespace CmdSharp
         public static string GetLogFile(string stamp = "")
         {
             string me = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string destination = "";
-            
-            if (me.Contains("ESCRIPT\\escript.exe"))
-            {
-                destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "ESCRIPT"); 
-            }
 
-            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT")))
+            if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CmdSharp")))
                 Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT"));
 
-            FileInfo f = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ESCRIPT", String.Format("escript{0}.log", stamp)));
+            FileInfo f = new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CmdSharp", String.Format("CmdSharp{0}.log", stamp)));
 
             if(File.Exists(f.FullName) && IsFileLocked(f))
             {
@@ -863,20 +843,5 @@ namespace CmdSharp
             //file is not locked
             return false;
         }
-        
-
-        public static string verText = "Command interpretator mode";
-
-//#if !IsCore
-//        public static void FormThread()
-//        {
-//            Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-//            if(splash == null) splash = new Splash();
-//            splash.Text = EConsole.Title;
-//            splash.SetVer(String.Format("ESCRIPT {0}.{1} Standard\r\nCopyright (C) Dz3n 2017-2018", cVer.Major, cVer.Minor));
-//            splash.SetScript(verText);
-//            if(splash.hidden) splash.ShowMe();
-//        }
-//#endif
     }
 }

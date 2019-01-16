@@ -29,7 +29,7 @@ namespace CmdSharp
             {
                 if (!force)
                 {
-                    if (v.Options.Contains("ESCRIPT")) return "ESCRIPT_ERROR_REMOVE_PROTECTED_VARIABLE";
+                    if (v.Options.Contains("CmdSharp")) return "ESCRIPT_ERROR_REMOVE_PROTECTED_VARIABLE";
                 }
                 VarList.Remove(v);
                 return 1;
@@ -158,45 +158,45 @@ namespace CmdSharp
                 }
             }
 
-            SetVariableObject("args", new EList(), new List<string>() { "ESCRIPT" });
+            SetVariableObject("args", new EList(), new List<string>() { "CmdSharp" });
             if (args != null)
             {
-                SetVariableObject("args", new EList() { Content = args.ToList<object>() }, new List<string>() { "ESCRIPT" });
+                SetVariableObject("args", new EList() { Content = args.ToList<object>() }, new List<string>() { "CmdSharp" });
             }
 
             //SetVariableObject("result", new EList() { DefaultIndex = -2, Content = { "null" } });
-            SetVariableObject("result", null, new List<string>() { "ESCRIPT" });
-            Add("invitation", "ESCRIPT> ", new List<string>() { "ESCRIPT" });
-            Add("showResult", false, new List<string>() { "ESCRIPT" });
-            Add("showCommands", false, new List<string>() { "ESCRIPT" });
-            Add("programDebug", false, new List<string>() { "ESCRIPT" });
+            SetVariableObject("result", null, new List<string>() { "CmdSharp" });
+            Add("invitation", "cmd#> ", new List<string>() { "CmdSharp" });
+            Add("showResult", false, new List<string>() { "CmdSharp" });
+            Add("showCommands", false, new List<string>() { "CmdSharp" });
+            Add("programDebug", false, new List<string>() { "CmdSharp" });
 
-            SetVariableObject("parserDebug", true, new List<string>() { "ESCRIPT", "Hidden" });
-            SetVariableObject("envDebug", true, new List<string>() { "ESCRIPT", "Hidden" });
+            SetVariableObject("parserDebug", true, new List<string>() { "CmdSharp", "Hidden" });
+            SetVariableObject("envDebug", true, new List<string>() { "CmdSharp", "Hidden" });
 
             if (GlobalVars.DebugWhenFormingEnv)
-                Set("programDebug", true, new List<string>() { "ESCRIPT" });
+                Set("programDebug", true, new List<string>() { "CmdSharp" });
 
-            Add("startTime", DateTime.Now, new List<string>() { "ESCRIPT" });
+            Add("startTime", DateTime.Now, new List<string>() { "CmdSharp" });
 #if IsCore
-            Add("edition", EnvironmentManager.ESEditions.Core, new List<string>() { "ESCRIPT" });
+            Add("edition", EnvironmentManager.ESEditions.Core, new List<string>() { "CmdSharp" });
 #else
-            Add("edition", EnvironmentManager.ESEditions.Standard, new List<string>() { "ESCRIPT" });
+            Add("edition", EnvironmentManager.ESEditions.Standard, new List<string>() { "CmdSharp" });
 #endif
-            Add("stuffServer", GlobalVars.StuffServer, new List<string>() { "ESCRIPT", "Hidden", "ReadOnly" });
+            Add("stuffServer", GlobalVars.StuffServer, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
 
-            SetVariableObject("forceConsole", false, new List<string>() { "ESCRIPT" });
-            SetVariableObject("checkUpdates", true, new List<string>() { "ESCRIPT", "Hidden" });
+            SetVariableObject("forceConsole", false, new List<string>() { "CmdSharp" });
+            SetVariableObject("checkUpdates", true, new List<string>() { "CmdSharp", "Hidden" });
 
-            Add("isCompiledScript", false, new List<string>() { "ESCRIPT", "Hidden" });
+            Add("isCompiledScript", false, new List<string>() { "CmdSharp", "Hidden" });
 
-            //Add("varCanBeMethod", "0", new List<string>() { "ESCRIPT", "Hidden", "ReadOnly" }); // example: $varCanBeMethod=#1
+            //Add("varCanBeMethod", "0", new List<string>() { "CmdSharp", "Hidden", "ReadOnly" }); // example: $varCanBeMethod=#1
                                         // $something=#{#{DateTimeNow}}
                                         // echo $something
                                         // #{#{DateTimeNow}} -> {DateTimeNow} -> xx.xx.xx xx:xx:xx
                                         // [SCREEN] xx.xx.xx xx:xx:xx
            
-            //Add("invokeIgnoreBadCmd", "1", new List<string>() { "ESCRIPT" }); // example: 
+            //Add("invokeIgnoreBadCmd", "1", new List<string>() { "CmdSharp" }); // example: 
                                             // $kek=Something
                                             //
                                             // If method "Something" not found and dollarIgnoreBadCmd = 1
@@ -205,14 +205,14 @@ namespace CmdSharp
                                             // echo $kek
                                             // [SCREEN] Something
 
-           // Add("displayNoCmd", "1", new List<string>() { "ESCRIPT" });
+           // Add("displayNoCmd", "1", new List<string>() { "CmdSharp" });
 
-            Add("forceGC", false, new List<string>() { "ESCRIPT" });
-            //Add("checkSyntax", tru, new List<string>() { "ESCRIPT" });
-            //Add("taskTimeout", "3000", new List<string>() { "ESCRIPT", "Hidden" });
-            //Add("varParseWithEnd", "1", new List<string>() { "ESCRIPT", "Hidden" }); // if 1, variables will be parsed like "$variable$". if 0, like "$variable"
-            Add("abortAfterBreak", true, new List<string>() { "ESCRIPT" });
-            Add("exitAfterBreak", false, new List<string>() { "ESCRIPT" });
+            Add("forceGC", false, new List<string>() { "CmdSharp" });
+            //Add("checkSyntax", tru, new List<string>() { "CmdSharp" });
+            //Add("taskTimeout", "3000", new List<string>() { "CmdSharp", "Hidden" });
+            //Add("varParseWithEnd", "1", new List<string>() { "CmdSharp", "Hidden" }); // if 1, variables will be parsed like "$variable$". if 0, like "$variable"
+            Add("abortAfterBreak", true, new List<string>() { "CmdSharp" });
+            Add("exitAfterBreak", false, new List<string>() { "CmdSharp" });
         }
         
     }

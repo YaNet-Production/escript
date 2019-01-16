@@ -98,7 +98,8 @@ namespace CmdSharp
                 {
                     Thread.Sleep(10);
                 }
-                currentStdout = (IntPtr)1;
+
+                _IsConsoleCreated = true;
                 WaitingForForm = false;
             }
             else
@@ -114,7 +115,7 @@ namespace CmdSharp
                     // reset stdout
                     SetStdHandle(StdOutputHandle, defaultStdout);
 
-
+                _IsConsoleCreated = true;
 
                 try
                 {

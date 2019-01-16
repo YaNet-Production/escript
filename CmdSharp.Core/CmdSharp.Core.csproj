@@ -91,7 +91,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Main\Functions.es" />
+    <EmbeddedResource Include="Scripts\Main\Functions.cmdsharp" />
     <EmbeddedResource Include="UI\Forms\ChoiceWindow.resx">
       <DependentUpon>ChoiceWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,18 +104,19 @@
     <EmbeddedResource Include="UI\Forms\TextBoxWindow.resx">
       <DependentUpon>TextBoxWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\Scripts\DesktopShortcut.cmdsharp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Scripts\ExampleFolder.es" />
+    <EmbeddedResource Include="Scripts\Scripts\ExampleFolder.cmdsharp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Scripts\InstallScript.es" />
+    <EmbeddedResource Include="Scripts\Scripts\InstallScript.cmdsharp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Scripts\TemplateScript.es" />
+    <EmbeddedResource Include="Scripts\Scripts\TemplateScript.cmdsharp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\Scripts\UpdateScript.es" />
+    <EmbeddedResource Include="Scripts\Scripts\UpdateScript.cmdsharp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UI\Resources\01.ico">
