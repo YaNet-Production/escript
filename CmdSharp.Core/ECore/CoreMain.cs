@@ -720,25 +720,16 @@ namespace CmdSharp
             //
             // BACHOK POTIK ZONE
             //
-            if(!GlobalVars.UsingAPI) Cmd.Process("ShowConsole();");
-            EConsole.ForegroundColor = ConsoleColor.White;
-            ConsoleColor b = EConsole.BackgroundColor;
-            EConsole.BackgroundColor = ConsoleColor.DarkRed;
-            if(!isUnhandled) EConsole.WriteLine("[BACHOK POTIK ERROR]");
-            else EConsole.WriteLine("[UNHANDLED EXCEPTION]");
-            EConsole.ForegroundColor = ConsoleColor.Red;
-            EConsole.BackgroundColor = b;
-            EConsole.WriteLine(ex.ToString());
+            if (!GlobalVars.UsingAPI)
+                Cmd.Process("ShowConsole();");
+
+            if (!isUnhandled) EConsole.WriteLine("[BACHOK POTIK ERROR]", ConsoleColor.Red);
+            else EConsole.WriteLine("[UNHANDLED EXCEPTION]", ConsoleColor.Red);
+
+            EConsole.WriteLine(ex.ToString(), ConsoleColor.White);
 #if DEBUG
-            if(ex != null)
-                throw ex;
+            throw ex;
 #endif
-            //if(args.Contains<string>("-install") && !args.Contains<string>("-close"))
-            //{
-            //    EConsole.WriteLine("If you have some troubles with installation");
-            //    EConsole.WriteLine("You should try to run ESCRIPT with -createInstallation argument");
-            //}
-            EConsole.BackgroundColor = b;
         }
 
         public static void Break()
@@ -810,7 +801,7 @@ namespace CmdSharp
                 string line = EConsole.ReadLine();
                 EConsole.ForegroundColor = ScriptColor;
                 SetResult(Cmd.Process(GlobalVars.RemoveDirtFromString(line)));
-                if (Variables.GetValue("showResult") == "1")
+                if (Variables.GetBool("showResult"))
                 {
                     PrintResult(Variables.GetValueObject("result"));
                 }

@@ -170,6 +170,7 @@ namespace CmdSharp.Parser
                 // I'm lazy, so temporary solution is to add "var" to the start:
                 return Process("var " + Command);
 
+#if NOT_LAZY_AUTHOR // TODO
                 string VariableName = Command.Split('=')[0].Trim(SpacesAndTabs);
 
                 string valueString = "";
@@ -212,6 +213,7 @@ namespace CmdSharp.Parser
                 }
 
                 throw new Exceptions.VariableSetException($"Variable {VariableName} is not found");
+#endif
             }
             else if (CommandType == CommandTypes.Typeof)
             {
