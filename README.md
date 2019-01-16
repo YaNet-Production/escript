@@ -1,3 +1,9 @@
+# WARNING
+## This project is closed. 
+The continuation of this project is CmdSharp: https://github.com/feel-the-dz3n/CmdSharp
+**cmd♯ - is a powerful command interpreter for C#-like language (continuation of ESCRIPT)**
+<br><br><br><br><br><br><br>
+
 <p align=center>
   <img alt="ESCRIPT" src="https://user-images.githubusercontent.com/25367511/47752398-03692a00-dc9d-11e8-9b91-3f4e91e8ec1f.png">
 </p>
