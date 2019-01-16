@@ -67,11 +67,12 @@ namespace CmdSharp
             }
         }
 
-        public static void CreateConsole(bool UseSystem = false)
+        public static void CreateConsole()
         {
             if (IsConsoleCreated)
                 return;
 
+            bool UseSystem = !Variables.GetBool("useCustomConsole");
 
 #if IsCore
             currentStdout = (IntPtr)1;

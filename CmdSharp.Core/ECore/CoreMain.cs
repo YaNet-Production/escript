@@ -442,6 +442,16 @@ namespace CmdSharp
             Variables.Initialize(true, args);
             EnvironmentManager.Initialize();
 
+
+            if (args.Contains<string>("-noUiConsole") || (bool)Cmd.Process("IsKeyDown(\"RShiftKey\");"))
+            {
+                Variables.Set("useCustomConsole", false, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
+            }
+            else
+            {
+                Variables.Set("useCustomConsole", true, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
+            }
+
             try
             {
                 string f = GetLogFile();
@@ -464,10 +474,6 @@ namespace CmdSharp
             Cmd.Process("Debug();");
 #endif
 
-            if (args.Contains<string>("-noUiConsole") || (bool)Cmd.Process("IsKeyDown(\"RShiftKey\");"))
-            {
-                Variables.Set("useCustomConsole", false, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
-            }
 
             if (args.Contains<string>("-console") || (bool)Cmd.Process("IsKeyDown(\"LControlKey\");"))
             {
