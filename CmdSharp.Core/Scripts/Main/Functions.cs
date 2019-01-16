@@ -1297,7 +1297,7 @@ namespace CmdSharp
             if (mth == null)
                 throw new Exception("Method not found");
 
-            var Args = mth.Pamareters;
+            var Args = mth.Parameters;
 
             if (printUse)
             {
@@ -1329,43 +1329,35 @@ namespace CmdSharp
             EConsole.WriteLine(")", ConsoleColor.White);
             return;
         }
-    
 
-        public object GetMethod(string methodName)
+        public void GetMethod(string methodName)
         {
             //if(methodName.Length == 0)
             //{
             //    EConsole.WriteLine(UseTextTest("GetMethod"));
             //    return null;//.Cmd.Fail;
             //}
-            System.Reflection.MethodInfo mth = null;
+            EMethodNew mth = null;
 
-            List<MethodInfo> m = this.GetType().GetMethods().ToList();
-
-
-            for (int i = 0; i < GlobalVars.LoadedLibs.Count; i++)
-            {
-                ImportedLibInfo imp = GlobalVars.LoadedLibs[i];
-                if (imp.classInstance != null)
-                {
-                    m.AddRange(imp.funcType.GetMethods());
-                }
-            }
+            EMethodNew[] m = EnvironmentManager.AllMethods;
 
             foreach (var me in m)
             {
-                if (me.Name == methodName) mth = me;
+                if (me.Name == methodName)
+                    mth = me;
             }
 
 
-            if (mth == null) return null;//.Cmd.Fail;
-            var Args = mth.GetParameters();
+            if (mth == null)
+                return;
+
+            var Args = mth.Parameters;
+
             EConsole.WriteLine("Method: " + mth.Name);
             for (int i = 0; i < Args.Length; i++)
             {
                 EConsole.WriteLine("[Argument " + i + "] " + Args[i].Name + " = " + Args[i].DefaultValue);
             }
-            return null;//.Cmd.Done;
         }
 
         public object ls(string directory = "null") { return dir(directory); }

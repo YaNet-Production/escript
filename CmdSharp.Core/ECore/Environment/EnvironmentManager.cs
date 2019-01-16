@@ -29,7 +29,6 @@ namespace CmdSharp
                 AddClass(new EClass(null, c.Type, ObjectVisibility.Public, true, false) { IsCompatibleType = true }, false);
             }
             
-            
             Debug.Log("ENV", "Started!");
         }
 

@@ -166,7 +166,7 @@ namespace CmdSharp
         public bool IsUser = false;
         public object ClassInstance = null;
 
-        public EMethodNewArgument[] Pamareters
+        public EMethodNewArgument[] Parameters
         {
             get
             {
@@ -194,13 +194,15 @@ namespace CmdSharp
             }
         }
 
+        public EMethodNewArgument[] GetParameters() { return Parameters; }
+
         public object Invoke(object[] Arguments = null)
         {
             if (Arguments == null)
                 Arguments = new object[] { };
 
 
-            var OriginalArguments = Pamareters;
+            var OriginalArguments = Parameters;
 
             if (Arguments.Length < OriginalArguments.Length)
             {
