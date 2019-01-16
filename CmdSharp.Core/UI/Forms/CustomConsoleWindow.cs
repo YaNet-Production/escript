@@ -315,7 +315,7 @@ namespace CmdSharp
 
         private void CustomConsoleWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Cmd.InvokeMethod("exit");
+            Cmd.Process("exit();");
         }
 
         private void textBoxOutput_TextChanged(object sender, EventArgs e)
