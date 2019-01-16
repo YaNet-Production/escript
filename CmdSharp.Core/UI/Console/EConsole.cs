@@ -190,7 +190,7 @@ namespace CmdSharp
             EConsole.ForegroundColor = ConsoleColor.Green;
             Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            EConsole.Write(String.Format("   ESCRIPT {0}.{1}", cVer.Major, cVer.Minor));
+            EConsole.Write(String.Format("   cmd# {0}.{1}", cVer.Major, cVer.Minor));
 #if IsCore
             EConsole.ForegroundColor = ConsoleColor.Magenta;
             EConsole.WriteLine(" Core");
