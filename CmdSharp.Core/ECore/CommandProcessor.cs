@@ -85,14 +85,14 @@ namespace CmdSharp
                     throw new Exception("The commands array is empty.");
                 else if (Normalized.Length == 1)
                 {
-                    ProcessExResult = EParserDz3n.Process(Normalized[0]);
+                    ProcessExResult = EParser.Process(Normalized[0]);
                 }
                 else if (Normalized.Length >= 2)
                 {
                     List<object> Result = new List<object>();
                     foreach(var cmd in Normalized)
                     {
-                        Result.Add(EParserDz3n.Process(cmd));
+                        Result.Add(EParser.Process(cmd));
                     }
                     ProcessExResult = Result.ToArray();
                 }

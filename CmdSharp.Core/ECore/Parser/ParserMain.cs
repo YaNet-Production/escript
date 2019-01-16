@@ -13,7 +13,7 @@ using static CmdSharp.Parser.CompatibleTypesClass;
 
 namespace CmdSharp.Parser
 {
-    public class EParserDz3n
+    public class EParser
     {
         enum ParserNativeResults // What should return variable initialization process??
         {

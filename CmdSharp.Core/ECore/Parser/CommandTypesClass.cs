@@ -103,7 +103,7 @@ namespace CmdSharp.Parser
                         break;
                     }
                 }
-                if (Command.Remove(0, CastEndPos + 1).Trim(EParserDz3n.SpacesAndTabs).StartsWith("new"))
+                if (Command.Remove(0, CastEndPos + 1).Trim(EParser.SpacesAndTabs).StartsWith("new"))
                     return CommandTypes.ObjectInitializer;
 
             }
@@ -138,8 +138,8 @@ namespace CmdSharp.Parser
                         Value += c;
                 }
 
-                CastTo = CastTo.Trim(EParserDz3n.SpacesAndTabs);
-                Value = Value.Trim(EParserDz3n.SpacesAndTabs);
+                CastTo = CastTo.Trim(EParser.SpacesAndTabs);
+                Value = Value.Trim(EParser.SpacesAndTabs);
 
                 if (CastTo.Length >= 1 && Value.Length >= 1)
                     return CommandTypes.CastValue;
