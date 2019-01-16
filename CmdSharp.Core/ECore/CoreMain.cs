@@ -20,7 +20,6 @@ namespace CmdSharp
         public static ConsoleColor ScriptColor = ConsoleColor.White;
         public static string Out = "";
 
-
         public static void WriteResourceToFile(string resourceName, string fileName)
         {
             Debug.DebugText("Write resource to file: " + resourceName + " : " + fileName);
@@ -435,8 +434,9 @@ namespace CmdSharp
         //    Cmd.Process("PrintResult {#" + result + "}||" + prefix, null, true);
         //}
 
-        public static void Init(string[] args)
+        public static void Init(string[] args, APICore api = null)
         {
+            GlobalVars.API = api;
 
             Variables.Initialize(true, args);
             EnvironmentManager.Initialize();

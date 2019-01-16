@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CmdSharp
 {
-    public static class API
+    public class API
     {
         public delegate void WriteEventMethod(object text);
         public static event WriteEventMethod WriteEvent;
@@ -20,7 +21,20 @@ namespace CmdSharp
 
         public static void Start(string[] args)
         {
-            GlobalVars.UsingAPI = true;
+            if (WriteLineEvent == null || WriteEvent == null)
+                throw new NullReferenceException();
+
+            MethodInfo WriteLineMethod = null, WriteMethod = null;
+
+            foreach(var m in typeof(API).GetMethods())
+            {
+                if (m.Name == "WriteLine")
+                    WriteLineMethod = m;
+                else if (m.Name == "Write")
+                    WriteMethod = m;
+            }
+
+            GlobalVars.API = new APICore(new API(), WriteLineMethod, WriteMethod);
             CoreMain.Init(args);
         }
         

@@ -33,6 +33,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,25 +52,81 @@
     <Compile Include="ECore\Parser\CompatibleTypesClass.cs" />
     <Compile Include="ECore\Parser\ParserMain.cs" />
     <Compile Include="ECore\CoreMain.cs" />
+    <Compile Include="Interop\AddressTool.cs" />
+    <Compile Include="Interop\APICore.cs" />
+    <Compile Include="Interop\GlobalVars.cs" />
+    <Compile Include="Interop\ImportedLibInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\Main\Functions.cs" />
+    <Compile Include="Scripts\Other\TCPConnection.cs" />
     <Compile Include="Stuff\Debug.cs" />
     <Compile Include="Stuff\Exceptions.cs" />
     <Compile Include="Stuff\Extensions.cs" />
     <Compile Include="Stuff\FileAssociation.cs" />
+    <Compile Include="UI\Console\ConsoleMessageBox.cs" />
+    <Compile Include="UI\Console\EConsole.cs" />
+    <Compile Include="UI\Forms\ChoiceWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\ChoiceWindow.Designer.cs">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\CustomConsoleWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\CustomConsoleWindow.Designer.cs">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\StatusWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\StatusWindow.Designer.cs">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\TextBoxWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Forms\TextBoxWindow.Designer.cs">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CmdSharp.Interop\CmdSharp.Interop.csproj">
-      <Project>{c83392d4-4699-4250-be82-ab8d05598a23}</Project>
-      <Name>CmdSharp.Interop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Language\CmdSharp.Language.csproj">
-      <Project>{371cbff7-7d62-46fd-a374-c798a920cb1d}</Project>
-      <Name>CmdSharp.Language</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.UI\CmdSharp.UI.csproj">
-      <Project>{92d178b9-15dd-4b1c-b734-dd16c57f253f}</Project>
-      <Name>CmdSharp.UI</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="Scripts\Main\Functions.es" />
+    <EmbeddedResource Include="UI\Forms\ChoiceWindow.resx">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\CustomConsoleWindow.resx">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\StatusWindow.resx">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\TextBoxWindow.resx">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\ExampleFolder.es" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\InstallScript.es" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\TemplateScript.es" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\UpdateScript.es" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UI\Resources\01.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="UI\Resources\about.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Resources\02.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

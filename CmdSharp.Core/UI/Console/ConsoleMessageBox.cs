@@ -12,7 +12,6 @@ namespace CmdSharp
         {
             string result = "OK";
             ConsoleColor s = EConsole.ForegroundColor;
-            //Console.Clear();
             EConsole.ForegroundColor = ConsoleColor.White;
             EConsole.WriteLine("");
             EConsole.ForegroundColor = ConsoleColor.Cyan;
@@ -24,8 +23,6 @@ namespace CmdSharp
 
             EConsole.ForegroundColor = ConsoleColor.Gray;
             EConsole.WriteLine("");
-
-            //Variables.Set("dialogInput", Console.ReadLine());
 
             EConsole.WriteLine("");
             EConsole.WriteLine("");

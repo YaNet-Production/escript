@@ -36,8 +36,9 @@ namespace CmdSharp
                         {
                             var Type = a.ParameterType;
                             var DefaultValue = a.DefaultValue;
+                            var Name = a.Name;
 
-                            arguments.Add(new EMethodNewArgument(Type, DefaultValue));
+                            arguments.Add(new EMethodNewArgument(Name, Type, DefaultValue));
                         }
                     }
 
@@ -179,8 +180,9 @@ namespace CmdSharp
                     {
                         var Type = a.ParameterType;
                         var DefaultValue = a.DefaultValue;
+                        var Name = a.Name;
 
-                        arguments.Add(new EMethodNewArgument(Type, DefaultValue));
+                        arguments.Add(new EMethodNewArgument(Name, Type, DefaultValue));
                     }
 
                     return arguments.ToArray();
@@ -244,12 +246,14 @@ namespace CmdSharp
 
     public class EMethodNewArgument
     {
-        public Type Type;
+        public string Name;
+        public Type ParameterType;
         public object DefaultValue;
 
-        public EMethodNewArgument(Type type, object defautlValue)
+        public EMethodNewArgument(string name, Type type, object defautlValue)
         {
-            Type = type;
+            Name = name;
+            ParameterType = type;
             DefaultValue = defautlValue;
         }
     }

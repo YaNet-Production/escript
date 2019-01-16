@@ -254,17 +254,6 @@ namespace CmdSharp
 
         private void CustomConsoleWindow_Load(object sender, EventArgs e)
         {
-            if (Variables.GetBool("Aero"))
-            {
-                if (Aero.Fine())
-                {
-                    //textBoxOutput.BackColor = Color.Black;
-                    TransparencyKey = textBoxOutput.BackColor;
-                    BackColor = textBoxOutput.BackColor;
-
-                    Aero.Glass(this.Handle);
-                }
-            }
         }
 
         public string ReadLine()
@@ -326,12 +315,7 @@ namespace CmdSharp
 
         private void CustomConsoleWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!EConsole.FakeKill)
-            {
-                Cmd.Process("exit();");
-            }
-            else
-                EConsole.FakeKill = false;
+            Cmd.InvokeMethod("exit");
         }
 
         private void textBoxOutput_TextChanged(object sender, EventArgs e)

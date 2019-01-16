@@ -60,18 +60,6 @@
       <Project>{1adfcc1c-a213-4ac8-bae2-5f18b7cbe674}</Project>
       <Name>CmdSharp.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Interop\CmdSharp.Interop.csproj">
-      <Project>{c83392d4-4699-4250-be82-ab8d05598a23}</Project>
-      <Name>CmdSharp.Interop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Language\CmdSharp.Language.csproj">
-      <Project>{371cbff7-7d62-46fd-a374-c798a920cb1d}</Project>
-      <Name>CmdSharp.Language</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.UI\CmdSharp.UI.csproj">
-      <Project>{92d178b9-15dd-4b1c-b734-dd16c57f253f}</Project>
-      <Name>CmdSharp.UI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CmdSharp.Wrappers\CmdSharp.Wrappers.csproj">
       <Project>{ce3bdace-6436-47c3-ac8f-4ae25a58bd79}</Project>
       <Name>CmdSharp.Wrappers</Name>

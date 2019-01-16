@@ -19,6 +19,8 @@ namespace CmdSharp
 #else
         public static bool IsCore = false;
 #endif
+        private static APICore _api = null;
+        public static APICore API { get { return _api; } set { _api = value; if (value == null) UsingAPI = false; else UsingAPI = true; } }
         public static bool UsingAPI = false;
         public static bool DebugWhenFormingEnv = false;
         public static bool IgnoreRunAsAdmin = false;
@@ -74,18 +76,6 @@ namespace CmdSharp
 
         public static List<ImportedLibInfo> LoadedLibs = new List<ImportedLibInfo>();
         public static List<Thread> UserThreads = new List<Thread>();
-
-
-        private const UInt32 StdOutputHandle = 0xFFFFFFF5;
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetStdHandle(UInt32 nStdHandle);
-        [DllImport("kernel32.dll")]
-        private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
-        [DllImport("kernel32")]
-        static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetConsoleWindow();
 
 #if !IsCore
 

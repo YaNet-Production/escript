@@ -3,17 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESLib", "ESLib\ESLib.csproj", "{64460263-73F2-4AB1-A89D-474F13465032}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "escript-api-test", "escript-api-test\escript-api-test.csproj", "{C30CCC1F-C113-44F5-8020-98DF3AE507EF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdSharp.Core", "CmdSharp.Core\CmdSharp.Core.csproj", "{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdSharp.UI", "CmdSharp.UI\CmdSharp.UI.csproj", "{92D178B9-15DD-4B1C-B734-DD16C57F253F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdSharp.Interop", "CmdSharp.Interop\CmdSharp.Interop.csproj", "{C83392D4-4699-4250-BE82-AB8D05598A23}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdSharp.Language", "CmdSharp.Language\CmdSharp.Language.csproj", "{371CBFF7-7D62-46FD-A374-C798A920CB1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdSharp.API", "CmdSharp.API\CmdSharp.API.csproj", "{6FC674C5-8B0C-4621-B4F5-FFF68C8130D7}"
 EndProject
@@ -29,30 +19,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{64460263-73F2-4AB1-A89D-474F13465032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64460263-73F2-4AB1-A89D-474F13465032}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64460263-73F2-4AB1-A89D-474F13465032}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64460263-73F2-4AB1-A89D-474F13465032}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C30CCC1F-C113-44F5-8020-98DF3AE507EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADFCC1C-A213-4AC8-BAE2-5F18B7CBE674}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92D178B9-15DD-4B1C-B734-DD16C57F253F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92D178B9-15DD-4B1C-B734-DD16C57F253F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92D178B9-15DD-4B1C-B734-DD16C57F253F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92D178B9-15DD-4B1C-B734-DD16C57F253F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C83392D4-4699-4250-BE82-AB8D05598A23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C83392D4-4699-4250-BE82-AB8D05598A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C83392D4-4699-4250-BE82-AB8D05598A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C83392D4-4699-4250-BE82-AB8D05598A23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{371CBFF7-7D62-46FD-A374-C798A920CB1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{371CBFF7-7D62-46FD-A374-C798A920CB1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{371CBFF7-7D62-46FD-A374-C798A920CB1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{371CBFF7-7D62-46FD-A374-C798A920CB1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6FC674C5-8B0C-4621-B4F5-FFF68C8130D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FC674C5-8B0C-4621-B4F5-FFF68C8130D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FC674C5-8B0C-4621-B4F5-FFF68C8130D7}.Release|Any CPU.ActiveCfg = Release|Any CPU

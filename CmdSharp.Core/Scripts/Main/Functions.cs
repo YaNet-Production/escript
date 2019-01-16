@@ -29,64 +29,26 @@ namespace CmdSharp
 
         public Dictionary<string, int> Labels;
 
-
-        //public Functions(List<EMethod> methods, Dictionary<string, int> labels)
-        //{
-        //    Methods = methods;
-        //    Labels = labels;
-        //}
-        
-        public object Import(string fileName, string typeName = "EFuncInvoke")
+        public void Import(string fileName, string className, object[] arguments = null)
         {
-            try
-            {
+#if ESCODE_IMPLEMENTED
                 if (fileName.Contains(".es") || fileName.Contains(".esh"))
                 {
                     new ESCode(fileName);
-                    return EResult.Cmd.Done;
+                    return null;//.Cmd.Done;
                 }
                 else
-                {
-                    ImportedLibInfo i = new ImportedLibInfo(fileName, this, typeName);
-                    GlobalVars.LoadedLibs.Add(i);
-                    return EResult.Cmd.Done;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (fileName.ToLower().StartsWith("import"))
-                {
-#if !IsCore
-                    IntPtr resourceInfo = GlobalVars.FindResource(IntPtr.Zero, fileName, (IntPtr)10);
-                    Program.Debug(fileName + " Import-Resource: 0x" + resourceInfo.ToString("X4"));
-
-                    if (resourceInfo != IntPtr.Zero)
-                    {
-                        uint size = GlobalVars.SizeofResource(IntPtr.Zero, resourceInfo);
-                        IntPtr pt = GlobalVars.LoadResource(IntPtr.Zero, resourceInfo);
-                        byte[] bPtr = new byte[size];
-                        Marshal.Copy(pt, bPtr, 0, (int)size);
-                        string code = Encoding.ASCII.GetString(bPtr);
-                        Program.Debug(fileName + ":\r\n" + code);
-
-                        new ESCode(ESCode.SplitCode(code));
-                        return EResult.Cmd.Done;
-                    }
-                    return EResult.Cmd.Fail;
-#else
-                    return "-1";
 #endif
-                }
 
-                EConsole.WriteLine(ex.ToString());
-                return "-1";
-            }
+            ImportedLibInfo i = new ImportedLibInfo(fileName, className, arguments);
+            GlobalVars.LoadedLibs.Add(i);
+
         }
 
-        public object Compare(string one, string p, string two, string ifOkDoThis, string el = "null")
-        {
-            return If(one, p, two, ifOkDoThis, el);
-        }
+        //public object Compare(string one, string p, string two, string ifOkDoThis, string el = "null")
+        //{
+        //    return If(one, p, two, ifOkDoThis, el);
+        //}
 
         public void Logo()
         {
@@ -114,42 +76,45 @@ namespace CmdSharp
         {
             return long.Parse(Long).ToString(Format);
         }
-        
-        public object If(string one, string condition, string two, string ifOkDoThis, string elseDoThis = "null")
-        {
-            try
-            {
-                int first = int.Parse(one.ToString()), second = int.Parse(two.ToString());
-                if (condition.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                if (condition.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                if (condition.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                if (condition.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                if (condition.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                if (condition.ToString() == "!=") if (first != second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-            }
-            catch
-            {
-                if (condition.ToString() == "==")
-                {
-                    if (one.ToString() == two.ToString()) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                }
-                else if (condition.ToString() == "!=")
-                {
-                    if (one.ToString() != two.ToString()) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return EResult.Cmd.Done; }
-                }
-                else return -1;
-            }
-            if (!elseDoThis.ToString().ToLower().StartsWith("null")) Cmd.Process(elseDoThis.ToString()/* FIX ME, Labels*/);
-            return EResult.Cmd.Fail;
-        }
+
+        //public object If(string one, string condition, string two, string ifOkDoThis, string elseDoThis = "null")
+        //{
+        //    try
+        //    {
+        //        int first = int.Parse(one.ToString()), second = int.Parse(two.ToString());
+        //        if (condition.ToString() == "<") if (first < second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        if (condition.ToString() == ">") if (first > second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        if (condition.ToString() == "<=") if (first <= second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        if (condition.ToString() == ">=") if (first >= second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        if (condition.ToString() == "==") if (first == second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        if (condition.ToString() == "!=") if (first != second) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //    }
+        //    catch
+        //    {
+        //        if (condition.ToString() == "==")
+        //        {
+        //            if (one.ToString() == two.ToString()) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        }
+        //        else if (condition.ToString() == "!=")
+        //        {
+        //            if (one.ToString() != two.ToString()) { Cmd.Process(ifOkDoThis.ToString()/* FIX ME, Labels*/); return null;//.Cmd.Done; }
+        //        }
+        //        else return -1;
+        //    }
+        //    if (!elseDoThis.ToString().ToLower().StartsWith("null")) Cmd.Process(elseDoThis.ToString()/* FIX ME, Labels*/);
+        //    return null;//.Cmd.Fail;
+        //}
 
         public object cd(string directory = "null") { return ChangeDir(directory); }
 
-        public object ChangeDir(string directory = "null")
+        public string ChangeDir(string directory = "null")
         {
-            if (directory.ToLower() == "null") return ReturnCurrentDirectory();
+            if (directory.ToLower() == "null")
+                return ReturnCurrentDirectory();
+
             Directory.SetCurrentDirectory(directory);
-            return EResult.Cmd.Done;
+
+            return null;
         }
 
         public object mciOpenAndPlay(string fileName, string alias = "escript")
@@ -186,16 +151,16 @@ namespace CmdSharp
                 string rStr = null;
                 if (returnString.ToLower() != "null") rStr = returnString;
                 uint result = GlobalVars.mciSendString(command, rStr, rLen, hw);
-                if (result == 0) return EResult.Cmd.Done;
+                if (result == 0) return null;//.Cmd.Done;
                 else return result.ToString();
             }
             catch (Exception ex)
             {
                 EConsole.WriteLine("ERROR: " + ex.Message);
-                return EResult.Cmd.Fail;
+                return null;//.Cmd.Fail;
             }
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
 
@@ -220,8 +185,8 @@ namespace CmdSharp
 #if !IsCore
             if (GlobalVars.ShowWindow((IntPtr)int.Parse(handle), int.Parse(command)))
 #endif
-                return EResult.Cmd.Done;
-            return EResult.Cmd.Fail;
+                return null;//.Cmd.Done;
+            return null;//.Cmd.Fail;
         }
 
         public string web_get(object Url, object Data)
@@ -270,14 +235,14 @@ namespace CmdSharp
 
         public object IsConsoleCreated()
         {
-            if (EConsole.IsConsoleOk) return EResult.Cmd.Done;
-            else return EResult.Cmd.Fail;
+            if (EConsole.IsConsoleCreated) return null;//.Cmd.Done;
+            else return null;//.Cmd.Fail;
         }
 
         public object CreateConsole()
         {
             EConsole.CreateConsole();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConsoleSetFont(string fontFamily = "Consolas", string clearScreen = "1")
@@ -291,9 +256,9 @@ namespace CmdSharp
                     Clear();
                     PrintIntro();
                 }
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #else
             return "-1";
 #endif
@@ -302,7 +267,7 @@ namespace CmdSharp
         //public object PrintResult(string result, string prefix = "")
         //{
         //    Program.PrintResult(result, prefix);
-        //    return EResult.Cmd.Done;
+        //    return null;//.Cmd.Done;
         //}
 
         public object ConsoleSetFontSize(string size = "10,35", string clearScreen = "1")
@@ -316,9 +281,9 @@ namespace CmdSharp
                     Clear();
                     PrintIntro();
                 }
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #else
             return "-1";
 #endif
@@ -326,8 +291,8 @@ namespace CmdSharp
 
         public object CommandInterpreter()
         {
-            Program.CommandLine();
-            return EResult.Cmd.Done;
+            CoreMain.CommandLine();
+            return null;//.Cmd.Done;
         }
 
         public object TCP_SetTriggers(string triggerMsg, string triggerDisconnected, string triggerConnected)
@@ -335,13 +300,13 @@ namespace CmdSharp
             Variables.Set("TCP_triggerMsg", triggerMsg);
             Variables.Set("TCP_triggerDisconnected", triggerDisconnected);
             Variables.Set("TCP_triggerConnected", triggerConnected);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object TCP_Disconnect()
         {
             TCPConnection.Disconnect();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
         public object TCP_Connect(object ip, object port)
         {
@@ -351,7 +316,7 @@ namespace CmdSharp
         public object TCP_Send(object text)
         {
             TCPConnection.Send(text.ToString());
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object Write(string text = "null", string color = "null")
@@ -361,7 +326,7 @@ namespace CmdSharp
             if (color != "null") SetColor(color);
             EConsole.Write(text);
             if (color != "null") SetColor(oldColor);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object echo(object text = null, string color = "null")
@@ -372,37 +337,37 @@ namespace CmdSharp
         public object Beep()
         {
             Console.Beep();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConsoleSetBuffer(int width, int height)
         {
             Console.SetBufferSize(width, height);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConsoleSetWindowSize(int width, int height)
         {
             Console.SetWindowSize(width, height);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConsoleSetWindowPosition(int x, int y)
         {
             Console.SetWindowPosition(x, y);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConsoleSetCursorPosition(int x, int y)
         {
             Console.SetCursorPosition(x, y);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object StringStartsWith(string text, string value)
         {
-            if (text.StartsWith(value)) return EResult.Cmd.Done;
-            else return EResult.Cmd.Fail;
+            if (text.StartsWith(value)) return null;//.Cmd.Done;
+            else return null;//.Cmd.Fail;
         }
 
         public object StringLength(string text)
@@ -450,7 +415,7 @@ namespace CmdSharp
             }
             catch (Exception ex)
             {
-                Program.Debug(ex.ToString(), ConsoleColor.DarkRed);
+                CmdSharp.Debug.DebugText(ex.ToString(), ConsoleColor.DarkRed);
                 throw ex;
             }
         }
@@ -468,7 +433,7 @@ namespace CmdSharp
 
         public object IsFileLocked(string path)
         {
-            return Program.IsFileLocked(new FileInfo(path));
+            return CoreMain.IsFileLocked(new FileInfo(path));
         }
 
         public string StringSplit(string text, string splitSymbol, string variable = "null")
@@ -482,35 +447,6 @@ namespace CmdSharp
             return variable;
         }
 
-        public void deb()
-        {
-            Debug();
-            string code =
-@"
-    {
-        echo it's block
-        echo and the end
-    }
-    {
-        echo 2nd block
-    }
-";
-
-            MethodAdd("debx (IgnoreCleanup)", code);
-            Cmd.Process("debx");
-        }
-
-        //        public void deb()
-        //        {
-        //            string code = 
-        //@"$a=#b||c
-        //echo {StringSetLength $a||2}";
-        //            MethodRemove("debx");
-        //            MethodAdd("debx", code);
-        //            Debug();
-        //            EConsole.WriteLine("Code:\r\n" + MethodGetCode("debx"));
-        //            Cmd.Process("debx");
-        //        }
 
         public string StringRemoveToChar(string text, string toChar, string startIndex = "0")
         {
@@ -566,8 +502,8 @@ namespace CmdSharp
 
         public object CheckUpdates()
         {
-            Program.CheckUpdates();
-            return EResult.Cmd.Done;
+            CoreMain.CheckUpdates();
+            return null;//.Cmd.Done;
         }
 
         public object SetStatusProgress(string value = "-2")
@@ -582,11 +518,11 @@ namespace CmdSharp
                 {
                     statusWnd.SetProgress(int.Parse(value));
                 }));
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
 
@@ -611,7 +547,7 @@ namespace CmdSharp
                 list.Content.Add(p.Id.ToString());
             }
             Variables.SetVariableObject(variable, list);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ProcessGetPid(string name)
@@ -635,7 +571,7 @@ namespace CmdSharp
             {
                 Process.GetProcessesByName(nameOrPid).FirstOrDefault().Kill();
             }
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object SetStatus(string caption, string status = "null", string value = "-2", string createNew = "0")
@@ -678,7 +614,7 @@ namespace CmdSharp
 #else
             EConsole.WriteLine(status);
 #endif
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object HideStatus() // Todo
@@ -689,29 +625,29 @@ namespace CmdSharp
                 if (statusWnd.InvokeRequired) statusWnd.Invoke(new Action(() => { statusWnd.Dispose(); }));
                 else statusWnd.Dispose();
                 statusWnd = null;
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
 #endif
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
         }
 
         public object DirExists(string dirName)
         {
-            if (Directory.Exists(dirName)) return EResult.Cmd.Done;
-            return EResult.Cmd.Fail;
+            if (Directory.Exists(dirName)) return null;//.Cmd.Done;
+            return null;//.Cmd.Fail;
         }
 
         public object FileExists(string fileName)
         {
-            if (File.Exists(fileName)) return EResult.Cmd.Done;
-            return EResult.Cmd.Fail;
+            if (File.Exists(fileName)) return null;//.Cmd.Done;
+            return null;//.Cmd.Fail;
         }
 
         public object DeleteDir(string dirName)
         {
             if (!Directory.Exists(dirName)) return "-2";
             Directory.Delete(dirName);
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
         }
 
         public object MakeDir(string dirName)
@@ -720,12 +656,12 @@ namespace CmdSharp
             try
             {
                 Directory.CreateDirectory(dirName);
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
             catch
             {
             }
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
         }
 
         //        public object InstallESCRIPT()
@@ -742,16 +678,16 @@ namespace CmdSharp
         //            }
         //            p.Start();
         //            Environment.Exit(0);
-        //            return EResult.Cmd.Done;
+        //            return null;//.Cmd.Done;
         //#else
-        //            return EResult.Cmd.Fail;
+        //            return null;//.Cmd.Fail;
         //#endif
         //        }
 
         public object BeepEx(object frequency, object duration)
         {
             Console.Beep(int.Parse(frequency.ToString()), int.Parse(duration.ToString()));
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object WriteLine(object line = null, string color = "null")
@@ -775,7 +711,7 @@ namespace CmdSharp
         public object Exit(string code = "0")
         {
             Environment.Exit(int.Parse(code));
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ReturnUsername()
@@ -807,10 +743,10 @@ namespace CmdSharp
             }
             Variables.Remove(enumIdxVar);
             Variables.Remove(enumValueVar);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
-        public object DebugText(string text, string foregroundColor = "white")
+        public void DebugText(string text, string foregroundColor = "white")
         {
             ConsoleColor cc = ConsoleColor.White;
             try
@@ -828,20 +764,19 @@ namespace CmdSharp
                     }
                 }
             }
-            Program.Debug("[SCRIPT] " + text, cc);
-            return EResult.Cmd.Done;
+            CmdSharp.Debug.DebugText("[SCRIPT] " + text, cc);
         }
 
-        public object For(string start, string stop, string command, string infoVariable = "for")
-        {
-            for (int a = int.Parse(start); a < int.Parse(stop.ToString()); a++)
-            {
-                if (GlobalVars.StopProgram) break;
-                Variables.Set(infoVariable.ToString(), a.ToString());
-                Cmd.Process(command.ToString()/* FIX ME, Labels*/);
-            }
-            return EResult.Cmd.Done;
-        }
+        //public object For(string start, string stop, string command, string infoVariable = "for")
+        //{
+        //    for (int a = int.Parse(start); a < int.Parse(stop.ToString()); a++)
+        //    {
+        //        if (GlobalVars.StopProgram) break;
+        //        Variables.Set(infoVariable.ToString(), a.ToString());
+        //        Cmd.Process(command.ToString()/* FIX ME, Labels*/);
+        //    }
+        //    return null;//.Cmd.Done;
+        //}
 
         public object Exception(object text)
         {
@@ -853,7 +788,7 @@ namespace CmdSharp
             return Environment.StackTrace;
         }
 
-        public object ReturnCurrentDirectory()
+        public string ReturnCurrentDirectory()
         {
             return Environment.CurrentDirectory;
         }
@@ -870,14 +805,14 @@ namespace CmdSharp
 
         public object CopyEx(string Source, string Destination, string Pattern = "*", string Overwrite = "0", string IncludeSubFolders = "1")
         {
-            
+
             if (File.Exists(Source))
             {
                 FileInfo s = new FileInfo(Source);
                 // file
-                Program.Debug($"{s.FullName} -> {Destination}");
+                CmdSharp.Debug.DebugText($"{s.FullName} -> {Destination}");
                 //s.CopyTo(Destination, StringToBool(Overwrite));
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
             else
             {
@@ -888,7 +823,7 @@ namespace CmdSharp
                     var files = d.EnumerateFiles(Pattern);
                     foreach (var file in files)
                     {
-                        Program.Debug($"{file.FullName} -> {Destination}");
+                        CmdSharp.Debug.DebugText($"{file.FullName} -> {Destination}");
                         //file.CopyTo(Destination, StringToBool(Overwrite));
                     }
 
@@ -898,13 +833,13 @@ namespace CmdSharp
                         foreach (var subfile in subfiles)
                         {
                             var dest = Path.Combine(Destination, subfile.FullName.Replace(d.FullName, ""));
-                            Program.Debug($"{subfile.FullName} -> {dest}");
+                            CmdSharp.Debug.DebugText($"{subfile.FullName} -> {dest}");
                         }
                     }
 
-                    return EResult.Cmd.Done;
+                    return null;//.Cmd.Done;
                 }
-                else return EResult.Cmd.GetError("Source not found");
+                else return null;//.Cmd.GetError("Source not found");
             }
         }
 
@@ -919,10 +854,10 @@ namespace CmdSharp
                     list.Add(file);
 
                 var dirs2 = dir.EnumerateDirectories(pattern);
-                foreach(var d2 in dirs2)
+                foreach (var d2 in dirs2)
                 {
                     var t = EEnumerateSubFolders(d2.FullName, pattern);
-                    foreach(var item in t)
+                    foreach (var item in t)
                         list.Add(item);
                 }
             }
@@ -936,53 +871,34 @@ namespace CmdSharp
             try
             {
                 File.Copy(fileName, destination, ov);
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
 
-        public object f(string contains = "null") { return GetMethods(contains); }
+        public void f(string contains = null) { GetMethods(contains); }
 
-        public object GetMethods(string contains = "null")
+        public void GetMethods(string contains = null)
         {
-            List<MethodInfo> m = this.GetType().GetMethods().ToList();
-
-            for (int i = 0; i < GlobalVars.LoadedLibs.Count; i++)
-            {
-                ImportedLibInfo imp = GlobalVars.LoadedLibs[i];
-                if (imp.classInstance != null)
-                {
-                    m.AddRange(imp.funcType.GetMethods());
-                }
-            }
+            EMethodNew[] m = EnvironmentManager.AllMethods;
 
 
-
-            if (contains != "null")
+            if (contains != null)
             {
                 EConsole.ForegroundColor = ConsoleColor.Magenta;
                 EConsole.WriteLine("Searching for: " + contains);
             }
+
             foreach (var method in m)
             {
-                if (contains == "null") UseTextTest(method.Name, false);
+                if (contains == null)
+                    UseTextTest(method.Name, false);
                 else
                 {
-                    if (method.Name.ToLower().Contains(contains.ToLower())) UseTextTest(method.Name, false);
-
+                    if (method.Name.ToLower().Contains(contains.ToLower()))
+                        UseTextTest(method.Name, false);
                 }
             }
-            for (int i = 0; i < GlobalVars.Methods.Count; i++)
-            {
-                if (contains == "null") UseTextTest(GlobalVars.Methods[i].Name, false, true);
-                else
-                {
-                    if (GlobalVars.Methods[i].Name.ToLower().Contains(contains.ToLower())) UseTextTest(GlobalVars.Methods[i].Name, false, true);
-
-                }
-            }
-
-            return EResult.Cmd.Done;
         }
 
         public Dictionary<MethodInfo, object> WhereIsMethod(string name)
@@ -1017,42 +933,42 @@ namespace CmdSharp
         {
             EDictionary list = new EDictionary();
             Variables.SetVariableObject(variable, list);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object DictEdit(string variable, string key, object value)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content[key] = value;
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object DictAdd(string variable, object key, object value)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Add(key, value);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object DictRemove(string variable, object key)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Remove(key);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object DictReverse(string variable)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Reverse();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object DictClear(string variable)
         {
             EDictionary list = Variables.GetValueObject(variable) as EDictionary;
             list.Content.Clear();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
 
@@ -1091,14 +1007,14 @@ namespace CmdSharp
         {
             EList list = new EList();
             Variables.SetVariableObject(variable, list);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ListEdit(string variable, string index, object value)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content[int.Parse(index)] = value;
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ListAdd(string variable, object value)
@@ -1112,21 +1028,21 @@ namespace CmdSharp
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Remove(item);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ListReverse(string variable)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Reverse();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ListClear(string variable)
         {
             EList list = Variables.GetValueObject(variable) as EList;
             list.Content.Clear();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
 
@@ -1254,7 +1170,7 @@ namespace CmdSharp
             try
             {
                 File.Move(moveFrom, moveTo);
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
@@ -1264,14 +1180,14 @@ namespace CmdSharp
             try
             {
                 File.Delete(fileName);
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
             }
             catch (Exception ex) { throw ex; }
         }
 
         public object ConsoleTextBox(string title, string text)
         {
-            return escript.ConsoleTextBox.Show(title, text);
+            return CmdSharp.ConsoleTextBox.Show(title, text);
         }
 
         public object TextBox(string title, string text = "null", string multiline = "0")
@@ -1286,7 +1202,7 @@ namespace CmdSharp
             if (multiline == "0") w.NoLines();
             if (w.ShowDialog() == DialogResult.OK)
             {
-                return Cmd.ProcessString(w.GetInput().Replace("||", "^split^").Replace("{", "^(^").Replace("}", "^)^"));
+                return w.GetInput().Replace("||", "^split^").Replace("{", "^(^").Replace("}", "^)^");
             }
             else return false;
 #else
@@ -1317,7 +1233,7 @@ namespace CmdSharp
         {
             return ChoiceWindowEx(title, text, StringSplit(buttons, ";"), defButton, "1");
         }
-    
+
         public object ChoiceWindowEx(string title, string text, string vListButtons, string defButton = "null", string removeVariable = "1")
         {
 
@@ -1355,114 +1271,72 @@ namespace CmdSharp
 #endif
             if (title != "null") version = title + " | " + version;
             EConsole.Title = version;
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public void TestHighlight(IntPtr Address, string Name = "Nikita Ivanov", bool Force = false, int Age = int.MaxValue)
         {
-            EConsole.WriteLine("Invoking f(\"TestHighlight\");"); 
+            EConsole.WriteLine("Invoking f(\"TestHighlight\");");
             f("TestHighlight");
         }
 
-        public void UseTextTest(string method, bool printUse = true, bool customPrint = false)
+        public void UseTextTest(string method, bool printUse = true)
         {
-            if (!customPrint)
+            EMethodNew[] m = EnvironmentManager.AllMethods;
+            EMethodNew mth = null;
+            
+            foreach (var me in m)
             {
-                System.Reflection.MethodInfo mth = null;
-                List<MethodInfo> m = GetType().GetMethods().ToList();
-                
-                for (int i = 0; i < GlobalVars.LoadedLibs.Count; i++)
+                if (me.Name == method)
                 {
-                    ImportedLibInfo imp = GlobalVars.LoadedLibs[i];
-                    if (imp.classInstance != null)
-                    {
-                        m.AddRange(imp.funcType.GetMethods());
-                    }
+                    mth = me;
+                    break;
                 }
+            }
 
-                foreach (var me in m)
+            if (mth == null)
+                throw new Exception("Method not found");
+
+            var Args = mth.Pamareters;
+
+            if (printUse)
+            {
+                EConsole.Write("USE: ", ConsoleColor.Yellow);
+            }
+
+            EConsole.Write(method + "(", ConsoleColor.White);
+            for (int i = 0; i < Args.Length; i++)
+            {
+                EConsole.Write($"{Args[i].ParameterType.Name} ", ConsoleColor.Blue);
+                EConsole.Write($"{Args[i].Name}", ConsoleColor.Gray);
+                if (Args[i].DefaultValue != null && Args[i].DefaultValue.GetType() != typeof(DBNull))
                 {
-                    if (me.Name == method) mth = me;
-                }
+                    EConsole.Write(" = ", ConsoleColor.DarkGray);
 
-                if (mth == null) throw new Exception("Method not found");
-
-                var Args = mth.GetParameters();
-                
-                if (printUse)
-                {
-                    EConsole.Write("USE: ", ConsoleColor.Yellow);
-                }
-                
-                EConsole.Write(method + "(", ConsoleColor.White);
-                for (int i = 0; i < Args.Length; i++)
-                {
-                    EConsole.Write($"{Args[i].ParameterType.Name} ", ConsoleColor.Blue);
-                    EConsole.Write($"{Args[i].Name}", ConsoleColor.Gray);
-                    if (Args[i].DefaultValue != null && Args[i].DefaultValue.GetType() != typeof(DBNull))
-                    {
-                        EConsole.Write(" = ", ConsoleColor.DarkGray);
-
-                        if(Args[i].DefaultValue.GetType() == typeof(string) || Args[i].DefaultValue.GetType() == typeof(char))
-                            EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Yellow);
-                        else if (Args[i].DefaultValue.GetType() == typeof(bool))
-                            EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Blue);
-                        else
-                            EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Green);
-                    }
+                    if (Args[i].DefaultValue.GetType() == typeof(string) || Args[i].DefaultValue.GetType() == typeof(char))
+                        EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Yellow);
+                    else if (Args[i].DefaultValue.GetType() == typeof(bool))
+                        EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Blue);
                     else
-                    {
-                    }
-
-                    if (i != Args.Length - 1) EConsole.Write(", ", ConsoleColor.DarkGray);
+                        EConsole.Write(Parser.CommandNormalizer.ConvertObjectToStringCode(Args[i].DefaultValue), ConsoleColor.Green);
                 }
-                EConsole.WriteLine(")", ConsoleColor.White);
-                return;
-            }
-            else
-            {
-                for (int x = 0; x < GlobalVars.Methods.Count; x++) if (GlobalVars.Methods[x].Name == method)
-                    {
-                        if (GlobalVars.Methods[x].Options.Contains("Hidden"))
-                            return;
+                else
+                {
+                }
 
-                        ConsoleColor ca = EConsole.ForegroundColor;
-                        EConsole.ForegroundColor = ConsoleColor.Yellow;
-                        if (printUse)
-                        {
-                            EConsole.Write("USE: ");
-                        }
-                        EConsole.ForegroundColor = ConsoleColor.DarkGray;
-                        EConsole.Write("(escript) ");
-                        EConsole.ForegroundColor = ConsoleColor.White;
-                        EConsole.Write(method + " ");
-                        if (GlobalVars.Methods[x].Arguments.Count >= 1)
-                            for (int i = 0; i < GlobalVars.Methods[x].Arguments.Count; i++)
-                            {
-                                EConsole.ForegroundColor = ConsoleColor.Gray;
-                                string arg = "[" + GlobalVars.Methods[x].Arguments[i].Name;
-                                if(GlobalVars.Methods[x].Arguments[i].DefaultValue != "null")
-                                {
-                                    arg += " = " + GlobalVars.Methods[x].Arguments[i].DefaultValue;
-                                }
-                                EConsole.Write(arg + "]");
-                                EConsole.ForegroundColor = ConsoleColor.DarkGray;
-                                if (i != (GlobalVars.Methods[x].Arguments.Count - 1)) EConsole.Write(Variables.GetValue("splitArgs"));
-                            }
-                        EConsole.WriteLine("");
-                        EConsole.ForegroundColor = ca;
-                        return;
-                    }
+                if (i != Args.Length - 1) EConsole.Write(", ", ConsoleColor.DarkGray);
             }
+            EConsole.WriteLine(")", ConsoleColor.White);
             return;
         }
+    
 
         public object GetMethod(string methodName)
         {
             //if(methodName.Length == 0)
             //{
             //    EConsole.WriteLine(UseTextTest("GetMethod"));
-            //    return EResult.Cmd.Fail;
+            //    return null;//.Cmd.Fail;
             //}
             System.Reflection.MethodInfo mth = null;
 
@@ -1484,14 +1358,14 @@ namespace CmdSharp
             }
 
 
-            if (mth == null) return EResult.Cmd.Fail;
+            if (mth == null) return null;//.Cmd.Fail;
             var Args = mth.GetParameters();
             EConsole.WriteLine("Method: " + mth.Name);
             for (int i = 0; i < Args.Length; i++)
             {
                 EConsole.WriteLine("[Argument " + i + "] " + Args[i].Name + " = " + Args[i].DefaultValue);
             }
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ls(string directory = "null") { return dir(directory); }
@@ -1536,10 +1410,10 @@ namespace CmdSharp
             catch (Exception ex)
             {
                 EConsole.WriteLine("ERROR: " + ex.Message);
-                return EResult.Cmd.Fail;
+                return null;//.Cmd.Fail;
             }
             EConsole.ForegroundColor = co;
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object FileRename(string renameFrom, string renameTo)
@@ -1592,14 +1466,14 @@ namespace CmdSharp
         //        public object Splash()
         //        {
         //#if !IsCore
-        //            Program.verText = Variables.GetValue("workingScriptText");
-        //            //Thread mThread = new Thread(Program.FormThread);
+        //            CoreMain.verText = Variables.GetValue("workingScriptText");
+        //            //Thread mThread = new Thread(CoreMain.FormThread);
         //            mThread.SetApartmentState(ApartmentState.STA);
         //            mThread.Start();
         //            Thread.Sleep(2000);
-        //            return EResult.Cmd.Done;
+        //            return null;//.Cmd.Done;
         //#else
-        //            return EResult.Cmd.Fail;
+        //            return null;//.Cmd.Fail;
         //#endif
         //        }
 
@@ -1627,8 +1501,8 @@ namespace CmdSharp
                 }
             }
             EConsole.ForegroundColor = cc;
-            Program.ScriptColor = cc;
-            return EResult.Cmd.Done;
+            CoreMain.ScriptColor = cc;
+            return null;//.Cmd.Done;
         }
 
 
@@ -1653,12 +1527,12 @@ namespace CmdSharp
                 }
             }
             EConsole.WriteLine("Total: " + count);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object ConvertScript(string fileName, string outName = "null", string iconPath = "null", string anykey = "0")
         {
-            if (iconPath != "null" && outName == "null") return EResult.Cmd.Fail;
+            if (iconPath != "null" && outName == "null") return null;//.Cmd.Fail;
 
             Process source = Process.GetCurrentProcess();
             Process target = new Process();
@@ -1682,7 +1556,7 @@ namespace CmdSharp
         public object Stop()
         {
             GlobalVars.StopProgram = true;
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object color(string foregroundColor = "15") { return SetColor(foregroundColor); }
@@ -1698,14 +1572,14 @@ namespace CmdSharp
             EConsole.WriteLine("Get/set current directory: cd [directory]");
             EConsole.WriteLine("Update program: UpdateProgram");
             EConsole.WriteLine("Create script using template: CreateScript [fileName]");
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object update(string r = "latest")
         {
             return UpdateProgram(r);
         }
-        
+
         public object cat(string filename) { return ReadFile(filename); }
 
         public object ReadFile(string filename)
@@ -1728,7 +1602,7 @@ namespace CmdSharp
         //{
         //    Process.Start(path, "-install");
         //    Environment.Exit(0);
-        //    return EResult.Cmd.Done;
+        //    return null;//.Cmd.Done;
         //}
 
         public object UpdateProgram(string r = "latest")
@@ -1736,13 +1610,13 @@ namespace CmdSharp
             string tempPath = System.IO.Path.GetTempPath();
             string uScriptPath = Path.Combine(tempPath, "UpdateScript.es");
 
-            Program.WriteResourceToFile("escript.Stuff.UpdateScript.es", uScriptPath);
+            CoreMain.WriteResourceToFile("escript.Stuff.UpdateScript.es", uScriptPath);
 
             Process eInstance = new Process();
             eInstance.StartInfo.FileName = GlobalVars.GetAboutMe().FullName;
             eInstance.StartInfo.Arguments = String.Format("\"{0}\" \"{1}\"", uScriptPath, r);
             eInstance.Start();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
         public object WriteFile(string filename, string data, string notClearFile)
         {
@@ -1771,7 +1645,7 @@ namespace CmdSharp
         {
             WebClient w = new WebClient();
             w.DownloadFile(url, filename);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object StartProgram(string fileName, string arguments = "null", string waitForExit = "0", string asAdmin = "0")
@@ -1790,7 +1664,7 @@ namespace CmdSharp
                 return a.ExitCode;
             }
 
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object Return(object obj, bool breakMethod = true)
@@ -1807,24 +1681,7 @@ namespace CmdSharp
         {
             return Path.Combine(path, path2);
         }
-
-        public object DwmExtendFrameIntoClientArea(string windowHandle, int left = -1, int right = -1, int top = -1, int bottom = -1)
-        {
-#if !IsCore
-            if (System.Environment.OSVersion.Version.Major >= 6)
-            {
-                if (Aero.DwmIsCompositionEnabled())
-                {
-                    IntPtr h = GlobalVars.GetConsoleWindowHandle();
-                    if (windowHandle.ToLower() != "null") h = (IntPtr)int.Parse(windowHandle);
-                    Aero.Glass(h, left, right, top, bottom);
-                    return EResult.Cmd.Done;
-                }
-            }
-#endif
-            return EResult.Cmd.Fail;
-        }
-
+        
         public object GetAsyncKeyState(string vKey)
         {
 #if IsCore
@@ -1849,7 +1706,7 @@ namespace CmdSharp
                 {
                     if (Enum.GetName(typeof(Keys), i).ToLower() == keyCodeOrName.ToLower()) return Keyboard.GetKeyStateX((Keys)i);
                 }
-                return EResult.Cmd.GetError("KEY_NOT_FOUND");
+                return null;//.Cmd.GetError("KEY_NOT_FOUND");
             }
 #else
             return -1;
@@ -1899,27 +1756,13 @@ namespace CmdSharp
         {
             return StartProgram(fileName, arguments, waitForExit, asAdmin);
         }
-
-        public object GetMethodOptions(string method)
-        {
-            for (int x = 0; x < GlobalVars.Methods.Count; x++) if (GlobalVars.Methods[x].Name == method)
-                {
-                    StringBuilder b = new StringBuilder();
-                    foreach(var o in GlobalVars.Methods[x].Options)
-                    {
-                        b.AppendLine(o);
-                    }
-                    return b.ToString();
-                }
-            return EResult.Cmd.Fail;
-        }
-
+        
         public object GetDocumentation(string topic = "FirstHelp", string version = "null")
         {
             string url = GlobalVars.StuffServer + "documentation/$ProgramVersion/" + topic + ".txt";
             if (version == "null") version = String.Format("{0}.{1}", Cmd.Process("ver major"), Cmd.Process("ver minor"));
             url = url.Replace("$ProgramVersion", version);
-            Program.Debug("Downloading: " + url);
+            CmdSharp.Debug.DebugText("Downloading: " + url);
             WebClient client = new WebClient();
             string text = client.DownloadString(url);
             if (text.StartsWith("REDIRECT:"))
@@ -1927,7 +1770,7 @@ namespace CmdSharp
                 return GetDocumentation(text.Replace("REDIRECT:", ""));
             }
             echo(text);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         //public object import(string fileName, string log = "0")
@@ -1941,9 +1784,9 @@ namespace CmdSharp
         //    {
         //        EConsole.WriteLine(m.Name);
         //    }
-        //    return EResult.Cmd.Fail;
+        //    return null;//.Cmd.Fail;
         //}
-        
+
 
 
         public object cls() { return Clear(); }
@@ -1951,7 +1794,7 @@ namespace CmdSharp
         public object Clear()
         {
             EConsole.Clear();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public void set(string name = "null", object value = null) { SetVar(name, value); }
@@ -1971,11 +1814,11 @@ namespace CmdSharp
         {
             Variables.Remove(name);
         }
-        
+
         public object VarReinit(string addSystem = "1")
         {
             Variables.Initialize(StringToBool(addSystem));
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object BoolToString(string b)
@@ -1988,12 +1831,12 @@ namespace CmdSharp
         {
             EnvironmentManager.Initialize();
         }
-        
+
         public void EnvMethods()
         {
-            foreach(var a in EnvironmentManager.AllMethods)
+            foreach (var a in EnvironmentManager.AllMethods)
             {
-                    EConsole.WriteLine($"({a.GetType().Name}): {a.ToString()}");
+                EConsole.WriteLine($"({a.GetType().Name}): {a.ToString()}");
             }
         }
 
@@ -2017,18 +1860,13 @@ namespace CmdSharp
         {
             var l = Variables.GetVariable(variable).Options;
             StringBuilder b = new StringBuilder();
-            foreach(var a in l)
+            foreach (var a in l)
             {
                 b.AppendLine(a);
             }
             return b.ToString();
         }
-
-        public object MethodCleanup(string MethodName)
-        {
-            return Cmd.MethodCleanup(MethodName);
-        }
-
+        
         public object VarList(bool showSystem = false, bool returnIt = false, bool ignoreOptions = false)
         {
             StringBuilder r = new StringBuilder();
@@ -2078,7 +1916,7 @@ namespace CmdSharp
             if (returnIt)
                 return r.ToString();
             else
-                return EResult.Cmd.Done;
+                return null;//.Cmd.Done;
         }
 
         public void Type(object t)
@@ -2127,7 +1965,7 @@ namespace CmdSharp
         //{
         //    Exception e = new Exception(message);
         //    Variables.SetVariableObject(variable, e);
-        //    return EResult.Cmd.Done;
+        //    return null;//.Cmd.Done;
         //}
 
         //public static string Throw(string exceptionVariable)
@@ -2136,22 +1974,7 @@ namespace CmdSharp
         //    throw e;
         //}
 
-
-        public object ForceSystemConsole()
-        {
-            Variables.Set("useCustomConsole", "0");
-            EConsole.Kill();
-            EConsole.CreateConsole();
-            return EResult.Cmd.Done;
-        }
-
-        public object ForceGUIConsole()
-        {
-            Variables.Set("useCustomConsole", "1");
-            EConsole.Kill();
-            EConsole.CreateConsole();
-            return EResult.Cmd.Done;
-        }
+            
 
         public void DebugEx(string what = null, bool newState = true)
         {
@@ -2189,7 +2012,7 @@ namespace CmdSharp
 
             if (showConsole)
                 ShowConsole();
-            
+
             EConsole.WriteLine(" -> DEBUG MODE", ConsoleColor.Magenta);
 
             Variables.Set("programDebug", true);
@@ -2243,8 +2066,8 @@ namespace CmdSharp
         {
             FileAssociation.FILE_EXTENSION = extension;
 
-            if (FileAssociation.IsAssociated) return EResult.Cmd.Done;
-            else return EResult.Cmd.Fail;
+            if (FileAssociation.IsAssociated) return null;//.Cmd.Done;
+            else return null;//.Cmd.Fail;
         }
 
         public object assoc(string appPath, string extension, string productName, string description, string icon = "")
@@ -2252,22 +2075,22 @@ namespace CmdSharp
             FileAssociation.FILE_EXTENSION = extension;
             FileAssociation.ProductName = productName;
             FileAssociation.Associate(appPath, description, icon);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
-        public object RunCode(string code)
-        {
-            ESCode script = new ESCode(ESCode.SplitCode(code, new string[] { "~n~" }));
-            script.RunScript();
-            return EResult.Cmd.Done;
-        }
+        //public object RunCode(string code)
+        //{
+        //    ESCode script = new ESCode(ESCode.SplitCode(code, new string[] { "~n~" }));
+        //    script.RunScript();
+        //    return null;//.Cmd.Done;
+        //}
 
-        public object RunScript(string fileName)
-        {
-            ESCode script = new ESCode(fileName);
-            script.RunScript();
-            return EResult.Cmd.Done;
-        }
+        //public object RunScript(string fileName)
+        //{
+        //    ESCode script = new ESCode(fileName);
+        //    script.RunScript();
+        //    return null;//.Cmd.Done;
+        //}
 
         public object Restart(string runAs = "0", string addArgs = "null")
         {
@@ -2293,38 +2116,38 @@ namespace CmdSharp
             if (Variables.GetValue("forceConsole") == "1") target.StartInfo.Arguments += "-console ";
             if (runAs == "1")
             {
-                if (GlobalVars.IgnoreRunAsAdmin) return EResult.Cmd.Done;
-                if(Environment.OSVersion.Version.Major > 5) target.StartInfo.Verb = "runas";
+                if (GlobalVars.IgnoreRunAsAdmin) return null;//.Cmd.Done;
+                if (Environment.OSVersion.Version.Major > 5) target.StartInfo.Verb = "runas";
                 target.StartInfo.Arguments += "-ignoreRunasRestart";
             }
             //EConsole.WriteLine("Final args: " + target.StartInfo.Arguments);
-            //return EResult.Cmd.Done;
+            //return null;//.Cmd.Done;
             try
             {
                 if (!target.Start())
-                    return EResult.Cmd.Fail;
+                    return null;//.Cmd.Fail;
             }
             catch (System.ComponentModel.Win32Exception e)
             {
                 //Cancelled
                 if (e.NativeErrorCode == 1223)
-                    return EResult.Cmd.Fail;
+                    return null;//.Cmd.Fail;
             }
             Environment.Exit(0);
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object CreateScript(string fileName, string overwrite = "0")
         {
             FileInfo f = new FileInfo(fileName);
-            if (File.Exists(f.FullName) && overwrite != "1") return EResult.Cmd.Fail;
+            if (File.Exists(f.FullName) && overwrite != "1") return null;//.Cmd.Fail;
 
             string fName = f.FullName;
             if (!f.Name.Contains(".es")) fName = fName + ".es";
 
-            Program.WriteResourceToFile("escript.TemplateScript.es", fName);
+            CoreMain.WriteResourceToFile("escript.TemplateScript.es", fName);
 
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object UpdateScript(string fileName, string oldVersion)
@@ -2336,7 +2159,7 @@ namespace CmdSharp
         public void PrintCompatibleTypes()
         {
             EConsole.WriteLine("These types are compatible with ESCRIPT: ", ConsoleColor.Yellow);
-            foreach(var c in Parser.CompatibleTypesClass.CompatibleTypesNames)
+            foreach (var c in Parser.CompatibleTypesClass.CompatibleTypesNames)
             {
                 EConsole.WriteLine(c, ConsoleColor.White);
             }
@@ -2384,15 +2207,15 @@ namespace CmdSharp
         }
 
 
-        public object ShowMessageBox(string caption, string text = "null", string icon = "none", string type = "ok")
+        public object ShowMessageBox(string caption, string text = null, string icon = "none", string type = "ok")
         {
 #if !IsCore
-            if (text == "null")
+            if (text == null)
             {
                 text = caption;
                 caption = "Message";
             }
-            if (Variables.GetValue("forceConsole") == "1") return ConsoleBox(caption, text, icon, type);
+            //if (Variables.GetValue("forceConsole") == "1") return ConsoleBox(caption, text, icon, type);
             foreach (var icn in MsgBoxIcons)
             {
                 if (icn.Key.ToLower() == icon)
@@ -2409,63 +2232,23 @@ namespace CmdSharp
                     break;
                 }
             }
-            var r = MessageBox.Show(new Form() { }, text, caption, GetMsgBoxBtns(int.Parse(type)), GetMsgBoxIcon(int.Parse(icon)));
+            var r = MessageBox.Show(text, caption, (MessageBoxButtons)int.Parse(type), (MessageBoxIcon)int.Parse(icon));
             return r.ToString();
 #else
             return ConsoleBox(caption, text, icon, type);
 #endif
         }
 #if !IsCore
-        private MessageBoxButtons GetMsgBoxBtns(int type)
-        {
-
-            switch (type)
-            {
-                case 1: return MessageBoxButtons.OKCancel;
-                case 2: return MessageBoxButtons.YesNo;
-                case 3: return MessageBoxButtons.YesNoCancel;
-                case 4: return MessageBoxButtons.RetryCancel;
-                case 5: return MessageBoxButtons.AbortRetryIgnore;
-            }
-            return MessageBoxButtons.OK;
-        }
-        private MessageBoxIcon GetMsgBoxIcon(int type)
-        {
-            switch (type)
-            {
-                case 1:
-                    {
-                        return MessageBoxIcon.Information;
-                    }
-                case 2:
-                    {
-                        return MessageBoxIcon.Warning;
-                    }
-                case 3:
-                    {
-                        return MessageBoxIcon.Error;
-                    }
-                case 4:
-                    {
-                        return MessageBoxIcon.Exclamation;
-                    }
-                case 5:
-                    {
-                        return MessageBoxIcon.Question;
-                    }
-            }
-            return MessageBoxIcon.None;
-        }
 #endif
         public object HideConsole()
         {
-            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
-            if (Variables.GetValue("forceConsole") == "1") return EResult.Cmd.Fail;
+            if (!EConsole.IsConsoleCreated) return null;//.Cmd.Fail;
+            if (Variables.GetValue("forceConsole") == "1") return null;//.Cmd.Fail;
 #if !IsCore
-            var handle = GlobalVars.GetConsoleWindowHandle();
+            var handle = EConsole.Handle;
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_HIDE).ToString();
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
 
@@ -2473,32 +2256,32 @@ namespace CmdSharp
         {
             EConsole.CreateConsole();
 #if !IsCore
-            var handle = GlobalVars.GetConsoleWindowHandle();
+            var handle = EConsole.Handle;
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_SHOW).ToString();
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
-        
+
 
         public object GetConsoleWindowHandle()
         {
-            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
+            if (!EConsole.IsConsoleCreated) return null;//.Cmd.Fail;
 #if !IsCore
-            return GlobalVars.GetConsoleWindowHandle();
+            return EConsole.Handle;
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
 
         public object MinimizeConsole()
         {
-            if (!EConsole.IsConsoleOk) return EResult.Cmd.Fail;
+            if (!EConsole.IsConsoleCreated) return null;//.Cmd.Fail;
 #if !IsCore
-            var handle = GlobalVars.GetConsoleWindowHandle(); 
+            var handle = EConsole.Handle;
             return GlobalVars.ShowWindow(handle, GlobalVars.SW_SHOWMINIMIZED).ToString();
 #else
-            return EResult.Cmd.Fail;
+            return null;//.Cmd.Fail;
 #endif
         }
 
@@ -2511,7 +2294,7 @@ namespace CmdSharp
         public object ThreadSleep(string time)
         {
             Thread.Sleep(int.Parse(time));
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
         public object sleep(string time) { return ThreadSleep(time); }
@@ -2523,20 +2306,20 @@ namespace CmdSharp
             {
                 object result = Cmd.Process(method/* FIX ME, Labels*/);
                 Variables.SetVariableObject(returnVariable, result);
-                if (Variables.GetValue("showResult") == "1") Program.PrintResult(result, "[ASYNC] ");
+                if (Variables.GetValue("showResult") == "1") CoreMain.PrintResult(result, "[ASYNC] ");
                 if (returnMethod != "null") Cmd.Process(returnMethod/* FIX ME, Labels*/);
                 GlobalVars.UserThreads.Remove(Thread.CurrentThread);
             });
             GlobalVars.UserThreads.Add(newThread);
             newThread.Start();
 
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
-        
+
         public object ThreadList()
         {
             StringBuilder x = new StringBuilder();
-            for(int i = 0; i < GlobalVars.UserThreads.Count; i++)
+            for (int i = 0; i < GlobalVars.UserThreads.Count; i++)
             {
                 x.AppendLine(i + "-" + GlobalVars.UserThreads[i].ManagedThreadId);
             }
@@ -2546,7 +2329,7 @@ namespace CmdSharp
         public object ThreadAbort(string id)
         {
             GlobalVars.UserThreads[int.Parse(id)].Abort();
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
 
@@ -2556,27 +2339,32 @@ namespace CmdSharp
             {
                 GlobalVars.UserThreads[i].Abort();
             }
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
 
-        public object MethodGetCode(string name)
-        {
-            for (int i = 0; i < GlobalVars.Methods.Count; i++)
-            {
-                if (GlobalVars.Methods[i].Name == name) { return GlobalVars.Methods[i].GetCode(); }
-            }
-            return EResult.Cmd.Fail;
-        }
+        //public object MethodGetCode(string name)
+        //{
+        //    for (int i = 0; i < GlobalVars.Methods.Count; i++)
+        //    {
+        //        if (GlobalVars.Methods[i].Name == name) { return GlobalVars.Methods[i].GetCode(); }
+        //    }
+        //    return null;//.Cmd.Fail;
+        //} 
 
-        public object MethodRemove(string name)
-        {
-            for(int i =0;i<GlobalVars.Methods.Count;i++)
-            {
-                if (GlobalVars.Methods[i].Name == name) { GlobalVars.Methods.Remove(GlobalVars.Methods[i]); return EResult.Cmd.Done; }
-            }
-            return EResult.Cmd.Fail;
-        }
+        //public object MethodRemove(string name)
+        //{
+        //    for (int i = 0; i < GlobalVars.Methods.Count; i++)
+        //    {
+        //        if (GlobalVars.Methods[i].Name == name)
+        //        {
+        //            GlobalVars.Methods.Remove(GlobalVars.Methods[i]); return null;//.Cmd.Done; }
+        //        }
+        //        return null;//.Cmd.Fail;
+        //    }
+        //    return null;
+        //}
 
+#if ESCODE_IMPLEMENTED
         public object MethodAdd(string name, string code)
         {
             try {
@@ -2586,16 +2374,17 @@ namespace CmdSharp
             try
             {
                 string c = "func " + name + "\r\n{\r\n" + code + "\r\n}";
-                Program.Debug(c);
+                CmdSharp.Debug.DebugText(c);
                 new ESCode(c.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
             }
             catch (Exception ex)
             {
                 EConsole.WriteLine(ex.ToString());
-                return EResult.Cmd.Fail;
+                return null;//.Cmd.Fail;
             }
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }
+#endif
         /*
         public object EnumerateGetPath()
         {
@@ -2604,7 +2393,7 @@ namespace CmdSharp
                 string n = Enum.GetName(typeof(Environment.SpecialFolder), i);
                 EConsole.WriteLine("SpecialFolder.Add(\"" + n + "\", " + i + ");");
             }
-            return EResult.Cmd.Done;
+            return null;//.Cmd.Done;
         }*/
 
         public void PrintIntro()
@@ -2652,7 +2441,7 @@ namespace CmdSharp
         //        Filter = filter
         //    };
         //    if (o.ShowDialog() == DialogResult.OK) return o.FileName;
-        //    return EResult.Cmd.Fail;
+        //    return null;//.Cmd.Fail;
         //}
 
         public Functions()

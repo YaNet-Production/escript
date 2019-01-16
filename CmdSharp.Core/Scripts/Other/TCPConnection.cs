@@ -27,15 +27,18 @@ namespace CmdSharp
                 tcpServer.Connect(IP, PORT);
                 IsConnected = true;
                 new Thread(msg).Start();
-                for (int i = 0; i < GlobalVars.Methods.Count; i++)
-                {
-                    var m = GlobalVars.Methods[i];
-                    if (m.Name == Variables.GetValue("TCP_triggerConnected"))
-                    {
-                        Cmd.Process(m.Name);
-                    }
-                }
-                return 1;
+
+                throw new NotImplementedException();
+
+                //for (int i = 0; i < GlobalVars.Methods.Count; i++)
+                //{
+                //    var m = GlobalVars.Methods[i];
+                //    if (m.Name == Variables.GetValue("TCP_triggerConnected"))
+                //    {
+                //        Cmd.Process(m.Name);
+                //    }
+                //}
+                //return 1;
             }
             catch { return -1; }
         }
@@ -51,14 +54,15 @@ namespace CmdSharp
         public static void Disconnect()
         {
             IsConnected = false;
-            for (int i = 0; i < GlobalVars.Methods.Count; i++)
-            {
-                var m = GlobalVars.Methods[i];
-                if (m.Name == Variables.GetValue("TCP_triggerDisconnected"))
-                {
-                    Cmd.Process(m.Name);
-                }
-            }
+            throw new NotImplementedException();
+            //for (int i = 0; i < GlobalVars.Methods.Count; i++)
+            //{
+            //    var m = GlobalVars.Methods[i];
+            //    if (m.Name == Variables.GetValue("TCP_triggerDisconnected"))
+            //    {
+            //        Cmd.Process(m.Name);
+            //    }
+            //}
             tcpServer.Close();
             try
             {
@@ -81,14 +85,15 @@ namespace CmdSharp
                     string msg = srReceiver.ReadLine();
                     Variables.Set("tcpMsg", msg);
                     if (msg == null) throw new Exception("TCP says null");
-                    for (int i = 0; i < GlobalVars.Methods.Count; i++)
-                    {
-                        var m = GlobalVars.Methods[i];
-                        if (m.Name == Variables.GetValue("TCP_triggerMsg"))
-                        {
-                            Cmd.Process(m.Name);
-                        }
-                    }
+                    throw new NotImplementedException();
+                    //for (int i = 0; i < GlobalVars.Methods.Count; i++)
+                    //{
+                    //    var m = GlobalVars.Methods[i];
+                    //    if (m.Name == Variables.GetValue("TCP_triggerMsg"))
+                    //    {
+                    //        Cmd.Process(m.Name);
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)

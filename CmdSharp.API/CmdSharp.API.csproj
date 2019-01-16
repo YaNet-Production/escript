@@ -52,10 +52,6 @@
       <Project>{1adfcc1c-a213-4ac8-bae2-5f18b7cbe674}</Project>
       <Name>CmdSharp.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Interop\CmdSharp.Interop.csproj">
-      <Project>{c83392d4-4699-4250-be82-ab8d05598a23}</Project>
-      <Name>CmdSharp.Interop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

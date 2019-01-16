@@ -12,17 +12,32 @@ namespace CmdSharp
 {
     public static class EConsole
     {
-        public static bool UsingUI = false;
+        // TODO: Cross-platform things
+        private const UInt32 StdOutputHandle = 0xFFFFFFF5;
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetStdHandle(UInt32 nStdHandle);
+        [DllImport("kernel32.dll")]
+        private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+        [DllImport("kernel32")]
+        static extern bool AllocConsole();
 
-#if !IsCore
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetConsoleWindow();
+        
+        public static IntPtr Handle
+        {
+            get
+            {
+                if (cWnd != null)
+                    return cWnd.Handle;
+                else
+                    return GetConsoleWindow();
+            }
+        }
+        
         public static CustomConsoleWindow cWnd = null;
-#else
-        public static object cWnd = null;
-#endif
         private static bool WaitingForForm = false;
-
         private static string _title = "ESCRIPT";
-
         [StructLayout(LayoutKind.Sequential)]
         internal struct COORD
         {
@@ -35,62 +50,27 @@ namespace CmdSharp
                 Y = y;
             }
         }
-        /*
-                [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-                internal unsafe struct CONSOLE_FONT_INFO_EX
-                {
-                    internal uint cbSize;
-                    internal uint nFont;
-                    internal COORD dwFontSize;
-                    internal int FontFamily;
-                    internal int FontWeight;
-                    internal fixed char FaceName[LF_FACESIZE];
-                }
-
-        */
         private const int STD_OUTPUT_HANDLE = -11;
         private const int TMPF_TRUETYPE = 4;
         private const int LF_FACESIZE = 32;
         private static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-
         public static IntPtr cWndHandle = IntPtr.Zero;
-
         static IntPtr currentStdout = IntPtr.Zero;
-
         private const int MY_CODE_PAGE = 866;
-        public static bool FakeKill = false;
 
-
-        public static bool IsConsoleOk
+        private static bool _IsConsoleCreated = false;
+        public static bool IsConsoleCreated
         {
             get
             {
-                if (currentStdout == IntPtr.Zero) return false;
-                else return true;
+                return _IsConsoleCreated;
             }
         }
 
-        public static void Kill()
+        public static void CreateConsole(bool UseSystem = false)
         {
-            currentStdout = IntPtr.Zero;
-            FakeKill = true;
-#if !IsCore
-            if (cWnd != null)
-            {
-                if(cWnd.InvokeRequired)
-                {
-                    cWnd.Invoke(new Action(delegate { cWnd.Dispose(); }));
-                }
-                else cWnd.Dispose();
-            }
-#endif
-            cWnd = null;
-        }
-
-
-        public static void CreateConsole()
-        {
-            if (IsConsoleOk) return;
+            if (IsConsoleCreated)
+                return;
 
 
 #if IsCore
@@ -101,19 +81,23 @@ namespace CmdSharp
 #else
 
 #endif
-            if ((bool)Variables.GetValueObject("useCustomConsole"))
+            if (!UseSystem)
             {
                 WaitingForForm = true;
+
                 new Thread(delegate ()
                 {
                     if (cWnd == null)
                     {
                         cWnd = new CustomConsoleWindow();
                         cWnd.ShowDialog();
-                        Program.Debug(" --- END UI THREAD --- ", ConsoleColor.DarkYellow);
                     }
                 }).Start();
-                while (cWnd == null) { Thread.Sleep(10); }
+
+                while (cWnd == null)
+                {
+                    Thread.Sleep(10);
+                }
                 currentStdout = (IntPtr)1;
                 WaitingForForm = false;
             }
@@ -121,7 +105,6 @@ namespace CmdSharp
             {
                 AllocConsole();
                 Console.CancelKeyPress += Console_CancelKeyPress;
-
 
                 // stdout's handle seems to always be equal to 7
                 IntPtr defaultStdout = new IntPtr(7);
@@ -158,17 +141,11 @@ namespace CmdSharp
                 }
 
             }
-            try
-            {
-                PrintIntro();
-            }
-            catch (Exception ex)
-            {
-                Program.BachokMessage(ex);
-            }
+
+            PrintIntro();
             Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            Title = String.Format("ESCRIPT {0}.{1}", cVer.Major, cVer.Minor);
+            Title = String.Format("CmdSharp {0}.{1}", cVer.Major, cVer.Minor);
 
         }
 
@@ -261,15 +238,32 @@ namespace CmdSharp
 
         public static ConsoleColor BackgroundColor
         {
-            get { return Console.BackgroundColor; }
-            set { Console.BackgroundColor = value;
-#if !IsCore
-                if (cWnd != null)
+            get
+            {
+                if (IsConsoleCreated)
                 {
-                    if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
-                    cWnd.BackgroundColor = ColorFromConsoleColor(value, true);
+                    if (cWnd == null)
+                        return Console.BackgroundColor;
                 }
-#endif
+
+                return ConsoleColor.Black;
+            }
+            set
+            {
+                if (IsConsoleCreated)
+                {
+                    if(cWnd == null)
+                        Console.BackgroundColor = value;
+                    else
+                    {
+                        if (WaitingForForm)
+                            while (WaitingForForm == true)
+                            {
+                                Thread.Sleep(10);
+                            }
+                        cWnd.BackgroundColor = ColorFromConsoleColor(value, true);
+                    }
+                }
             }
         }
 
@@ -293,7 +287,7 @@ namespace CmdSharp
                 case ConsoleColor.Red: return System.Drawing.Color.FromArgb(255, 45, 45);
                 case ConsoleColor.Yellow: return System.Drawing.Color.FromArgb(255, 255, 17);
                     
-                case ConsoleColor.Black: { return System.Drawing.Color.Black; }
+                case ConsoleColor.Black:return System.Drawing.Color.Black; 
                 case ConsoleColor.White: return System.Drawing.Color.White;
 
                 default: return System.Drawing.Color.FromName(console.ToString());
@@ -307,13 +301,19 @@ namespace CmdSharp
 
         public static void WriteLine(object text, bool log = true, ConsoleColor color = ConsoleColor.Black)
         {
-            if (Program.log != null && log) Program.log.WriteLine("[" + DateTime.Now.ToString() + "] " + text);
-            if (GlobalVars.UsingAPI) API.WriteLine(text);
-            if (IsConsoleOk)
+            if (CoreMain.log != null && log)
+                CoreMain.log.WriteLine("[" + DateTime.Now.ToString() + "] " + text);
+
+            if (GlobalVars.UsingAPI)
+                GlobalVars.API.InvokeWriteLine(text);
+
+            if (IsConsoleCreated)
             {
                 ConsoleColor old = EConsole.ForegroundColor;
-                if (color != ConsoleColor.Black) EConsole.ForegroundColor = color;
-#if !IsCore
+
+                if (color != ConsoleColor.Black)
+                    EConsole.ForegroundColor = color;
+
                 if (cWnd != null)
                 {
                     if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
@@ -323,23 +323,27 @@ namespace CmdSharp
                     }));
                 }
                 else
-#endif
                     Console.WriteLine(text);
+
                 if (color != ConsoleColor.Black) EConsole.ForegroundColor = old;
 
             }
-            //if (api != null) api.trigger(text.ToString());
         }
 
         public static void Write(object text, ConsoleColor color = ConsoleColor.Black)
         {
-            if (Program.log != null) Program.log.Write(text);
-            if (GlobalVars.UsingAPI) API.Write(text);
-            if (IsConsoleOk)
+            if (CoreMain.log != null)
+                CoreMain.log.Write(text);
+
+            if (GlobalVars.UsingAPI)
+                GlobalVars.API.InvokeWrite(text);
+
+            if (IsConsoleCreated)
             {
                 ConsoleColor old = EConsole.ForegroundColor;
+
                 if (color != ConsoleColor.Black) EConsole.ForegroundColor = color;
-#if !IsCore
+
                 if (cWnd != null)
                 {
                     if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
@@ -349,63 +353,56 @@ namespace CmdSharp
                     }));
                 }
                 else
-#endif
                     Console.Write(text);
-                if (color != ConsoleColor.Black) EConsole.ForegroundColor = old;
+
+                if (color != ConsoleColor.Black)
+                    EConsole.ForegroundColor = old;
             }
-            //if (api != null) api.trigger(text.ToString());
         }
 
         public static string Title
         {
-            get { if (IsConsoleOk) return Console.Title; else return _title; }
+            get
+            {
+                return _title;
+            }
             set
             {
                 _title = value;
-                if (IsConsoleOk)
-                {
-#if !IsCore
-                    if (cWnd != null)
-                    {
-                        if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
-                        cWnd.BeginInvoke(new Action(delegate { cWnd.Text = value; }));
-                    }
-                    else
-#endif
-                        try
-                        {
-                            Console.Title = value;
-                        }
-                        catch { }
-                } 
+
+                if (IsConsoleCreated && cWnd == null)
+                    Console.Title = value;
+                else if (IsConsoleCreated && cWnd != null)
+                    cWnd.Text = value;
             }
         }
 
         public static void Clear()
         {
-            if (!IsConsoleOk) CreateConsole();
-#if !IsCore
+            if (!IsConsoleCreated)
+                CreateConsole();
+            
             if (cWnd != null)
             {
                 cWnd.Clear();
-                return;
             }
-#endif
-            Console.Clear();
+            else
+               Console.Clear();
         }
 
         public static string ReadLine()
         {
-            if (!IsConsoleOk) CreateConsole();
-#if !IsCore
+            if (!IsConsoleCreated)
+                CreateConsole();
+
             if(cWnd != null)
             {
                 if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
                 string cr = cWnd.ReadLine();
                 return cr;
             }
-#endif
-            return Console.ReadLine();
+            else
+                return Console.ReadLine();
         }
 
 /*
@@ -438,7 +435,7 @@ namespace CmdSharp
 */
         public static ConsoleKeyInfo ReadKey(bool hideKey = false)
         {
-            if (!IsConsoleOk) CreateConsole();
+            if (!IsConsoleCreated) CreateConsole();
 #if !IsCode
             if(cWnd != null)
             {

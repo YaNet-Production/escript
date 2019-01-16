@@ -37,8 +37,8 @@ namespace CmdSharp
             int height = (maximumLines * 18) + 150;
             int width = (maximumSymbol * 8) + 100;
 
-            Program.Debug("maximumSymbol = " + maximumSymbol + ", width = " + width);
-            Program.Debug("maximumLines = " + maximumLines + ", height = " + height);
+            //Program.Debug("maximumSymbol = " + maximumSymbol + ", width = " + width);
+            //Program.Debug("maximumLines = " + maximumLines + ", height = " + height);
 
             //if (height > Size.Height) Size = new Size(Size.Width, height);
             //if (width > Size.Width) Size = new Size(width, Size.Height);
