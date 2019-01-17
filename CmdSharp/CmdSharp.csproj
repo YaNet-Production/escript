@@ -37,6 +37,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -70,19 +72,27 @@
     <Compile Include="Stuff\FileAssociation.cs" />
     <Compile Include="UI\Console\ConsoleMessageBox.cs" />
     <Compile Include="UI\Console\EConsole.cs" />
-    <Compile Include="UI\Forms\ChoiceWindow.cs" />
+    <Compile Include="UI\Forms\ChoiceWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Forms\ChoiceWindow.Designer.cs">
       <DependentUpon>ChoiceWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Forms\CustomConsoleWindow.cs" />
+    <Compile Include="UI\Forms\CustomConsoleWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Forms\CustomConsoleWindow.Designer.cs">
       <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Forms\StatusWindow.cs" />
+    <Compile Include="UI\Forms\StatusWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Forms\StatusWindow.Designer.cs">
       <DependentUpon>StatusWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Forms\TextBoxWindow.cs" />
+    <Compile Include="UI\Forms\TextBoxWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Forms\TextBoxWindow.Designer.cs">
       <DependentUpon>TextBoxWindow.cs</DependentUpon>
     </Compile>
@@ -126,9 +136,9 @@
     <EmbeddedResource Include="UI\Resources\about.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Resources\02.ico">
+    <None Include="UI\Resources\02.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

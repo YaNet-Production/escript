@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace CmdSharp
+namespace CmdSharp.API
 {
-    public class API
+    public class Main
     {
         public delegate void WriteEventMethod(object text);
         public static event WriteEventMethod WriteEvent;
@@ -26,7 +26,7 @@ namespace CmdSharp
 
             MethodInfo WriteLineMethod = null, WriteMethod = null;
 
-            foreach(var m in typeof(API).GetMethods())
+            foreach(var m in typeof(Main).GetMethods())
             {
                 if (m.Name == "WriteLine")
                     WriteLineMethod = m;
@@ -34,7 +34,7 @@ namespace CmdSharp
                     WriteMethod = m;
             }
 
-            GlobalVars.API = new APICore(new API(), WriteLineMethod, WriteMethod);
+            GlobalVars.API = new APICore(new Main(), WriteLineMethod, WriteMethod);
             CoreMain.Init(args);
         }
         
