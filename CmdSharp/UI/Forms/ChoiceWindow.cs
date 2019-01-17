@@ -30,7 +30,7 @@ namespace CmdSharp
 
                 RadioButton r = new RadioButton();
                 r.Text = btn.Text;
-                r.Tag = btn.Tag;
+                r.Tag = new KeyValuePair<ChoiceWndButton, object>(btn, btn.Tag);
 
                 r.Margin = new Padding(0);
 
@@ -46,25 +46,26 @@ namespace CmdSharp
 
         public void SetText(string text)
         {
-            
-            //if (text.Length >= 200) Size = new Size((Screen.PrimaryScreen.WorkingArea.Width/2), (Screen.PrimaryScreen.WorkingArea.Height - 80));
             label1.Text = text;
         }
 
-        public CmdSharp.UI.Forms.DialogAnswer Get()
+        public UI.Forms.DialogAnswer GetAnswer()
         {
             string value = "";
             object tag = null;
+            ChoiceWndButton button = null;
             
             foreach (RadioButton btn in flowLayoutPanel1.Controls)
             {
                 if (btn.Checked)
                 {
                     value = btn.Text;
-                    tag = btn.Tag;
+                    tag = ((KeyValuePair<ChoiceWndButton, object>)btn.Tag).Value;
+                    button = ((KeyValuePair<ChoiceWndButton, object>)btn.Tag).Key;
+                    break;
                 }
             }
-            return new UI.Forms.DialogAnswer(value, result, tag);
+            return new UI.Forms.DialogAnswer(value, result, tag) { ChoiceWndButton = button };
         }
         
 
@@ -98,5 +99,13 @@ namespace CmdSharp
     {
         public string Text = "";
         public object Tag = null;
+
+        public ChoiceWndButton() { }
+
+        public ChoiceWndButton(string text, object tag = null)
+        {
+            Text = text;
+            Tag = tag;
+        }
     }
 }

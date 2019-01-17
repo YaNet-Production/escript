@@ -726,7 +726,7 @@ namespace CmdSharp
             if(GlobalVars.UsingAPI)
             {
                 Cmd.Process("ThreadAbortAll();");
-                EConsole.WriteLine("STOP. (WAITING FOR API)");
+                EConsole.WriteLine("API_BREAK");
                 return;
             }
             try
@@ -734,36 +734,54 @@ namespace CmdSharp
                 while (true)
                 {
                     Cmd.Process("ShowConsole();");
-                    EConsole.ForegroundColor = ConsoleColor.Red;
-                    EConsole.Write("\nSTOP. ");
+
                     if (Variables.GetBool("abortAfterBreak"))
                     {
                         Cmd.Process("ThreadAbortAll();");
                         Cmd.Process("HideStatus();");
                     }
-                    EConsole.ForegroundColor = ConsoleColor.White;
 
-                    if (Variables.GetBool("exitAfterBreak")) Environment.Exit(0);
+                    if (Variables.GetBool("exitAfterBreak"))
+                        Cmd.Process("exit(0);");
 
-                    EConsole.Write("[L]og, [R]estart, [S]et, [C]ommand Interpreter, another key - exit ");
-                    var key = EConsole.ReadKey();
+                    ChoiceWindow c = new ChoiceWindow();
 
-                    EConsole.WriteLine("\n");
-                    if (key == ConsoleKey.R)
+                    c.SetText("Choose something or press cancel to exit");
+                    c.SetCaption("CmdSharp - break mode");
+
+                    ChoiceWndButton[] buttons =
                     {
-                        Cmd.Process("HideConsole();");
+                        new ChoiceWndButton("Restart CmdSharp"),
+                        new ChoiceWndButton("Open log in a text editor"),
+                        new ChoiceWndButton("Display variables list"),
+                        new ChoiceWndButton("Enter debug mode and attach debugger"),
+                        new ChoiceWndButton("Go to single-command interpreter mode"),
+                        new ChoiceWndButton("Exit")
+                    };
+                    c.SetButtons(buttons);
+
+                   
+
+                    c.ShowDialog();
+                    var result = c.GetAnswer();
+
+                    if (result.ChoiceWndButton == null)
+                        Cmd.Process("exit(0);");
+                    else if (result.ChoiceWndButton == buttons[0]) // restart
                         Cmd.Process("Restart();");
-                        Environment.Exit(0);
-                    }
-                    else if (key == ConsoleKey.S) Cmd.Process("set();");
-                    else if (key == ConsoleKey.F1 || key == ConsoleKey.L) Cmd.Process("start(\"notepad\", logFile, false);");
-                    else if (key == ConsoleKey.C)
+                    else if (result.ChoiceWndButton == buttons[1]) // log
+                        Cmd.Process($"start(\"notepad\", \"{(string)Variables.Get("logFile")}\");");
+                    else if (result.ChoiceWndButton == buttons[2]) // set
+                        Cmd.Process("VarList();");
+                    else if (result.ChoiceWndButton == buttons[3]) // debug
+                        Cmd.Process("Debug(true);");
+                    else if (result.ChoiceWndButton == buttons[4]) // commandline
                     {
-                        EConsole.ForegroundColor = ConsoleColor.Gray;
-                        EConsole.WriteLine("Use: \"Break\" to back to stop menu");
+                        EConsole.WriteLine("Use: \"Break();\" to return back.", ConsoleColor.Gray);
                         CommandLine();
                     }
-                    else Environment.Exit(0);
+                    else if (result.ChoiceWndButton == buttons[5]) // exit
+                        Cmd.Process("exit(0);");
                 }
             }
             catch (Exception ex)

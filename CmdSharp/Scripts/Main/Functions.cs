@@ -708,10 +708,9 @@ namespace CmdSharp
             return null;
         }
 
-        public object Exit(string code = "0")
+        public void Exit(int code = 0)
         {
-            Environment.Exit(int.Parse(code));
-            return null;//.Cmd.Done;
+            Environment.Exit(code);
         }
 
         public object ReturnUsername()
@@ -1229,34 +1228,21 @@ namespace CmdSharp
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public object ChoiceWindow(string title, string text, string buttons, string defButton = "null")
+        public UI.Forms.DialogAnswer ChoiceWindow(string title, string text, ChoiceWndButton[] buttons, ChoiceWndButton defButton = null)
         {
-            return ChoiceWindowEx(title, text, StringSplit(buttons, ";"), defButton, "1");
-        }
+            if (Variables.GetBool("forceConsole"))
+                throw new NotImplementedException("This dialog is not implemented in console mode");
 
-        public object ChoiceWindowEx(string title, string text, string vListButtons, string defButton = "null", string removeVariable = "1")
-        {
-
-            if (Variables.GetValue("forceConsole") == "1") return -1;
-#if !IsCore
             ChoiceWindow w = new ChoiceWindow();
-            //w.Text = title + " | ESCRIPT " + ver("major") + "." + ver("minor");
-            if (text == "null") text = "";
-            w.SetText(text);
+
             w.SetCaption(title);
+            w.SetText(text);
 
-            EList a = (Variables.GetValueObject(vListButtons) as EList);
-            w.SetButtons(GlobalVars.ObjectListToStringArray(a.Content), defButton);
+            w.SetButtons(buttons, defButton);
 
-            string result = w.ShowDialog().ToString();
-
-            if (StringToBool(removeVariable)) Variables.Remove(vListButtons);
-
-            //Variables.Set(vResult, w.Get());
-            return w.Get();
-#else
-            return -1;
-#endif
+            w.ShowDialog();
+            
+            return w.GetAnswer();
         }
 
         public object title(string title = "null") { return SetTitle(title); }
@@ -1418,7 +1404,10 @@ namespace CmdSharp
         public object delete(string fileName) { return FileDelete(fileName); }
 
         public object copy(string fileName, string destination, string overwrite = "0") { return FileCopy(fileName, destination, overwrite); }
-        public object exit() { return Exit(); }
+        public void exit(int code)
+        {
+            Exit(code);
+        }
 
         private ConsoleColor GetConsoleColor(int n)
         {
@@ -1940,14 +1929,14 @@ namespace CmdSharp
         }
 
 
-        public object ReadLine()
+        public string ReadLine()
         {
             return EConsole.ReadLine();
         }
 
-        public object ReadKey(string intercept = "0")
+        public string ReadKey(bool intercept = false)
         {
-            return EConsole.ReadKey(StringToBool(intercept)).KeyChar.ToString();
+            return EConsole.ReadKey(intercept);
         }
 
         // 
