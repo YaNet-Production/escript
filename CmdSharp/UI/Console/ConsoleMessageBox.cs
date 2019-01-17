@@ -64,8 +64,8 @@ namespace CmdSharp
                 EConsole.Write("   OK [Enter] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.Enter)
+                    var key = EConsole.ReadKey(true).ToLower();
+                    if (key == "enter")
                     {
                         result = "OK";
                         break;
@@ -77,13 +77,14 @@ namespace CmdSharp
                 EConsole.Write("   OK [Enter] | Cancel [C] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.Enter)
+                    var key = EConsole.ReadKey(true).ToLower();
+
+                    if (key == "enter")
                     {
                         result = "OK";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.C)
+                    else if (key == "c")
                     {
                         result = "Cancel";
                         break;
@@ -95,13 +96,13 @@ namespace CmdSharp
                 EConsole.Write("   Yes [Y] | No [N] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.Y)
+                    var key = EConsole.ReadKey(true).ToLower();
+                    if (key == "y")
                     {
                         result = "Yes";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.N)
+                    else if (key == "n")
                     {
                         result = "No";
                         break;
@@ -113,18 +114,18 @@ namespace CmdSharp
                 EConsole.Write("   Yes [Y] | No [N] | Cancel [C] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.Y)
+                    var key = EConsole.ReadKey(true).ToLower();
+                    if (key == "y")
                     {
                         result = "Yes";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.N)
+                    else if (key == "n")
                     {
                         result = "No";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.C)
+                    else if (key == "c")
                     {
                         result = "Cancel";
                         break;
@@ -136,13 +137,13 @@ namespace CmdSharp
                 EConsole.Write("   Retry [R] | Cancel [C] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.R)
+                    var key = EConsole.ReadKey(true).ToLower();
+                    if (key == "r")
                     {
                         result = "Retry";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.C)
+                    else if (key == "c")
                     {
                         result = "Cancel";
                         break;
@@ -154,18 +155,18 @@ namespace CmdSharp
                 EConsole.Write("   Abort [A] | Retry [R] | Ignore [I] ");
                 while (true)
                 {
-                    var key = EConsole.ReadKey(true);
-                    if (key.Key == ConsoleKey.R)
+                    var key = EConsole.ReadKey(true).ToLower();
+                    if (key == "r")
                     {
                         result = "Retry";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.I)
+                    else if (key == "i")
                     {
                         result = "Ignore";
                         break;
                     }
-                    else if (key.Key == ConsoleKey.A)
+                    else if (key == "a")
                     {
                         result = "Abort";
                         break;
