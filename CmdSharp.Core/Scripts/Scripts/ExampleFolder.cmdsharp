@@ -1,4 +1,0 @@
-string programFiles = GetPath("ProgramFiles");
-string esfolder = PathCombine(programFiles, "CmdSharp");
-start("explorer.exe", esfolder);
-exit();

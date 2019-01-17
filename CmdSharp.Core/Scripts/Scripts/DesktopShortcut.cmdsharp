@@ -1,3 +1,0 @@
-﻿string me = GetProgramPath();
-start(me);
-exit();
