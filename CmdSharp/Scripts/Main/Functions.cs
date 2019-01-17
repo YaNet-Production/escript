@@ -1404,7 +1404,7 @@ namespace CmdSharp
         public object delete(string fileName) { return FileDelete(fileName); }
 
         public object copy(string fileName, string destination, string overwrite = "0") { return FileCopy(fileName, destination, overwrite); }
-        public void exit(int code)
+        public void exit(int code = 0)
         {
             Exit(code);
         }
