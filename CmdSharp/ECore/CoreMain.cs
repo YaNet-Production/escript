@@ -759,9 +759,7 @@ namespace CmdSharp
                         new ChoiceWndButton("Exit")
                     };
                     c.SetButtons(buttons);
-
-                   
-
+                    
                     c.ShowDialog();
                     var result = c.GetAnswer();
 
@@ -780,7 +778,7 @@ namespace CmdSharp
                         EConsole.WriteLine("Use: \"Break();\" to return back.", ConsoleColor.Gray);
                         CommandLine();
                     }
-                    else if (result.ChoiceWndButton == buttons[5]) // exit
+                    else  // exit
                         Cmd.Process("exit(0);");
                 }
             }
