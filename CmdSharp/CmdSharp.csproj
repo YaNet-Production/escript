@@ -97,6 +97,7 @@
       <DependentUpon>TextBoxWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Wrappers\System.ComponentModel.cs" />
+    <Compile Include="Wrappers\System.Drawing.cs" />
     <Compile Include="Wrappers\System.Windows.Forms.cs" />
   </ItemGroup>
   <ItemGroup>

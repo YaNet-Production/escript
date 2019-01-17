@@ -58,14 +58,7 @@ namespace CmdSharp
         static IntPtr currentStdout = IntPtr.Zero;
         private const int MY_CODE_PAGE = 866;
 
-        private static bool _IsConsoleCreated = false;
-        public static bool IsConsoleCreated
-        {
-            get
-            {
-                return _IsConsoleCreated;
-            }
-        }
+        public static bool IsConsoleCreated = false;
 
         public static void CreateConsole()
         {
@@ -100,7 +93,7 @@ namespace CmdSharp
                     Thread.Sleep(10);
                 }
 
-                _IsConsoleCreated = true;
+                IsConsoleCreated = true;
                 WaitingForForm = false;
             }
             else
@@ -116,7 +109,7 @@ namespace CmdSharp
                     // reset stdout
                     SetStdHandle(StdOutputHandle, defaultStdout);
 
-                _IsConsoleCreated = true;
+                IsConsoleCreated = true;
 
                 try
                 {
