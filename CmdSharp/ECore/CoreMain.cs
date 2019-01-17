@@ -751,7 +751,7 @@ namespace CmdSharp
 
                     ChoiceWndButton[] buttons =
                     {
-                        new ChoiceWndButton("Restart CmdSharp"),
+                        new ChoiceWndButton("Restart cmd#"),
                         new ChoiceWndButton("Open log in a text editor"),
                         new ChoiceWndButton("Display variables list"),
                         new ChoiceWndButton("Enter debug mode and attach debugger"),

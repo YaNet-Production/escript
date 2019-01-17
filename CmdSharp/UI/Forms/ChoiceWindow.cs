@@ -23,7 +23,9 @@ namespace CmdSharp
         
         public void SetButtons(ChoiceWndButton[] ButtonsArray, ChoiceWndButton Default = null)
         {
-            foreach(var btn in ButtonsArray)
+            flowLayoutPanel1.Controls.Clear();
+
+            foreach (var btn in ButtonsArray)
             {
                 if (btn.Text == null)
                     continue;
@@ -32,7 +34,8 @@ namespace CmdSharp
                 r.Text = btn.Text;
                 r.Tag = new KeyValuePair<ChoiceWndButton, object>(btn, btn.Tag);
 
-                r.Margin = new Padding(0);
+                r.Margin = new Padding(2);
+                r.AutoSize = true;
 
                 flowLayoutPanel1.Controls.Add(r);
 
