@@ -41,16 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CmdSharp.Common\CmdSharp.Common.csproj">
-      <Project>{d8117e0a-7c3f-4b62-b64d-be00cd1708fc}</Project>
-      <Name>CmdSharp.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Core\CmdSharp.Core.csproj">
-      <Project>{1adfcc1c-a213-4ac8-bae2-5f18b7cbe674}</Project>
-      <Name>CmdSharp.Core</Name>
+    <ProjectReference Include="..\CmdSharp\CmdSharp.csproj">
+      <Project>{e2ee7a6f-8e1f-40f2-a837-c556f1aa2e56}</Project>
+      <Name>CmdSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>CmdSharpProgram.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -44,26 +44,89 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CmdSharp.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ECore\CommandProcessor.cs" />
+    <Compile Include="ECore\CoreMain.cs" />
+    <Compile Include="ECore\Environment\ClassesAndMethods.cs" />
+    <Compile Include="ECore\Environment\EnvironmentManager.cs" />
+    <Compile Include="ECore\Environment\EVariable.cs" />
+    <Compile Include="ECore\Environment\Variables.cs" />
+    <Compile Include="ECore\Parser\CommandNormalizer.cs" />
+    <Compile Include="ECore\Parser\CommandTypesClass.cs" />
+    <Compile Include="ECore\Parser\CompatibleTypesClass.cs" />
+    <Compile Include="ECore\Parser\ParserMain.cs" />
+    <Compile Include="Interop\AddressTool.cs" />
+    <Compile Include="Interop\APICore.cs" />
+    <Compile Include="Interop\GlobalVars.cs" />
+    <Compile Include="Interop\ImportedLibInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\Main\Functions.cs" />
+    <Compile Include="Scripts\Other\TCPConnection.cs" />
+    <Compile Include="Stuff\Debug.cs" />
+    <Compile Include="Stuff\Exceptions.cs" />
+    <Compile Include="Stuff\Extensions.cs" />
+    <Compile Include="Stuff\FileAssociation.cs" />
+    <Compile Include="UI\Console\ConsoleMessageBox.cs" />
+    <Compile Include="UI\Console\EConsole.cs" />
+    <Compile Include="UI\Forms\ChoiceWindow.cs" />
+    <Compile Include="UI\Forms\ChoiceWindow.Designer.cs">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\CustomConsoleWindow.cs" />
+    <Compile Include="UI\Forms\CustomConsoleWindow.Designer.cs">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\StatusWindow.cs" />
+    <Compile Include="UI\Forms\StatusWindow.Designer.cs">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Forms\TextBoxWindow.cs" />
+    <Compile Include="UI\Forms\TextBoxWindow.Designer.cs">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Wrappers\System.ComponentModel.cs" />
+    <Compile Include="Wrappers\System.Windows.Forms.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CmdSharp.API\CmdSharp.API.csproj">
-      <Project>{6fc674c5-8b0c-4621-b4f5-fff68c8130d7}</Project>
-      <Name>CmdSharp.API</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Common\CmdSharp.Common.csproj">
-      <Project>{d8117e0a-7c3f-4b62-b64d-be00cd1708fc}</Project>
-      <Name>CmdSharp.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Core\CmdSharp.Core.csproj">
-      <Project>{1adfcc1c-a213-4ac8-bae2-5f18b7cbe674}</Project>
-      <Name>CmdSharp.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CmdSharp.Wrappers\CmdSharp.Wrappers.csproj">
-      <Project>{ce3bdace-6436-47c3-ac8f-4ae25a58bd79}</Project>
-      <Name>CmdSharp.Wrappers</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="Scripts\Main\Functions.cmdsharp" />
+    <EmbeddedResource Include="UI\Forms\ChoiceWindow.resx">
+      <DependentUpon>ChoiceWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\CustomConsoleWindow.resx">
+      <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\StatusWindow.resx">
+      <DependentUpon>StatusWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Forms\TextBoxWindow.resx">
+      <DependentUpon>TextBoxWindow.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\DesktopShortcut.cmdsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\ExampleFolder.cmdsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\InstallScript.cmdsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\TemplateScript.cmdsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\Scripts\UpdateScript.cmdsharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UI\Resources\01.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <EmbeddedResource Include="UI\Resources\about.rtf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Resources\02.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
