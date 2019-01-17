@@ -1246,7 +1246,7 @@ namespace CmdSharp
             w.SetCaption(title);
 
             EList a = (Variables.GetValueObject(vListButtons) as EList);
-            w.SetButt(GlobalVars.ObjectListToStringArray(a.Content), defButton);
+            w.SetButtons(GlobalVars.ObjectListToStringArray(a.Content), defButton);
 
             string result = w.ShowDialog().ToString();
 

@@ -84,6 +84,7 @@
     <Compile Include="UI\Forms\CustomConsoleWindow.Designer.cs">
       <DependentUpon>CustomConsoleWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Forms\Dialogs.cs" />
     <Compile Include="UI\Forms\StatusWindow.cs">
       <SubType>Form</SubType>
     </Compile>

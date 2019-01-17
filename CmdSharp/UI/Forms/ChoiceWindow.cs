@@ -11,24 +11,32 @@ namespace CmdSharp
 {
     public partial class ChoiceWindow : Form
     {
+        private DialogResult result = DialogResult.Cancel;
+
         public ChoiceWindow()
         {
             InitializeComponent();
             Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            labelVersion.Text = "ESCRIPT " + cVer.Major + "." + cVer.Minor;
+            
+            labelVersion.Text = "CmdSharp";
         }
         
-        public void SetButt(string[] bts, string Default = "null")
+        public void SetButtons(ChoiceWndButton[] ButtonsArray, ChoiceWndButton Default = null)
         {
-            foreach(var btn in bts)
+            foreach(var btn in ButtonsArray)
             {
-                if (btn == "null") continue;
+                if (btn.Text == null)
+                    continue;
+
                 RadioButton r = new RadioButton();
-                r.Text = btn;
+                r.Text = btn.Text;
+                r.Tag = btn.Tag;
+
                 r.Margin = new Padding(0);
+
                 flowLayoutPanel1.Controls.Add(r);
-                if (Default == r.Text)
+
+                if (btn == Default)
                 {
                     r.Checked = true;
                     flowLayoutPanel1.ScrollControlIntoView(r);
@@ -43,13 +51,20 @@ namespace CmdSharp
             label1.Text = text;
         }
 
-        public string Get()
+        public CmdSharp.UI.Forms.DialogAnswer Get()
         {
-            foreach(RadioButton btn in flowLayoutPanel1.Controls)
+            string value = "";
+            object tag = null;
+            
+            foreach (RadioButton btn in flowLayoutPanel1.Controls)
             {
-                if (btn.Checked) return btn.Text;
+                if (btn.Checked)
+                {
+                    value = btn.Text;
+                    tag = btn.Tag;
+                }
             }
-            return "null";
+            return new UI.Forms.DialogAnswer(value, result, tag);
         }
         
 
@@ -71,11 +86,17 @@ namespace CmdSharp
 
         private void btnOk_Click(object sender, EventArgs e)
         {
+            result = DialogResult.OK;
         }
 
         private void TextBoxWindow_Load(object sender, EventArgs e)
         {
 
         }
+    }
+    public class ChoiceWndButton
+    {
+        public string Text = "";
+        public object Tag = null;
     }
 }

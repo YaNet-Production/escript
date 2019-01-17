@@ -746,7 +746,7 @@ namespace CmdSharp
                     if (Variables.GetBool("exitAfterBreak")) Environment.Exit(0);
 
                     EConsole.Write("[L]og, [R]estart, [S]et, [C]ommand Interpreter, another key - exit ");
-                    var key = EConsole.ReadKey().Key;
+                    var key = EConsole.ReadKey();
 
                     EConsole.WriteLine("\n");
                     if (key == ConsoleKey.R)
