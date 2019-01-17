@@ -109,20 +109,6 @@ namespace CmdSharp
 
         public static void SetVariableObject(string name, object value, List<string> options = null)
         {
-            //EVariable e = GetVariable(name);
-            //if (e == null)
-            //{
-            //    EVariable variable = new EVariable(name, value, options);
-            //    if (options != null) variable.Options = options;
-            //    VarList.Add(variable);
-            //}
-            //else
-            //    e.Edit(value);
-
-            ////var f = new Functions();
-            ////f.echo("VarList invoke");
-            ////f.VarList();
-            ///
             SetVariable(name, value, options);
         }
 
@@ -138,7 +124,9 @@ namespace CmdSharp
             }
             else
             {
-                if (e.Options.Contains("ReadOnly")) throw new Exception("ESCRIPT_ERROR_EDIT_READONLY_VARIABLE");
+                if (e.Options.Contains("ReadOnly"))
+                    throw new Exception("ESCRIPT_ERROR_EDIT_READONLY_VARIABLE");
+
                 e.Edit(value, options);
             }
             
@@ -178,11 +166,8 @@ namespace CmdSharp
                 Set("programDebug", true, new List<string>() { "CmdSharp" });
 
             Add("startTime", DateTime.Now, new List<string>() { "CmdSharp" });
-#if IsCore
-            Add("edition", EnvironmentManager.ESEditions.Core, new List<string>() { "CmdSharp" });
-#else
-            Add("edition", EnvironmentManager.ESEditions.Standard, new List<string>() { "CmdSharp" });
-#endif
+
+            Add("edition", EnvironmentManager.Edition, new List<string>() { "CmdSharp", "ReadOnly" });
             Add("stuffServer", GlobalVars.StuffServer, new List<string>() { "CmdSharp", "Hidden", "ReadOnly" });
 
             SetVariableObject("forceConsole", false, new List<string>() { "CmdSharp" });

@@ -13,6 +13,18 @@ namespace CmdSharp
             Core
         }
 
+        public static ESEditions Edition
+        {
+            get
+            {
+#if IsCore
+                return ESEditions.Core; 
+#else
+                return ESEditions.Standard;
+#endif
+            }
+        }
+
         public static void Initialize()
         {
             Debug.Log("ENV", "Starting...");

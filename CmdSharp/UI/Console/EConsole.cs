@@ -23,7 +23,18 @@ namespace CmdSharp
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr GetConsoleWindow();
-        
+
+        public static bool IsGUI
+        {
+            get
+            {
+                if (cWnd == null)
+                    return false;
+                else
+                    return true;
+            }
+        }
+
         public static IntPtr Handle
         {
             get
@@ -34,7 +45,7 @@ namespace CmdSharp
                     return GetConsoleWindow();
             }
         }
-        
+
         public static CustomConsoleWindow cWnd = null;
         private static bool WaitingForForm = false;
         private static string _title = "ESCRIPT";
@@ -67,14 +78,6 @@ namespace CmdSharp
 
             bool UseSystem = !Variables.GetBool("useCustomConsole");
 
-#if IsCore
-            currentStdout = (IntPtr)1;
-            Console.Title = conTitle;
-            PrintIntro();
-            return;
-#else
-
-#endif
             if (!UseSystem)
             {
                 WaitingForForm = true;
@@ -166,11 +169,11 @@ namespace CmdSharp
             Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             string eVer = version.ToString();
             string buildInfo = "";
-            if(version.Revision != 0)
+            if (version.Revision != 0)
             {
                 switch (version.Revision)
                 {
-                    default: { buildInfo = "UNSTABLE VERSION";  break; }
+                    default: { buildInfo = "UNSTABLE VERSION"; break; }
                     case 1: { buildInfo = "BETA VERSION (only for testing)"; break; }
                 }
             }
@@ -180,39 +183,37 @@ namespace CmdSharp
 
 
 
-            EConsole.WriteLine(" ");
-            EConsole.ForegroundColor = ConsoleColor.Green;
             Version cVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            EConsole.WriteLine(" ");
 
-            EConsole.Write(String.Format("   cmd# {0}.{1}", cVer.Major, cVer.Minor));
-#if IsCore
-            EConsole.ForegroundColor = ConsoleColor.Magenta;
-            EConsole.WriteLine(" Core");
-            EConsole.ForegroundColor = ConsoleColor.Green;
-#else
-            EConsole.ForegroundColor = ConsoleColor.White;
-            EConsole.WriteLine(" Standard");
-            EConsole.ForegroundColor = ConsoleColor.Green;
-#endif
-            EConsole.ForegroundColor = ConsoleColor.Gray;
-            EConsole.WriteLine("   Copyright (C) Dz3n 2017-2019");
-            EConsole.ForegroundColor = ConsoleColor.DarkGray;
-            EConsole.Write("   Build " + version.Build + " ");
-            EConsole.ForegroundColor = ConsoleColor.Yellow;
-            EConsole.WriteLine(buildInfo);
-            if(cVer.Revision != 0)
+            EConsole.Write($"   cmd# {cVer.Major}.{cVer.Minor}", ConsoleColor.Green);
+
+            switch (EnvironmentManager.Edition)
             {
-                EConsole.WriteLine("   Type \"update\" to install the latest stable version", true, ConsoleColor.DarkYellow);
+                case EnvironmentManager.ESEditions.Core:
+                    {
+                        EConsole.WriteLine(" Core", ConsoleColor.Magenta);
+                        break;
+                    }
+                case EnvironmentManager.ESEditions.Standard:
+                    {
+                        EConsole.WriteLine(" Standard", ConsoleColor.White);
+                        break;
+                    }
             }
+            
+            EConsole.WriteLine("   Copyright (C) Dz3n 2017-2019", ConsoleColor.Gray);
+            EConsole.Write("   Build " + version.Build + " ", ConsoleColor.DarkGray);
 
-           EConsole.WriteLine("");
+            EConsole.WriteLine(buildInfo, ConsoleColor.Yellow);
 
-            EConsole.ForegroundColor = ConsoleColor.DarkGray;
+            if (cVer.Revision != 0)
+                EConsole.WriteLine("   Type \"update\" to install the latest stable version", true, ConsoleColor.DarkYellow);
 
-
-            EConsole.WriteLine("   OS: " + Environment.OSVersion.VersionString);
-            EConsole.WriteLine("   https://github.com/feel-the-dz3n/escript | https://discord.gg/jXcjuqv");
-            EConsole.WriteLine("   https://vk.com/dz3n.escript");
+            EConsole.WriteLine("");
+            EConsole.WriteLine("   OS: " + Environment.OSVersion.VersionString, ConsoleColor.DarkGray);
+            EConsole.WriteLine("   https://github.com/feel-the-dz3n/escript | https://discord.gg/jXcjuqv", ConsoleColor.DarkGray);
+            EConsole.WriteLine("   https://vk.com/dz3n.escript", ConsoleColor.DarkGray);
             EConsole.WriteLine("");
 
         }
@@ -220,14 +221,20 @@ namespace CmdSharp
         public static ConsoleColor ForegroundColor
         {
             get { return Console.ForegroundColor; }
-            set { Console.ForegroundColor = value;
-#if !IsCore
+            set
+            {
+                Console.ForegroundColor = value;
+
                 if (cWnd != null)
                 {
-                    if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
+                    if (WaitingForForm)
+                        while (WaitingForForm == true)
+                        {
+                            Thread.Sleep(10);
+                        }
+
                     cWnd.ForegroundColor = ColorFromConsoleColor(value);
                 }
-#endif
             }
         }
 
@@ -247,7 +254,7 @@ namespace CmdSharp
             {
                 if (IsConsoleCreated)
                 {
-                    if(cWnd == null)
+                    if (cWnd == null)
                         Console.BackgroundColor = value;
                     else
                     {
@@ -264,7 +271,7 @@ namespace CmdSharp
 
         private static System.Drawing.Color ColorFromConsoleColor(ConsoleColor console, bool isBack = false)
         {
-            switch(console)
+            switch (console)
             {
                 case ConsoleColor.DarkBlue: return System.Drawing.Color.FromArgb(0, 64, 128);
                 case ConsoleColor.DarkCyan: return System.Drawing.Color.FromArgb(0, 151, 151);
@@ -281,8 +288,8 @@ namespace CmdSharp
                 case ConsoleColor.Magenta: return System.Drawing.Color.FromArgb(225, 0, 113);
                 case ConsoleColor.Red: return System.Drawing.Color.FromArgb(255, 45, 45);
                 case ConsoleColor.Yellow: return System.Drawing.Color.FromArgb(255, 255, 17);
-                    
-                case ConsoleColor.Black:return System.Drawing.Color.Black; 
+
+                case ConsoleColor.Black: return System.Drawing.Color.Black;
                 case ConsoleColor.White: return System.Drawing.Color.White;
 
                 default: return System.Drawing.Color.FromName(console.ToString());
@@ -376,13 +383,13 @@ namespace CmdSharp
         {
             if (!IsConsoleCreated)
                 CreateConsole();
-            
+
             if (cWnd != null)
             {
                 cWnd.Clear();
             }
             else
-               Console.Clear();
+                Console.Clear();
         }
 
         public static string ReadLine()
@@ -390,7 +397,7 @@ namespace CmdSharp
             if (!IsConsoleCreated)
                 CreateConsole();
 
-            if(cWnd != null)
+            if (cWnd != null)
             {
                 if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
                 string cr = cWnd.ReadLine();
@@ -399,40 +406,13 @@ namespace CmdSharp
             else
                 return Console.ReadLine();
         }
-
-/*
-        public static void SetConsoleFont(int size, short sizex, short sizey, string fontName = "Lucida Console")
+        
+        public static string ReadKey(bool hideKey = false)
         {
-            unsafe
-            {
-                if (currentStdout != INVALID_HANDLE_VALUE)
-                {
-                    CONSOLE_FONT_INFO_EX info = new CONSOLE_FONT_INFO_EX();
-                    info.cbSize = (uint)Marshal.SizeOf(info);
+            if (!IsConsoleCreated)
+                CreateConsole();
 
-                    // Set console font to Lucida Console.
-                    CONSOLE_FONT_INFO_EX newInfo = new CONSOLE_FONT_INFO_EX();
-                    newInfo.cbSize = (uint)Marshal.SizeOf(newInfo);
-                    newInfo.FontFamily = TMPF_TRUETYPE;
-                    IntPtr ptr = new IntPtr(newInfo.FaceName);
-                    Marshal.Copy(fontName.ToCharArray(), 0, ptr, fontName.Length);
-
-                    // Get some settings from current font.
-                    newInfo.dwFontSize = new COORD(sizex, sizey);
-                    newInfo.FontWeight = size;
-                    SetCurrentConsoleFontEx(currentStdout, true, ref newInfo);
-
-                    WriteLine("w: " + newInfo.FontWeight);
-                    WriteLine("s: " + newInfo.dwFontSize.X + " | " + newInfo.dwFontSize.Y);
-                }
-            }
-        }
-*/
-        public static ConsoleKeyInfo ReadKey(bool hideKey = false)
-        {
-            if (!IsConsoleCreated) CreateConsole();
-#if !IsCode
-            if(cWnd != null)
+            if (IsGUI)
             {
                 if (WaitingForForm) while (WaitingForForm == true) { Thread.Sleep(10); }
                 char result = '-';
@@ -442,13 +422,11 @@ namespace CmdSharp
                 }
                 catch { }
 
-                ConsoleKeyInfo key = new ConsoleKeyInfo(result, (ConsoleKey)cWnd.oneKeyKey.ToString()[0], false, false, false);
-                return key;
+                System.Windows.Forms.Keys oneKeyKey = cWnd.oneKeyKey;
+                return oneKeyKey.ToString();
             }
-#endif
-            return Console.ReadKey();
+            else
+                return Console.ReadKey(hideKey).Key.ToString();
         }
-        
-
     }
 }
