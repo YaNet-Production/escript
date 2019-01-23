@@ -7,21 +7,46 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using static CmdSharp.Parser.CommandNormalizer;
 using static CmdSharp.Parser.CommandTypesClass;
 using static CmdSharp.Parser.CompatibleTypesClass;
 
 namespace CmdSharp.Parser
 {
-    public class EParser
+    public class ParseResult
     {
-        enum ParserNativeResults // What should return variable initialization process??
+        public enum ParserNativeResults // What should return variable initialization process??
         {
             ParserNativeUnknown,
             ParserNativeOK,
             ParserNativeError
         }
 
+        public ParserNativeResults NativeResult = ParserNativeResults.ParserNativeUnknown;
+        public string CustomMessage = null;
+
+        public ParseResult(ParserNativeResults result, string text = null)
+        {
+            NativeResult = result;
+            CustomMessage = text;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder b = new StringBuilder();
+
+            b.Append("Parser.ParseResult (");
+            b.Append(NativeResult.ToString());
+            b.Append(CustomMessage != null ? ", " + CustomMessage : "");
+            b.Append(")");
+
+            return b.ToString();
+        }
+    }
+    public class EParser
+    {
+       
         public static char[] SpacesAndTabs = { ' ', '\t' };
 
         // Single-command parser
@@ -137,7 +162,7 @@ namespace CmdSharp.Parser
 
                     Variables.SetVariableObject(VariableName, invokeResult);
 
-                    return ParserNativeResults.ParserNativeOK;
+                    return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, "VariableInitialzer, value is Method-compatible");
                 }
                 else if (type == CommandTypes.CastValue)
                 {
@@ -152,7 +177,7 @@ namespace CmdSharp.Parser
 
                     Variables.SetVariableObject(VariableName, invokeResult);
 
-                    return ParserNativeResults.ParserNativeOK;
+                    return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, "VariableInitialzer, value is cast");
                 }
                 else
                 {
@@ -288,6 +313,37 @@ namespace CmdSharp.Parser
                     invokeResult = ConvertStringToVar($"({CastTo}){CommandNormalizer.ConvertObjectToStringCode(invokeResult)}");
                 }
                 return invokeResult;
+            }
+            else if (CommandType == CommandTypes.UsingHeader)
+            {
+                string Namespace = "";
+                string NamespaceOriginal = Command.Split(' ')[1].Trim(SpacesAndTabs);
+                for(int i = 0; i < NamespaceOriginal.Length; i++)
+                {
+                    char c = NamespaceOriginal[i];
+
+                    if (c == ';')
+                        break;
+
+                    Namespace += c;
+                }
+
+                Namespace = Namespace.Trim(SpacesAndTabs);
+
+                if (Namespace.Length <= 0)
+                    throw new Exceptions.ParserException($"Namespace is invalid");
+                
+                for(int i = 0; i < EnvironmentManager.LoadedLibs.Count; i++)
+                {
+                    var lib = EnvironmentManager.LoadedLibs[i];
+                    
+                    foreach(var type in EnvironmentManager.GetTypesInNamespace(lib.assembly, Namespace))
+                    {
+                        EnvironmentManager.AddClass(new EClass(null, type, EnvironmentManager.ObjectVisibility.Public, false, false), false);
+                    }
+                }
+
+                return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, $"Namespace '{Namespace}' imported");
             }
             else if(CommandType == CommandTypes.ObjectInitializer)
             {
@@ -719,7 +775,7 @@ namespace CmdSharp.Parser
         }
         
 
-        private static ParserNativeResults VariableSetValueHandler(string VariableType, string VariableName, string VariableValue)
+        private static ParseResult VariableSetValueHandler(string VariableType, string VariableName, string VariableValue)
         {
             object FutureValue = null;
             ETypeInfo FutureType = GetCompatibleTypeByName(VariableType);
@@ -727,7 +783,7 @@ namespace CmdSharp.Parser
             if (VariableType == "var")
             {
                 Variables.SetVariableObject(VariableName, ConvertStringToVar(VariableValue));
-                return ParserNativeResults.ParserNativeOK;
+                return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, "VariableSetValueHandler, variable is auto");
             }
 
             if (FutureType == null)
@@ -769,7 +825,7 @@ namespace CmdSharp.Parser
                 Variables.SetVariableObject(VariableName, FutureValue);
             }
 
-            return ParserNativeResults.ParserNativeOK;
+            return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, "VariableSetValueHandler done");
         }
 
     }

@@ -74,9 +74,6 @@ namespace CmdSharp
         [DllImport("user32.dll")]
         public static extern IntPtr CreateIconFromResourceEx(byte[] pbIconBits, uint cbIconBits, bool fIcon, uint dwVersion, int cxDesired, int cyDesired, uint uFlags);
 
-        public static List<ImportedLibInfo> LoadedLibs = new List<ImportedLibInfo>();
-        public static List<Thread> UserThreads = new List<Thread>();
-
 #if !IsCore
 
 

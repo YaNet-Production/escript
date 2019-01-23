@@ -1,12 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 
 namespace CmdSharp
 {
     public class EnvironmentManager
     {
+        public static void Initialize()
+        {
+            var executingAssembly = Assembly.GetExecutingAssembly();
+            Debug.Log("ENV", "Starting...");
+
+            Classes.Clear();
+
+            LoadedLibs.Add(new ImportedLibInfo(executingAssembly));
+
+            AddClass(new EClass(null, typeof(Functions), ObjectVisibility.Public, true, false), true);
+
+            AddClass(new EClass(null, typeof(TestClass), ObjectVisibility.Public, true, false), false);
+            AddClass(new EClass(null, typeof(SuperClass), ObjectVisibility.Public, true, false), false);
+
+            foreach (var c in Parser.CompatibleTypesClass.CompatibleTypesNative)
+            {
+                AddClass(new EClass(null, c.Type, ObjectVisibility.Public, true, false) { IsCompatibleType = true }, false);
+            }
+
+            Debug.Log("ENV", "Started!");
+        }
+
         public enum ESEditions
         {
             Standard,
@@ -25,26 +49,18 @@ namespace CmdSharp
             }
         }
 
-        public static void Initialize()
-        {
-            Debug.Log("ENV", "Starting...");
-
-            Classes.Clear();
-
-            AddClass(new EClass(null, typeof(Functions), ObjectVisibility.Public, true, false), true);
-
-            AddClass(new EClass(null, typeof(TestClass), ObjectVisibility.Public, true, false), false);
-            AddClass(new EClass(null, typeof(SuperClass), ObjectVisibility.Public, true, false), false);
-
-            foreach(var c in Parser.CompatibleTypesClass.CompatibleTypesNative)
-            {
-                AddClass(new EClass(null, c.Type, ObjectVisibility.Public, true, false) { IsCompatibleType = true }, false);
-            }
-            
-            Debug.Log("ENV", "Started!");
-        }
 
         public static List<EClass> Classes = new List<EClass>();
+        public static List<ImportedLibInfo> LoadedLibs = new List<ImportedLibInfo>();
+        public static List<Thread> UserThreads = new List<Thread>();
+
+        public static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        {
+            return
+              assembly.GetTypes()
+                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
+                      .ToArray();
+        }
 
         public static EMethodNew[] AllMethods
         {

@@ -29,7 +29,7 @@ namespace CmdSharp
 
         public Dictionary<string, int> Labels;
 
-        public void Import(string fileName, string className, object[] arguments = null)
+        public void Import(string fileName, object[] arguments = null)
         {
 #if ESCODE_IMPLEMENTED
                 if (fileName.Contains(".es") || fileName.Contains(".esh"))
@@ -40,9 +40,8 @@ namespace CmdSharp
                 else
 #endif
 
-            ImportedLibInfo i = new ImportedLibInfo(fileName, className, arguments);
-            GlobalVars.LoadedLibs.Add(i);
-
+            ImportedLibInfo i = new ImportedLibInfo(fileName, arguments);
+            EnvironmentManager.LoadedLibs.Add(i);
         }
 
         //public object Compare(string one, string p, string two, string ifOkDoThis, string el = "null")
@@ -900,33 +899,33 @@ namespace CmdSharp
             }
         }
 
-        public Dictionary<MethodInfo, object> WhereIsMethod(string name)
-        {
-            MethodInfo mth = null;
-            object target = this;
-            try
-            {
-                mth = GetType().GetMethod(name); // split command by space, used to split first argument. If there are no spaces then we will get just only command, without errors
-            }
-            catch { }
+        //public Dictionary<MethodInfo, object> WhereIsMethod(string name)
+        //{
+        //    MethodInfo mth = null;
+        //    object target = this;
+        //    try
+        //    {
+        //        mth = GetType().GetMethod(name); // split command by space, used to split first argument. If there are no spaces then we will get just only command, without errors
+        //    }
+        //    catch { }
 
 
-            for (int i = 0; i < GlobalVars.LoadedLibs.Count; i++)
-            {
-                ImportedLibInfo imp = GlobalVars.LoadedLibs[i];
-                if (imp.classInstance != null)
-                {
-                    if (imp.funcType.GetMethod(name) != null)
-                    {
-                        mth = imp.funcType.GetMethod(name);
-                        target = imp.classInstance;
-                    }
-                }
-            }
-            var d = new Dictionary<MethodInfo, object>();
-            d.Add(mth, target);
-            return d;
-        }
+        //    for (int i = 0; i < GlobalVars.LoadedLibs.Count; i++)
+        //    {
+        //        ImportedLibInfo imp = GlobalVars.LoadedLibs[i];
+        //        if (imp.classInstance != null)
+        //        {
+        //            if (imp.funcType.GetMethod(name) != null)
+        //            {
+        //                mth = imp.funcType.GetMethod(name);
+        //                target = imp.classInstance;
+        //            }
+        //        }
+        //    }
+        //    var d = new Dictionary<MethodInfo, object>();
+        //    d.Add(mth, target);
+        //    return d;
+        //}
 
         public object DictCreate(string variable)
         {
@@ -2289,9 +2288,9 @@ namespace CmdSharp
                 Variables.SetVariableObject(returnVariable, result);
                 if (Variables.GetValue("showResult") == "1") CoreMain.PrintResult(result, "[ASYNC] ");
                 if (returnMethod != "null") Cmd.Process(returnMethod/* FIX ME, Labels*/);
-                GlobalVars.UserThreads.Remove(Thread.CurrentThread);
+                EnvironmentManager.UserThreads.Remove(Thread.CurrentThread);
             });
-            GlobalVars.UserThreads.Add(newThread);
+            EnvironmentManager.UserThreads.Add(newThread);
             newThread.Start();
 
             return null;//.Cmd.Done;
@@ -2300,25 +2299,25 @@ namespace CmdSharp
         public object ThreadList()
         {
             StringBuilder x = new StringBuilder();
-            for (int i = 0; i < GlobalVars.UserThreads.Count; i++)
+            for (int i = 0; i < EnvironmentManager.UserThreads.Count; i++)
             {
-                x.AppendLine(i + "-" + GlobalVars.UserThreads[i].ManagedThreadId);
+                x.AppendLine(i + "-" + EnvironmentManager.UserThreads[i].ManagedThreadId);
             }
             return x.ToString();
         }
 
         public object ThreadAbort(string id)
         {
-            GlobalVars.UserThreads[int.Parse(id)].Abort();
+            EnvironmentManager.UserThreads[int.Parse(id)].Abort();
             return null;//.Cmd.Done;
         }
 
 
         public object ThreadAbortAll()
         {
-            for (int i = 0; i < GlobalVars.UserThreads.Count; i++)
+            for (int i = 0; i < EnvironmentManager.UserThreads.Count; i++)
             {
-                GlobalVars.UserThreads[i].Abort();
+                EnvironmentManager.UserThreads[i].Abort();
             }
             return null;//.Cmd.Done;
         }

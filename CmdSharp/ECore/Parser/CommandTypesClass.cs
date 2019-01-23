@@ -19,7 +19,7 @@ namespace CmdSharp.Parser
             ClassStructure,
             NamespaceStructure,
             NamespacesAndClassesStruct,
-            UsingHeader,
+            UsingHeader, // using System;
             ObjectInitializer, // new ...(...); returns new instance
             Typeof // typeof(ClassName); returns class type
         }
@@ -39,7 +39,8 @@ namespace CmdSharp.Parser
             {
                 if (thisOne == CommandTypes.Typeof 
                     || thisOne == CommandTypes.ObjectInitializer
-                    || thisOne == CommandTypes.Method)
+                    || thisOne == CommandTypes.Method
+                    || thisOne == CommandTypes.UsingHeader)
                     return true;
             }
 
@@ -90,6 +91,9 @@ namespace CmdSharp.Parser
                 else
                     throw new Exceptions.ParserException("Invalid typeof usage.");
             }
+
+            if (Command.StartsWith("using"))
+                return CommandTypes.UsingHeader;
 
             if (Command.StartsWith("(") && Command.Contains(")") && Command.Contains("new")) // (string)new string()...
             {

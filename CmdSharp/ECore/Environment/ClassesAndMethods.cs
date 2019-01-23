@@ -137,19 +137,19 @@ namespace CmdSharp
             return Instance;
         }
 
-        public EClass(string name, object content, ObjectVisibility visibility, bool istatic, bool isuser = false)
+        public EClass(string NullOrName, object content, ObjectVisibility visibility, bool istatic, bool isuser = false)
         {
             Content = content;
-            if (name == null && (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType"))
+            if (NullOrName == null && (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType"))
             {
                 var c = (Type)Content;
-                name = c.Name;
+                NullOrName = c.Name;
             }
 
             if (Content.GetType() != typeof(Type) && Content.GetType().Name != "RuntimeType")
                 throw new NotImplementedException($"Attemption to create EClass with '{Content.GetType().Name}' type. (not supported)");
 
-            Name = name;
+            Name = NullOrName;
             Visibility = visibility;
             IsUser = isuser;
             IsStatic = istatic;
