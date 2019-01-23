@@ -658,7 +658,7 @@ namespace CmdSharp.Parser
                 return null;
 
             var var = Variables.Get(str);
-            if (var != null)
+            if (var == null || var.GetType() != typeof(VNull))
                 return var;
 
             if (str.StartsWith("\"") && str.EndsWith("\""))

@@ -6,6 +6,10 @@ using System.Text;
 
 namespace CmdSharp
 {
+    /// <summary>
+    /// Class for non-existing variable
+    /// </summary>
+    public class VNull { }
     public static class Variables
     {
         public static List<EVariable> VarList = new List<EVariable>();
@@ -67,7 +71,7 @@ namespace CmdSharp
             EVariable a = GetVariable(name);
 
             if (a == null)
-                return null;
+                return new VNull();
 
             return a.Value;
         }
