@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace System.Windows.Forms
+namespace System.Windows.Forms : IDisposable
 {
     public class Control
     {
