@@ -336,8 +336,10 @@ namespace CmdSharp.Parser
                 for(int i = 0; i < EnvironmentManager.LoadedLibs.Count; i++)
                 {
                     var lib = EnvironmentManager.LoadedLibs[i];
-                    
-                    foreach(var type in EnvironmentManager.GetTypesInNamespace(lib.assembly, Namespace))
+
+                    var types = EnvironmentManager.GetTypesInNamespace(lib.assembly, Namespace);
+
+                    foreach (var type in types)
                     {
                         EnvironmentManager.AddClass(new EClass(null, type, EnvironmentManager.ObjectVisibility.Public, false, false), false);
                     }

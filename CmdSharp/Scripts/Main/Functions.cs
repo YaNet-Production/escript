@@ -2006,6 +2006,11 @@ namespace CmdSharp
             DebugEx();
         }
 
+        public object ShowDialog(Form form)
+        {
+            return form.ShowDialog();
+        }
+
         public void NoDebug()
         {
             for (int idx = 0; idx < Variables.VarList.Count; idx++)

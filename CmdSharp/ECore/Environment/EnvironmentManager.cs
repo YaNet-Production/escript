@@ -16,8 +16,6 @@ namespace CmdSharp
 
             Classes.Clear();
 
-            LoadedLibs.Add(new ImportedLibInfo(executingAssembly));
-
             AddClass(new EClass(null, typeof(Functions), ObjectVisibility.Public, true, false), true);
 
             AddClass(new EClass(null, typeof(TestClass), ObjectVisibility.Public, true, false), false);
@@ -27,6 +25,8 @@ namespace CmdSharp
             {
                 AddClass(new EClass(null, c.Type, ObjectVisibility.Public, true, false) { IsCompatibleType = true }, false);
             }
+            
+            AddLibrary(new ImportedLibInfo(executingAssembly));
 
             Debug.Log("ENV", "Started!");
         }
@@ -56,10 +56,52 @@ namespace CmdSharp
 
         public static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
         {
-            return
-              assembly.GetTypes()
-                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
-                      .ToArray();
+            List<Type> result = new List<Type>();
+
+            var types = assembly.GetTypes();
+
+            foreach (var type in types)
+            {
+                if (type.Namespace == nameSpace)
+                    result.Add(type);
+            }
+
+            return result.ToArray();
+        }
+
+        public static bool IsLibLoaded(ImportedLibInfo lib)
+        {
+            for (int i = 0; i < LoadedLibs.Count; i++)
+            {
+                if (LoadedLibs[i].assembly.FullName == lib.assembly.FullName)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Add library to environment and all it's references
+        /// </summary>
+        /// <param name="i">Library information</param>
+        public static void AddLibrary(ImportedLibInfo i, bool addReferenced = true)
+        {
+            if (IsLibLoaded(i))
+                return;
+
+            if (addReferenced)
+            {
+                foreach (var reference in i.assembly.GetReferencedAssemblies())
+                {
+                    AddLibrary(new ImportedLibInfo(Assembly.Load(reference)), false);
+                    //Debug.Log("ENV", $"[{i.assembly.FullName}] module: {reference.Name}");
+                }
+
+            }
+
+            Debug.Log("ENV", " + lib \"" + i.assembly.FullName + "\"");
+
+            LoadedLibs.Add(i);
         }
 
         public static EMethodNew[] AllMethods
