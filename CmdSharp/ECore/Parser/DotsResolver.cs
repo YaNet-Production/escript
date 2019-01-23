@@ -16,7 +16,6 @@ namespace CmdSharp.Parser
         /// <returns></returns>
         public static object Resolve(string Command, object ParentVariable = null)
         {
-            string Name = "";
             bool ContainsDots = false;
             
             // this will make command without strings
@@ -28,16 +27,15 @@ namespace CmdSharp.Parser
                 IgnoreType = CheckForIgnoreType(IgnoreType, c, i);
                 
                 if (IgnoreType == CodeIgnoreType.None)
-                {
-                    Name += c;
-                }
+                    if (c == '.')
+                        ContainsDots = true;
             }
 
             if (!ContainsDots)
                 return null;
 
             // return normal command
-            Name = Command;
+            string Name = Command;
             
             string[] Sections = Name.Split('.');
             string RealName = Sections[Sections.Length - 1].Trim(EParser.SpacesAndTabs);
