@@ -667,12 +667,9 @@ namespace CmdSharp.Parser
             if (str == "null")
                 return null;
 
-            for (int i = 0; i < Variables.VarList.Count; i++)
-            {
-                var var = Variables.VarList[i];
-                if (var.Name == str)
-                    return var.Value;
-            }
+            var var = Variables.Get(str);
+            if (var != null)
+                return var;
 
             if (str.StartsWith("\"") && str.EndsWith("\""))
             {

@@ -30,20 +30,23 @@ namespace CmdSharp.Parser
             Name = RealName;
 
             string section = "";
-            var variable = ParentVariable; 
+            object prevVariable = null;
+            var variable = ParentVariable;
+            bool LookInside = ParentVariable != null ? true : false;
 
             for (int i = 0; i < Sections.Length; i++)
             {
                 if (i >= 1) section += '.';
                 section += Sections[i];
 
+                prevVariable = variable;
                 variable = Variables.Get(section, true);
 
                 if (variable != null)
                 {
                     EClass c = EnvironmentManager.SearchForType(variable.GetType().Name);
                     c.ForceInstance(variable);
-                    
+
                     foreach (var field in c.PropertiesAndFields)
                     {
                         if (field.Name == RealName)
@@ -55,6 +58,7 @@ namespace CmdSharp.Parser
                         if (method.Name == RealName)
                             return method;
                     }
+                    
 
                     throw new TypeAccessException($"Field/property/method '{RealName}' is not found in '{section}'");
                 }
