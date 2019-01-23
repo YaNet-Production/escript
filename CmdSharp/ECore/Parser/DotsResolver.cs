@@ -41,7 +41,7 @@ namespace CmdSharp.Parser
 
                 if (variable != null)
                 {
-                    EClass c = new EClass(null, variable.GetType(), EnvironmentManager.ObjectVisibility.Public, false, false);
+                    EClass c = EnvironmentManager.SearchForType(variable.GetType().Name);
                     c.ForceInstance(variable);
                     
                     foreach (var field in c.PropertiesAndFields)
@@ -56,7 +56,7 @@ namespace CmdSharp.Parser
                             return method;
                     }
 
-                    throw new TypeAccessException($"Field/property/method' {RealName}' is not found in '{section}'");
+                    throw new TypeAccessException($"Field/property/method '{RealName}' is not found in '{section}'");
                 }
             }
             
