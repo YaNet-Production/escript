@@ -775,7 +775,6 @@ namespace CmdSharp.Parser
 
             return result.ToArray();
         }
-        
 
         private static ParseResult VariableSetValueHandler(string VariableType, string VariableName, string VariableValue)
         {

@@ -1979,10 +1979,10 @@ namespace CmdSharp
             EConsole.WriteLine("   Environment Manager");
             EConsole.WriteLine($"     Classes ({ EnvironmentManager.Classes.Count})");
 
-            for (int i = 0; i < EnvironmentManager.Classes.Count; i++)
-            {
-                EConsole.WriteLine($"       {EnvironmentManager.Classes[i].Name} - IsUser: {EnvironmentManager.Classes[i].IsUser} - Methods: {EnvironmentManager.Classes[i].Methods.Length}");
-            }
+            //for (int i = 0; i < EnvironmentManager.Classes.Count; i++)
+            //{
+            //    EConsole.WriteLine($"       {EnvironmentManager.Classes[i].Name} - IsUser: {EnvironmentManager.Classes[i].IsUser} - Methods: {EnvironmentManager.Classes[i].Methods.Length}");
+            //}
             EConsole.WriteLine($"     All Methods ({ EnvironmentManager.AllMethods.Length})");
         }
 
@@ -2004,11 +2004,6 @@ namespace CmdSharp
                 Debugger.Launch();
 
             DebugEx();
-        }
-
-        public object ShowDialog(Form form)
-        {
-            return form.ShowDialog();
         }
 
         public void NoDebug()

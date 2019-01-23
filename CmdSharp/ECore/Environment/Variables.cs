@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CmdSharp.Parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,16 +38,38 @@ namespace CmdSharp
             return "ESCRIPT_ERROR_VARIABLE_NOT_FOUND";
         }
 
-        public static object Get(string name) { return GetValueObject(name); }
+        public static object Get(string name, bool NoResolve = false) { return GetValueObject(name, NoResolve); }
 
-        public static object GetValueObject(string name)
+        public static object GetValueObject(string name, bool NoResolve = false)
         {
-            EVariable a = GetVariable(name);
-            if (a == null) return "";
-            else
+            if (!NoResolve)
             {
-                return a.Value;
+                object dots = DotsResolver.Resolve(name);
+                if (dots != null)
+                {
+                    if (dots.GetType() == typeof(EProperty))
+                    {
+                        return ((EProperty)dots).GetValue();
+                    }
+                    else if (dots.GetType() == typeof(EField))
+                    {
+                        return ((EField)dots).GetValue();
+                    }
+                    else if (dots.GetType() == typeof(EMethodNew))
+                    {
+                        return ((EMethodNew)dots).Invoke();
+                    }
+                    else
+                        throw new Exception($"Excpeted field, but '{dots.GetType().Name}' received.");
+                }
             }
+            
+            EVariable a = GetVariable(name);
+
+            if (a == null)
+                return null;
+
+            return a.Value;
         }
 
         public static bool GetBool(string name)
@@ -116,7 +139,23 @@ namespace CmdSharp
 
         public static void SetVariable(string name, object value, List<string> options = null)
         {
+            object dots = DotsResolver.Resolve(name);
+            if(dots != null)
+            {
+                if (dots.GetType() == typeof(EProperty))
+                {
+                    ((EProperty)dots).SetValue(value);
+                }
+                else if (dots.GetType() == typeof(EField))
+                {
+                    ((EField)dots).SetValue(value);
+                }
+                else
+                    throw new Exception($"Excpeted field or method, but '{dots.GetType().Name}' received.");
+            }
+
             EVariable e = GetVariable(name);
+
             if (e == null)
             {
                 EVariable variable = new EVariable(name, value, options);

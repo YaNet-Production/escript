@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="API\API.cs" />
     <Compile Include="API\Common.cs" />
+    <Compile Include="ECore\Parser\DotsResolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ECore\CommandProcessor.cs" />
     <Compile Include="ECore\CoreMain.cs" />

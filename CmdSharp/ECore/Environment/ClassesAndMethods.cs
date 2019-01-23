@@ -12,7 +12,26 @@ namespace CmdSharp
         public string Name = null;
         public bool IsStatic = false;
         public ObjectVisibility Visibility = ObjectVisibility.Private;
-        public object Content = null;
+        private object content = null;
+        public object Content
+        {
+            get
+            {
+                return content;
+            }
+            set
+            {
+                if (value == null || value.GetType() == typeof(Type) || value.GetType().Name == "RuntimeType")
+                {
+                    content = value;
+                    return;
+                }
+                else
+                {
+                    throw new Exception($"Excpected Type or UserType, but '{value.GetType().Name}' received");
+                }
+            }
+        }
         public object Tag = null;
         public bool IsUser = false;
         public object Instance = null;
@@ -46,8 +65,61 @@ namespace CmdSharp
                 }
                 else
                     throw new NotImplementedException("Only .NET types pelase");
+            }
+        }
 
-                return null;
+        public EField[] Fields
+        {
+            get
+            {
+                List<EField> result = new List<EField>();
+
+
+                if (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType")
+                {
+                    var c = (Type)Content;
+
+                    foreach (var m in c.GetFields())
+                    {
+                        result.Add(new EField() { Content = m, Name = m.Name, FieldType = m.FieldType, ReflectedType = m.ReflectedType, ClassInstance = Instance });
+                    }
+                }
+
+                return result.ToArray();
+            }
+        }
+
+        public EProperty[] Properties
+        {
+            get
+            {
+                List<EProperty> result = new List<EProperty>();
+
+
+                if (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType")
+                {
+                    var c = (Type)Content;
+
+                    foreach (var m in c.GetProperties())
+                    {
+                        result.Add(new EProperty() { Content = m, Name = m.Name, FieldType = m.PropertyType, ReflectedType = m.ReflectedType, ClassInstance = Instance });
+                    }
+                }
+
+                return result.ToArray();
+            }
+        }
+
+        public EField[] PropertiesAndFields
+        {
+            get
+            {
+                List<EField> result = new List<EField>();
+
+                result.AddRange(Fields);
+                result.AddRange(Properties);
+
+                return result.ToArray();
             }
         }
 
@@ -243,6 +315,67 @@ namespace CmdSharp
             Visibility = visibility;
             IsUser = isuser;
             IsStatic = istatic;
+        }
+    }
+
+    public class EProperty : EField
+    {
+    }
+
+    public class EField
+    {
+        public string Name;
+        public Type FieldType;
+        public Type ReflectedType;
+        public object Content = null;
+        public object Tag = null;
+        public bool IsUser = false;
+        public object ClassInstance = null;
+
+        public void SetValue(object value)
+        {
+            if (Content.GetType() == typeof(FieldInfo) || Content.GetType().Name == "RuntimeFieldInfo")
+            {
+                if (ClassInstance == null)
+                    throw new NullReferenceException($"Can't access '{Name}' field: no class instance");
+
+                FieldInfo field = (FieldInfo)Content;
+
+                field.SetValue(ClassInstance, value);
+            }
+            else if (Content.GetType() == typeof(PropertyInfo) || Content.GetType().Name == "RuntimePropertyInfo")
+            {
+                if (ClassInstance == null)
+                    throw new NullReferenceException($"Can't access '{Name}' field: no class instance");
+
+                PropertyInfo field = (PropertyInfo)Content;
+                
+                field.SetValue(ClassInstance, value, null);
+            }
+        }
+
+        public object GetValue()
+        {
+            if (Content.GetType() == typeof(FieldInfo) || Content.GetType().Name == "RuntimeFieldInfo")
+            {
+                if (ClassInstance == null)
+                    throw new NullReferenceException($"Can't access '{Name}' field: no class instance");
+
+                FieldInfo field = (FieldInfo)Content;
+
+                return field.GetValue(ClassInstance);
+            }
+            else if (Content.GetType() == typeof(PropertyInfo) || Content.GetType().Name == "RuntimePropertyInfo")
+            {
+                if (ClassInstance == null)
+                    throw new NullReferenceException($"Can't access '{Name}' field: no class instance");
+
+                PropertyInfo field = (PropertyInfo)Content;
+
+                return field.GetValue(ClassInstance, null);
+            }
+            else
+                throw new NotImplementedException();
         }
     }
 

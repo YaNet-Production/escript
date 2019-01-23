@@ -115,8 +115,7 @@ namespace CmdSharp
         {
             if (Arguments == null)
                 Arguments = new object[] { };
-
-            Type type = null;
+            
             object ResultInstance = null;
 
             var SearchResult = EnvironmentManager.SearchForType(TypeName);
@@ -130,43 +129,109 @@ namespace CmdSharp
 
         public static object InvokeMethod(string Name, object[] Arguments = null)
         {
-            foreach(var m in EnvironmentManager.AllMethods)
+            object m = null;
+            object instance = null;
+
+#if OLD
+            // Resolve namespace or variable
+            // Works only with *one* variable and *one* method right now (like a.Lol());
+            if (Name.Contains('.'))
             {
-                if(m.Name == Name)
+                // FIX ME
+                // text after the latest dot is our method
+                string[] s = Name.Split('.');
+                string RealName = s[s.Length - 1].Trim(EParser.SpacesAndTabs);
+                int AllSectionsLen = 0;
+
+                for (int i = 0; i < s.Length - 1; i++)
+                    AllSectionsLen += s[i].Length;
+
+                string Namespace = Name.Remove(AllSectionsLen, Name.Length-1);
+                Name = RealName;
+
+                //Debug.Log("Program", "Namespace: " + Namespace);
+                //Debug.Log("Program", "Name: " + Name);
+
+                var variable = Variables.Get(s[0]);
+                if(variable != null)
                 {
-
-                    try
+#if UserClassImplemented // FIX ME
+                    if(variable.GetType() != typeof(EClass))
+#endif
                     {
-                        return m.Invoke(Arguments);
+                        var type = variable.GetType();
+                        var methods = type.GetMethods();
 
+                        foreach(var method in methods)
+                        {
+                            if(method.Name == Name)
+                            {
+                                // FIX me. It must be EMethodNew
+                                instance = variable;
+                                m = method;//new EMethodNew(null, method, EnvironmentManager.ObjectVisibility.Public, false, false);
+                                goto invokeMethodStep;
+                            }
+                        }
                     }
-                    catch (ArgumentException ex)
-                    {
-                        EConsole.WriteLine("ERROR: Invalid arguments", ConsoleColor.Red);
-                        Debug.DebugText(ex.ToString(), ConsoleColor.DarkRed);
-                        Process("UseTextTest(\"" + Name + "\");");// Call UseTextTest method to show arguments of command
 
-                        return null;
-                    }
-                    catch (TargetInvocationException ex)
-                    {
-                        EConsole.WriteLine("ERROR: Can't invoke \"" + Name + "\" method because of exception:", ConsoleColor.Red);
-                        EConsole.WriteLine(ex.InnerException.ToString(), ConsoleColor.DarkRed);
-                        Process("UseTextTest(\"" + Name + "\");");// Call UseTextTest method to show arguments of command
+                }
 
-                        return null;// EResult.ESCRIPT.GetError("Exception");
-                    }
-                    catch (Exception ex)
-                    {
-                        EConsole.WriteLine(ex.GetType().Name + ": " + ex.Message, ConsoleColor.Red);
-                        Debug.DebugText(ex.StackTrace, ConsoleColor.DarkRed);
-                        Process("UseTextTest(\"" + Name + "\");"); // Call UseTextTest method to show arguments of command
+                throw new TypeAccessException($"Type or namespace '{Namespace}' is not found");
+            }
+#endif
+            // if     a.b.c.d(); -> d (EMethod)
+            object dots = DotsResolver.Resolve(Name);
 
-                        return null;//EResult.Cmd.GetError(ex.Message);
-                    }
+            if (dots != null)
+            {
+                if (dots.GetType() == typeof(EMethodNew))
+                    m = dots;
+            }
+
+            foreach(var method in EnvironmentManager.AllMethods)
+            {
+                if(method.Name == Name)
+                {
+                    m = method;
+                    goto invokeMethodStep;
                 }
             }
-            throw new Exceptions.InvokeMethodNotFoundException($"Method '{Name}' is not found");
+            
+            invokeMethodStep:
+            if(m == null)
+                throw new Exceptions.InvokeMethodNotFoundException($"Method '{Name}' is not found");
+            
+            try
+            {
+                if (m.GetType() == typeof(EMethodNew))
+                    return ((EMethodNew)m).Invoke(Arguments);
+                else
+                    return ((MethodInfo)m).Invoke(instance, Arguments);
+            }
+            catch (ArgumentException ex)
+            {
+                EConsole.WriteLine("ERROR: Invalid arguments", ConsoleColor.Red);
+                Debug.DebugText(ex.ToString(), ConsoleColor.DarkRed);
+                Process("UseTextTest(\"" + Name + "\");");// Call UseTextTest method to show arguments of command
+
+                return null;
+            }
+            catch (TargetInvocationException ex)
+            {
+                EConsole.WriteLine("ERROR: Can't invoke \"" + Name + "\" method because of exception:", ConsoleColor.Red);
+                EConsole.WriteLine(ex.InnerException.ToString(), ConsoleColor.DarkRed);
+                Process("UseTextTest(\"" + Name + "\");");// Call UseTextTest method to show arguments of command
+
+                return null;// EResult.ESCRIPT.GetError("Exception");
+            }
+            catch (Exception ex)
+            {
+                EConsole.WriteLine(ex.GetType().Name + ": " + ex.Message, ConsoleColor.Red);
+                Debug.DebugText(ex.StackTrace, ConsoleColor.DarkRed);
+                Process("UseTextTest(\"" + Name + "\");"); // Call UseTextTest method to show arguments of command
+
+                return null;//EResult.Cmd.GetError(ex.Message);
+            }
         }
     }
 }
