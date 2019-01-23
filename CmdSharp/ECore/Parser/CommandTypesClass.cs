@@ -80,20 +80,24 @@ namespace CmdSharp.Parser
                 }
             }
 
-            if (Command.StartsWith("new")) // new string()...
+            if (Command.StartsWith("new ")) // new string()...
                 return CommandTypes.ObjectInitializer;
 
             if (Command.StartsWith("typeof"))
             {
-                if (Command.Contains("(") && Command.Contains(")"))
-                {
-                    return CommandTypes.Typeof;
-                }
-                else
-                    throw new Exceptions.ParserException("Invalid typeof usage.");
+                for (int i = "typeof".Length; i < Command.Length; i++)
+                    if (Command[i] == '(')
+                    {
+                        if (Command.Contains("(") && Command.Contains(")"))
+                        {
+                            return CommandTypes.Typeof;
+                        }
+                        else
+                            throw new Exceptions.ParserException("Invalid typeof usage.");
+                    }
             }
 
-            if (Command.StartsWith("using"))
+            if (Command.StartsWith("using "))
                 return CommandTypes.UsingHeader;
 
             if (Command.StartsWith("(") && Command.Contains(")") && Command.Contains("new")) // (string)new string()...
@@ -150,27 +154,22 @@ namespace CmdSharp.Parser
                     return CommandTypes.CastValue;
             }
 
-            if (Command.StartsWith("if") && Command.Contains("(") && Command.Contains(")"))
+            if (Command.StartsWith("if ") && Command.Contains("(") && Command.Contains(")"))
             {
                 return CommandTypes.IfStructure;
             }
 
-            if (Command.StartsWith("if") && Command.Contains("else") && Command.Contains("(") && Command.Contains(")"))
-            {
-                return CommandTypes.IfElseStructure;
-            }
-
-            if (Command.StartsWith("while") && Command.Contains("(") && Command.Contains(")"))
+            if (Command.StartsWith("while ") && Command.Contains("(") && Command.Contains(")"))
             {
                 return CommandTypes.WhileStructure;
             }
 
-            if (Command.StartsWith("for") && Command.Contains("(") && Command.Contains(")"))
+            if (Command.StartsWith("for ") && Command.Contains("(") && Command.Contains(")"))
             {
                 return CommandTypes.ForStructure;
             }
 
-            if (Command.StartsWith("foreach") && Command.Contains("(") && Command.Contains(")"))
+            if (Command.StartsWith("foreach ") && Command.Contains("(") && Command.Contains(")"))
             {
                 return CommandTypes.ForeachStructure;
             }
