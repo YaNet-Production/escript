@@ -18,9 +18,6 @@ namespace CmdSharp
 
             AddClass(new EClass(null, typeof(Functions), ObjectVisibility.Public, true, false), true);
 
-            AddClass(new EClass(null, typeof(TestClass), ObjectVisibility.Public, true, false), false);
-            AddClass(new EClass(null, typeof(SuperClass), ObjectVisibility.Public, true, false), false);
-
             foreach (var c in Parser.CompatibleTypesClass.CompatibleTypesNative)
             {
                 AddClass(new EClass(null, c.Type, ObjectVisibility.Public, true, false) { IsCompatibleType = true }, false);
@@ -96,7 +93,6 @@ namespace CmdSharp
                     AddLibrary(new ImportedLibInfo(Assembly.Load(reference)), false);
                     //Debug.Log("ENV", $"[{i.assembly.FullName}] module: {reference.Name}");
                 }
-
             }
 
             Debug.Log("ENV", " + lib \"" + i.assembly.FullName + "\"");
@@ -116,6 +112,30 @@ namespace CmdSharp
                 }
 
                 return result.ToArray();
+            }
+        }
+
+        public static void AddNamespace(string Namespace)
+        {
+            for (int i = 0; i < LoadedLibs.Count; i++)
+            {
+                var lib = LoadedLibs[i];
+
+                var types = GetTypesInNamespace(lib.assembly, Namespace);
+
+                foreach (var type in types)
+                {
+                    AddClass(new EClass(null, type, ObjectVisibility.Public, false, false), false);
+                }
+            }
+        }
+
+        public static void RemoveNamespace(string Namespace)
+        {
+            for(int i = 0; i < Classes.Count; i++)
+            {
+                if (Classes[i].Namespace == Namespace)
+                    RemoveClass(Classes[i]);
             }
         }
 
@@ -141,6 +161,18 @@ namespace CmdSharp
 
             if(CreateInstance)
                 Class.CreateInstance();
+        }
+
+        public static void RemoveClass(string name)
+        {
+            for(int i = 0; i < Classes.Count; i++)
+            {
+                if(Classes[i].Name == name)
+                {
+                    Classes.Remove(Classes[i]);
+                    return;
+                }
+            }
         }
 
         public static void RemoveClass(EClass Class)

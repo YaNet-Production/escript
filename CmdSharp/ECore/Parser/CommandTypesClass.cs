@@ -16,12 +16,12 @@ namespace CmdSharp.Parser
             ForStructure, // for(...){}
             WhileStructure, // while(...) { }
             ForeachStructure, // foreach(var x in ARRAY) { }
-            ClassStructure,
-            NamespaceStructure,
-            NamespacesAndClassesStruct,
+            ClassStructure, // class XXX { ... }
+            NamespaceStructure, // namespace XXX { ... }
             UsingHeader, // using System;
             ObjectInitializer, // new ...(...); returns new instance
-            Typeof // typeof(ClassName); returns class type
+            Typeof, // typeof(ClassName); returns class type
+            TryCatchStruct // try { } catch { } finally { }
         }
 
         public static CommandTypes GetCommandType(string Command)
@@ -59,7 +59,8 @@ namespace CmdSharp.Parser
                         return CommandTypes.VariableInitializer;
                     }
                 }
-
+                
+                // Search for variables
                 for (int i = 0; i < Variables.VarList.Count; i++)
                 {
                     var var = Variables.VarList[i];

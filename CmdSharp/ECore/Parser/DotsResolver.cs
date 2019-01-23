@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static CmdSharp.Parser.CommandNormalizer;
 
 namespace CmdSharp.Parser
 {
@@ -15,10 +16,28 @@ namespace CmdSharp.Parser
         /// <returns></returns>
         public static object Resolve(string Command, object ParentVariable = null)
         {
-            string Name = Command;
+            string Name = "";
+            bool ContainsDots = false;
+            
+            // this will make command without strings
+            CodeIgnoreType IgnoreType = CodeIgnoreType.None;
+            for (int i = 0; i < Command.Length; i++)
+            {
+                char c = Command[i];
 
-            if (!Name.Contains('.'))
+                IgnoreType = CheckForIgnoreType(IgnoreType, c, i);
+                
+                if (IgnoreType == CodeIgnoreType.None)
+                {
+                    Name += c;
+                }
+            }
+
+            if (!ContainsDots)
                 return null;
+
+            // return normal command
+            Name = Command;
             
             string[] Sections = Name.Split('.');
             string RealName = Sections[Sections.Length - 1].Trim(EParser.SpacesAndTabs);

@@ -128,8 +128,6 @@ namespace CmdSharp
 
         public static void Add(string name, object value, List<string> options = null) { SetVariable(name, value, options); }
 
-
-
         public static void SetVariableObject(string name, object value, List<string> options = null)
         {
             SetVariable(name, value, options);

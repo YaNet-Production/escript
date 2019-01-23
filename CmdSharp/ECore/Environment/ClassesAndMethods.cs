@@ -9,6 +9,7 @@ namespace CmdSharp
 {
     public class EClass
     {
+        public string Namespace = null;
         public string Name = null;
         public bool IsStatic = false;
         public ObjectVisibility Visibility = ObjectVisibility.Private;
@@ -209,13 +210,18 @@ namespace CmdSharp
             return Instance;
         }
 
-        public EClass(string NullOrName, object content, ObjectVisibility visibility, bool istatic, bool isuser = false)
+        public EClass(string NullOrName, object content, ObjectVisibility visibility, bool istatic, bool isuser = false, string NullOrNamespace = null)
         {
             Content = content;
             if (NullOrName == null && (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType"))
             {
                 var c = (Type)Content;
                 NullOrName = c.Name;
+            }
+            if (NullOrNamespace == null && (Content.GetType() == typeof(Type) || Content.GetType().Name == "RuntimeType"))
+            {
+                var c = (Type)Content;
+                NullOrNamespace = c.Namespace;
             }
 
             if (Content.GetType() != typeof(Type) && Content.GetType().Name != "RuntimeType")
@@ -224,6 +230,7 @@ namespace CmdSharp
             Name = NullOrName;
             Visibility = visibility;
             IsUser = isuser;
+            Namespace = NullOrNamespace;
             IsStatic = istatic;
         }
     }

@@ -332,18 +332,8 @@ namespace CmdSharp.Parser
 
                 if (Namespace.Length <= 0)
                     throw new Exceptions.ParserException($"Namespace is invalid");
-                
-                for(int i = 0; i < EnvironmentManager.LoadedLibs.Count; i++)
-                {
-                    var lib = EnvironmentManager.LoadedLibs[i];
 
-                    var types = EnvironmentManager.GetTypesInNamespace(lib.assembly, Namespace);
-
-                    foreach (var type in types)
-                    {
-                        EnvironmentManager.AddClass(new EClass(null, type, EnvironmentManager.ObjectVisibility.Public, false, false), false);
-                    }
-                }
+                EnvironmentManager.AddNamespace(Namespace);
 
                 return new ParseResult(ParseResult.ParserNativeResults.ParserNativeOK, $"Namespace '{Namespace}' imported");
             }

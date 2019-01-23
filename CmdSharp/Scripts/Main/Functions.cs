@@ -2017,6 +2017,11 @@ namespace CmdSharp
             EConsole.WriteLine("Debug is offline");
         }
 
+        public void RemoveNamespace(string Namespace)
+        {
+            EnvironmentManager.RemoveNamespace(Namespace);
+        }
+
         public object msg(string caption, string text = "null", string icon = "none", string type = "ok") { return ShowMessageBox(caption, text, icon, type); }
 
         public object ConsoleBox(string caption, string text, string icon, string type)
