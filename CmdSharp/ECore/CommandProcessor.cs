@@ -132,54 +132,6 @@ namespace CmdSharp
             object m = null;
             object instance = null;
 
-#if OLD
-            // Resolve namespace or variable
-            // Works only with *one* variable and *one* method right now (like a.Lol());
-            if (Name.Contains('.'))
-            {
-                // FIX ME
-                // text after the latest dot is our method
-                string[] s = Name.Split('.');
-                string RealName = s[s.Length - 1].Trim(EParser.SpacesAndTabs);
-                int AllSectionsLen = 0;
-
-                for (int i = 0; i < s.Length - 1; i++)
-                    AllSectionsLen += s[i].Length;
-
-                string Namespace = Name.Remove(AllSectionsLen, Name.Length-1);
-                Name = RealName;
-
-                //Debug.Log("Program", "Namespace: " + Namespace);
-                //Debug.Log("Program", "Name: " + Name);
-
-                var variable = Variables.Get(s[0]);
-                if(variable != null)
-                {
-#if UserClassImplemented // FIX ME
-                    if(variable.GetType() != typeof(EClass))
-#endif
-                    {
-                        var type = variable.GetType();
-                        var methods = type.GetMethods();
-
-                        foreach(var method in methods)
-                        {
-                            if(method.Name == Name)
-                            {
-                                // FIX me. It must be EMethodNew
-                                instance = variable;
-                                m = method;//new EMethodNew(null, method, EnvironmentManager.ObjectVisibility.Public, false, false);
-                                goto invokeMethodStep;
-                            }
-                        }
-                    }
-
-                }
-
-                throw new TypeAccessException($"Type or namespace '{Namespace}' is not found");
-            }
-#endif
-            // if     a.b.c.d(); -> d (EMethod)
             object dots = DotsResolver.Resolve(Name);
 
             if (dots != null)
