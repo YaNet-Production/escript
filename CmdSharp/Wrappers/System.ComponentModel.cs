@@ -1,4 +1,4 @@
-﻿#if WRAPPER
+﻿#if IsCore
 using System.Runtime;
 
 namespace System.ComponentModel

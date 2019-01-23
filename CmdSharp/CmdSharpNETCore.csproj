@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net40;netcoreapp2.1</TargetFrameworks>
+	<Platforms>AnyCPU;x64;x86</Platforms>
+	<ApplicationIcon />
+	<OutputType>WinExe</OutputType>
+	<StartupObject />
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.1'">
+    <DefineConstants>IsCore</DefineConstants>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE;IsCore</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="UI\Resources\about.rtf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UI\Resources\about.rtf" />
+  </ItemGroup>
+
+</Project>

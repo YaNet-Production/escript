@@ -1,4 +1,4 @@
-﻿#if WRAPPER
+﻿#if IsCore
 using System;
 using System.Collections.Generic;
 using System.Linq;
