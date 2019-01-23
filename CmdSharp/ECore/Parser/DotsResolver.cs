@@ -32,7 +32,7 @@ namespace CmdSharp.Parser
             }
 
             if (!ContainsDots)
-                return null;
+                return new VNull();
 
             // return normal command
             string Name = Command;

@@ -49,7 +49,7 @@ namespace CmdSharp
             if (!NoResolve)
             {
                 object dots = DotsResolver.Resolve(name);
-                if (dots != null)
+                if (dots != null && dots.GetType() != typeof(VNull))
                 {
                     if (dots.GetType() == typeof(EProperty))
                     {
@@ -142,7 +142,7 @@ namespace CmdSharp
         public static void SetVariable(string name, object value, List<string> options = null)
         {
             object dots = DotsResolver.Resolve(name);
-            if(dots != null)
+            if(dots != null && dots.GetType() != typeof(VNull))
             {
                 if (dots.GetType() == typeof(EProperty))
                 {

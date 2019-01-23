@@ -134,7 +134,7 @@ namespace CmdSharp
 
             object dots = DotsResolver.Resolve(Name);
 
-            if (dots != null)
+            if (dots != null && dots.GetType() != typeof(VNull))
             {
                 if (dots.GetType() == typeof(EMethodNew))
                     m = dots;
